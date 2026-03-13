@@ -1,0 +1,71 @@
+💼 Found wallet: privy
+SmartAccountContext.tsx:73 🔐 Initializing smart account on Base Sepolia...
+SmartAccountContext.tsx:87 📡 Using Base Paymaster RPC: https://api.developer.coinbase.com/rpc/v1/base-sepolia/34ut3gkiuZadCZR3FB4mWd8Gj1B2Jktt
+SmartAccountContext.tsx:151 ❌ Failed to initialize smart account: TypeError: Cannot read properties of undefined (reading 'address')
+    at toOwner (chunk-JW3NR5MD.js?v=41c0e4f5:129:35)
+    at toSimpleSmartAccount (permissionless_accounts.js?v=41c0e4f5:430:28)
+    at initSmartAccount (SmartAccountContext.tsx:96:37)
+initSmartAccount @ SmartAccountContext.tsx:151
+await in initSmartAccount
+(anonymous) @ SmartAccountContext.tsx:158
+commitHookEffectListMount @ chunk-Z2GUPSCO.js?v=41c0e4f5:16915
+commitPassiveMountOnFiber @ chunk-Z2GUPSCO.js?v=41c0e4f5:18156
+commitPassiveMountEffects_complete @ chunk-Z2GUPSCO.js?v=41c0e4f5:18129
+commitPassiveMountEffects_begin @ chunk-Z2GUPSCO.js?v=41c0e4f5:18119
+commitPassiveMountEffects @ chunk-Z2GUPSCO.js?v=41c0e4f5:18109
+flushPassiveEffectsImpl @ chunk-Z2GUPSCO.js?v=41c0e4f5:19490
+flushPassiveEffects @ chunk-Z2GUPSCO.js?v=41c0e4f5:19447
+(anonymous) @ chunk-Z2GUPSCO.js?v=41c0e4f5:19328
+workLoop @ chunk-Z2GUPSCO.js?v=41c0e4f5:197
+flushWork @ chunk-Z2GUPSCO.js?v=41c0e4f5:176
+performWorkUntilDeadline @ chunk-Z2GUPSCO.js?v=41c0e4f5:384Understand this error
+app-layout.tsx:344 [AppLayout] Unread message count: 0
+chunk-ILUNCV6Q.js?v=41c0e4f5:339 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-ILUNCV6Q.js?v=41c0e4f5:339
+commitHookEffectListMount @ chunk-Z2GUPSCO.js?v=41c0e4f5:16915
+commitPassiveMountOnFiber @ chunk-Z2GUPSCO.js?v=41c0e4f5:18156
+commitPassiveMountEffects_complete @ chunk-Z2GUPSCO.js?v=41c0e4f5:18129
+commitPassiveMountEffects_begin @ chunk-Z2GUPSCO.js?v=41c0e4f5:18119
+commitPassiveMountEffects @ chunk-Z2GUPSCO.js?v=41c0e4f5:18109
+flushPassiveEffectsImpl @ chunk-Z2GUPSCO.js?v=41c0e4f5:19490
+flushPassiveEffects @ chunk-Z2GUPSCO.js?v=41c0e4f5:19447
+commitRootImpl @ chunk-Z2GUPSCO.js?v=41c0e4f5:19416
+commitRoot @ chunk-Z2GUPSCO.js?v=41c0e4f5:19277
+performSyncWorkOnRoot @ chunk-Z2GUPSCO.js?v=41c0e4f5:18895
+flushSyncCallbacks @ chunk-Z2GUPSCO.js?v=41c0e4f5:9119
+commitRootImpl @ chunk-Z2GUPSCO.js?v=41c0e4f5:19432
+commitRoot @ chunk-Z2GUPSCO.js?v=41c0e4f5:19277
+finishConcurrentRender @ chunk-Z2GUPSCO.js?v=41c0e4f5:18805
+performConcurrentWorkOnRoot @ chunk-Z2GUPSCO.js?v=41c0e4f5:18718
+workLoop @ chunk-Z2GUPSCO.js?v=41c0e4f5:197
+flushWork @ chunk-Z2GUPSCO.js?v=41c0e4f5:176
+performWorkUntilDeadline @ chunk-Z2GUPSCO.js?v=41c0e4f5:384Understand this warning
+content-preview.tsx:65 🚀 Creating coin on chain: Base Sepolia
+content-preview.tsx:82 📤 Uploading metadata to IPFS...
+pinata.ts:4 PINATA_JWT available: true
+pinata.ts:5 Environment variables: {VITE_PINATA_JWT: true, VITE_PINATA_API_KEY: true, VITE_NEXT_PUBLIC_GATEWAY_URL: true}
+content-preview.tsx:84 ✅ Metadata uploaded: ipfs://QmRrUsbdMmfnSxxrxNBu3k4Quoq7LoFPSDjpZjgBPqCr75
+content-preview.tsx:168 ❌ Coin creation failed: Error: Smart account not initialized. Please refresh and try again.
+    at Object.mutationFn (content-preview.tsx:88:15)
+onError @ content-preview.tsx:168
+execute @ chunk-7X75LGXT.js?v=41c0e4f5:1254
+await in execute
+mutate @ chunk-7X75LGXT.js?v=41c0e4f5:2630
+(anonymous) @ chunk-7X75LGXT.js?v=41c0e4f5:3295
+onClick @ content-preview.tsx:270
+callCallback2 @ chunk-Z2GUPSCO.js?v=41c0e4f5:3674
+invokeGuardedCallbackDev @ chunk-Z2GUPSCO.js?v=41c0e4f5:3699
+invokeGuardedCallback @ chunk-Z2GUPSCO.js?v=41c0e4f5:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-Z2GUPSCO.js?v=41c0e4f5:3736
+executeDispatch @ chunk-Z2GUPSCO.js?v=41c0e4f5:7014
+processDispatchQueueItemsInOrder @ chunk-Z2GUPSCO.js?v=41c0e4f5:7034
+processDispatchQueue @ chunk-Z2GUPSCO.js?v=41c0e4f5:7043
+dispatchEventsForPlugins @ chunk-Z2GUPSCO.js?v=41c0e4f5:7051
+(anonymous) @ chunk-Z2GUPSCO.js?v=41c0e4f5:7174
+batchedUpdates$1 @ chunk-Z2GUPSCO.js?v=41c0e4f5:18913
+batchedUpdates @ chunk-Z2GUPSCO.js?v=41c0e4f5:3579
+dispatchEventForPluginEventSystem @ chunk-Z2GUPSCO.js?v=41c0e4f5:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-Z2GUPSCO.js?v=41c0e4f5:5478
+dispatchEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5472
+dispatchDiscreteEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5449Understand this error
+app-layout.tsx:344 [AppLayout] Unread message count: 0

@@ -1,0 +1,724 @@
+"use client";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+
+import {
+  ExternalLink,
+  Calendar,
+  User,
+  Coins,
+  Copy,
+  Check,
+  TrendingUp,
+  Play,
+} from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { useLocation } from "wouter";
+import { safeNavigate } from "@/lib/navigation";
+import { parseEther, formatEther } from "viem";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
+import { getCoin, getCoinHolders } from "@zoralabs/coins-sdk";
+import { base } from "viem/chains";
+import { useQuery } from "@tanstack/react-query";
+import TradeModal from "@/components/trade-modal";
+import MobileTradeModal from "@/components/mobile-trade-modal";
+import { useIsMobile } from "@/hooks/use-mobile";
+import "@/lib/zora";
+import { createAvatar } from "@dicebear/core";
+import { avataaars } from "@dicebear/collection";
+import { cn, formatSmartCurrency } from "@/lib/utils";
+import { useTour } from "@/hooks/use-tour";
+import { PlatformTag } from "@/components/platform-tag";
+
+const GATEWAY_URLS = ["gateway.pinata.cloud", "dweb.link", "ipfs.io"];
+
+interface CoinStatsIconsProps {
+  price?: string | null;
+  marketCap?: string | null;
+  volume24h?: string | null;
+  uniqueHolders?: number | null;
+  earnings?: string | null;
+}
+
+function CoinStatsIcons({
+  price,
+  marketCap,
+  volume24h,
+  uniqueHolders,
+  earnings,
+}: CoinStatsIconsProps) {
+  return (
+    <div className="grid grid-cols-2 gap-2 text-xs">
+      {price && (
+        <div className="flex items-center gap-1">
+          <TrendingUp className="h-3 w-3 text-green-600" />
+          <span className="text-gray-600">Price:</span>
+          <span className="font-semibold">${price}</span>
+        </div>
+      )}
+      {marketCap && (
+        <div className="flex items-center gap-1">
+          <Coins className="h-3 w-3 text-blue-600" />
+          <span className="text-gray-600">MCap:</span>
+          <span className="font-semibold">${marketCap}</span>
+        </div>
+      )}
+      {volume24h && (
+        <div className="flex items-center gap-1">
+          <Calendar className="h-3 w-3 text-purple-600" />
+          <span className="text-gray-600">Vol:</span>
+          <span className="font-semibold">${volume24h}</span>
+        </div>
+      )}
+      {uniqueHolders && (
+        <div className="flex items-center gap-1">
+          <User className="h-3 w-3 text-orange-600" />
+          <span className="text-gray-600">Holders:</span>
+          <span className="font-semibold">{uniqueHolders}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+interface CoinCardProps {
+  coin: {
+    id: string;
+    name: string;
+    symbol: string;
+    address: string;
+    creator?: string;
+    creator_wallet?: string;
+    createdAt: string;
+    metadata?: {
+      title?: string;
+      description?: string;
+      image?: string;
+      originalUrl?: string;
+      author?: string;
+      animation_url?: string; // Ensure animation_url is present
+    };
+    ipfsUri?: string;
+    image?: string;
+    description?: string;
+  };
+  isOwnCoin?: boolean;
+  className?: string;
+  handleCardClick?: () => void;
+  isTourActive?: boolean;
+  tourStep?: number;
+}
+
+export default function CoinCard({
+  coin,
+  isOwnCoin = false,
+  className,
+  handleCardClick,
+  isTourActive = false,
+  tourStep,
+}: CoinCardProps) {
+  const isMobile = useIsMobile();
+  const [copied, setCopied] = useState(false);
+  const [tradeDialogOpen, setTradeDialogOpen] = useState(false);
+  const [marketCap, setMarketCap] = useState<string | null>(null);
+  const [volume24h, setVolume24h] = useState<string | null>(null);
+  const [uniqueHolders, setUniqueHolders] = useState<number | null>(null);
+  const [creatorEarnings, setCreatorEarnings] = useState<Array<{
+    amount: {
+      currencyAddress: string;
+      amountRaw: string;
+      amountDecimal: number;
+    };
+    amountUsd?: string;
+  }> | null>(null);
+  const [coinImage, setCoinImage] = useState<string | null>(null);
+  const [imageLoadError, setImageLoadError] = useState(false);
+  const [gatewayIndex, setGatewayIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [creatorAvatar, setCreatorAvatar] = useState<string | null>(null); // State to store the creator's avatar URL
+  const [localCoin, setLocalCoin] = useState(coin); // State to hold the coin data, including updated stats
+  const { currentStep, nextStep } = useTour();
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  // Determine if this is audio or video content
+  // Check all possible sources for media type including metadata
+  const allImageSources = [
+    coin.metadata?.image,
+    coin.image,
+    coinImage,
+    coin.ipfsUri,
+    coin.metadata?.animation_url,
+  ].filter(Boolean);
+
+  const isAudioContent = allImageSources.some(
+    (src) => src?.match(/\.(mp3|wav|ogg|m4a)$/i) || src?.includes("spotify"),
+  );
+  const isVideoContent =
+    allImageSources.some((src) => src?.match(/\.(mp4|webm|mov|avi)$/i)) ||
+    coin.metadata?.animation_url?.match(/\.(mp4|webm|mov|avi)$/i);
+
+  // Effect to update localCoin when the prop changes
+  useEffect(() => {
+    setLocalCoin(coin);
+  }, [coin]);
+
+  useEffect(() => {
+    if (!coin.address) return;
+
+    let isMounted = true;
+
+    async function fetchCoinStats() {
+      try {
+        const { getCoin } = await import("@zoralabs/coins-sdk");
+        const { base } = await import("viem/chains");
+
+        const zoraCoinResult = await getCoin({
+          address: coin.address as `0x${string}`,
+          chain: base.id,
+        });
+
+        if (!isMounted) return;
+
+        const zoraCoin = zoraResult.data?.zora20Token;
+
+        if (zoraCoin) {
+          // Calculate estimated creator earnings from total volume (already in USD)
+          // Creator gets 50% of 1% total fees = 0.5% of trading volume
+          const totalVolumeUSD = parseFloat(zoraCoin.totalVolume || "0");
+          const estimatedCreatorEarningsUSD = totalVolumeUSD * 0.005; // 0.5% of volume
+
+          console.log(
+            `💰 ${coin.name} - Total Volume: $${zoraCoin.totalVolume}, Creator Earnings: $${estimatedCreatorEarningsUSD.toFixed(2)}`,
+          );
+
+          // Update coin data with blockchain stats, ensuring createdAt is properly set
+          const coinData = {
+            ...coin,
+            totalSupply: zoraCoin.totalSupply || coin.totalSupply,
+            marketCap: zoraCoin.marketCap || coin.marketCap,
+            volume24h: zoraCoin.volume24h || coin.volume24h,
+            holders: zoraCoin.holderCount || coin.holders,
+            priceUsd: zoraCoin.priceUsd || coin.priceUsd,
+            // Ensure we always have a valid createdAt date
+            createdAt: coin.createdAt || zoraCoin.createdAt || new Date().toISOString(),
+            // Add estimated creator earnings based on total volume (in USD)
+            totalVolume: zoraCoin.totalVolume || "0",
+            creatorEarningsUSD: estimatedCreatorEarningsUSD,
+            metadata: {
+              ...coin.metadata,
+              ...zoraCoin.metadata,
+            },
+          };
+
+          setLocalCoin(coinData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch coin stats:", error);
+      }
+    }
+
+    fetchCoinStats();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [coin.address]);
+
+  // Use React Query to fetch creator data with proper caching
+  const { data: creatorData } = useQuery({
+    queryKey: ["/api/creators/address", coin.creator_wallet],
+    queryFn: async () => {
+      if (!coin.creator_wallet) return null;
+      const response = await fetch(
+        `/api/creators/address/${coin.creator_wallet}`,
+      );
+      if (!response.ok) return null;
+      return response.json();
+    },
+    enabled: !!coin.creator_wallet && open,
+  });
+
+  // Update creator avatar when creator data changes
+  useEffect(() => {
+    if (creatorData?.avatar) {
+      setCreatorAvatar(creatorData.avatar);
+    }
+  }, [creatorData]);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchCoinStats() {
+      if (!coin.address) {
+        console.warn(
+          `⚠️ No address for coin ${coin.name}, skipping stats fetch`,
+        );
+        return;
+      }
+
+      try {
+        console.log(
+          `📊 Fetching real stats for ${coin.name} (${coin.address})...`,
+        );
+
+        // Use Zora SDK getCoin to get all stats
+        const coinResponse = await getCoin({
+          address: coin.address as `0x${string}`,
+          chain: base.id,
+        });
+
+        const coinData = coinResponse.data?.zora20Token;
+
+        if (!isMounted) return;
+
+        if (!coinData) {
+          console.warn(`⚠️ No data returned from Zora API for ${coin.name}`);
+          return;
+        }
+
+        console.log(`✅ Real stats loaded for ${coin.name}:`, {
+          marketCap: coinData.marketCap,
+          volume24h: coinData.volume24h,
+          uniqueHolders: coinData.uniqueHolders,
+          creatorEarnings: coinData.creatorEarnings,
+          totalSupply: coinData.totalSupply,
+          creatorAddress: coinData.creatorAddress,
+          fullEarningsData: JSON.stringify(coinData.creatorEarnings, null, 2),
+        });
+
+        // Set market cap - handle both string and number
+        if (coinData.marketCap !== null && coinData.marketCap !== undefined) {
+          const mcValue =
+            typeof coinData.marketCap === "string"
+              ? parseFloat(coinData.marketCap)
+              : coinData.marketCap;
+          setMarketCap(mcValue.toFixed(2));
+        } else {
+          setMarketCap(null);
+        }
+
+        // Set 24h volume - handle both string and number, ensure we show real data
+        if (coinData.volume24h !== null && coinData.volume24h !== undefined) {
+          const volValue =
+            typeof coinData.volume24h === "string"
+              ? parseFloat(coinData.volume24h)
+              : coinData.volume24h;
+          // Only set if we have a valid number
+          if (!isNaN(volValue)) {
+            setVolume24h(volValue.toFixed(2));
+          } else {
+            setVolume24h("0");
+          }
+        } else {
+          setVolume24h("0");
+        }
+
+        // Fetch real-time holder count using getCoinHolders for accuracy
+        try {
+          const { getCoinHolders } = await import("@zoralabs/coins-sdk");
+          const holdersResponse = await getCoinHolders({
+            address: coin.address as `0x${string}`,
+            chainId: base.id,
+            first: 100, // Fetch up to 100 holders to get accurate count
+          });
+
+          const holderBalances =
+            holdersResponse.data?.zora20Token?.holderBalances?.edges || [];
+
+          // Count unique holders with non-zero balance
+          const actualHolderCount = holderBalances.filter((edge: any) => {
+            const balance = parseFloat(edge.node.balance || "0");
+            return balance > 0;
+          }).length;
+
+          if (!isMounted) return;
+
+          // Use real-time holder count, fallback to coinData.uniqueHolders if needed
+          if (actualHolderCount > 0) {
+            setUniqueHolders(actualHolderCount);
+          } else if (
+            coinData.uniqueHolders !== null &&
+            coinData.uniqueHolders !== undefined
+          ) {
+            setUniqueHolders(Number(coinData.uniqueHolders));
+          } else {
+            setUniqueHolders(null);
+          }
+        } catch (holdersError) {
+          console.error("Error fetching holders:", holdersError);
+
+          // Fallback to uniqueHolders from getCoin if holder fetch fails
+          if (!isMounted) return;
+
+          if (
+            coinData.uniqueHolders !== null &&
+            coinData.uniqueHolders !== undefined
+          ) {
+            setUniqueHolders(Number(coinData.uniqueHolders));
+          } else {
+            setUniqueHolders(null);
+          }
+        }
+
+        // Set creator earnings - properly extract USD value
+        if (
+          coinData.creatorEarnings &&
+          Array.isArray(coinData.creatorEarnings) &&
+          coinData.creatorEarnings.length > 0
+        ) {
+          const earnings = coinData.creatorEarnings[0];
+
+          // Try multiple ways to get the USD value
+          let earningsUsd = null;
+
+          if (earnings.amountUsd) {
+            earningsUsd = earnings.amountUsd;
+          } else if (earnings.amount?.amountDecimal) {
+            // If no USD value, use the decimal amount (this is in ZORA tokens)
+            earningsUsd = earnings.amount.amountDecimal.toString();
+          } else if (earnings.amount?.amountRaw) {
+            // Convert from wei to decimal if needed (18 decimals for ZORA)
+            const rawAmount = BigInt(earnings.amount.amountRaw);
+            earningsUsd = (Number(rawAmount) / 1e18).toString();
+          }
+
+          console.log("Creator earnings for", coin.name, ":", {
+            raw: earnings,
+            parsedUsd: earningsUsd,
+          });
+
+          if (earningsUsd && parseFloat(earningsUsd) > 0) {
+            setCreatorEarnings([
+              {
+                amount: earnings.amount,
+                amountUsd: earningsUsd,
+              },
+            ]);
+          } else {
+            setCreatorEarnings(null);
+          }
+        } else {
+          setCreatorEarnings(null);
+        }
+
+        // Set coin image from Zora's CDN
+        if (coinData.mediaContent?.previewImage) {
+          const previewImage = coinData.mediaContent.previewImage as any;
+          const imageUrl = previewImage.medium || previewImage.small || null;
+          if (imageUrl) {
+            setCoinImage(imageUrl);
+          }
+        } else if (coin.image) {
+          setCoinImage(coin.image);
+        } else if (coin.metadata?.image) {
+          setCoinImage(coin.metadata.image);
+        }
+      } catch (error: any) {
+        if (!isMounted) return;
+        console.error(
+          `❌ Failed to fetch stats for ${coin.name}:`,
+          error?.message || error,
+        );
+
+        // Set fallback image on error
+        if (coin.image) {
+          setCoinImage(coin.image);
+        } else if (coin.metadata?.image) {
+          setCoinImage(coin.metadata.image);
+        }
+      }
+    }
+
+    if (typeof window !== "undefined" && coin.address) {
+      fetchCoinStats();
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [coin.address, coin.name, coin.image, coin.metadata?.image]);
+
+  const getImageSrc = (imageUrl?: string, gatewayIdx: number = 0) => {
+    if (!imageUrl) return null;
+    if (imageUrl.startsWith("ipfs://")) {
+      const hash = imageUrl.replace("ipfs://", "");
+      return `https://${GATEWAY_URLS[gatewayIdx]}/ipfs/${hash}`;
+    }
+    if (imageUrl.includes("yellow-patient-cheetah-559.mypinata.cloud")) {
+      const hash = imageUrl.split("/ipfs/")[1];
+      if (hash) {
+        return `https://${GATEWAY_URLS[gatewayIdx]}/ipfs/${hash}`;
+      }
+    }
+    return imageUrl;
+  };
+
+  const getCurrentImageSrc = () => {
+    if (isVideoContent || isAudioContent) {
+      return getImageSrc(coin.metadata?.image || coin.image, gatewayIndex);
+    }
+
+    if (!imageLoadError && coinImage) {
+      return coinImage;
+    }
+    return getImageSrc(coin.image || coin.metadata?.image, gatewayIndex);
+  };
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (gatewayIndex < GATEWAY_URLS.length - 1) {
+      console.warn(
+        `IPFS gateway ${GATEWAY_URLS[gatewayIndex]} failed, trying ${GATEWAY_URLS[gatewayIndex + 1]}...`,
+      );
+      setGatewayIndex(gatewayIndex + 1);
+    } else if (!imageLoadError) {
+      setImageLoadError(true);
+      if (coinImage) {
+        console.warn("Zora API image failed to load, falling back to IPFS:", {
+          failedSrc: e.currentTarget.src,
+          coin: coin.name,
+        });
+        setGatewayIndex(0);
+      } else {
+        console.error("All image sources failed to load:", {
+          src: e.currentTarget.src,
+          alt: e.currentTarget.alt,
+          coin: coin.name,
+        });
+      }
+    }
+  };
+
+  const [, navigate] = useLocation();
+
+  const handleCardClickWrapper = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (isTourActive && currentStep === tourStep) {
+      nextStep();
+    } else if (handleCardClick) {
+      handleCardClick();
+    } else if (!isOwnCoin && coin.address) {
+      // Always navigate to coin details page
+      safeNavigate(navigate, `/coin/${coin.symbol}/${coin.address}`);
+    }
+  };
+
+  const handleCardPointerDown = (e: React.PointerEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  return (
+    <Card
+      onClick={handleCardClickWrapper}
+      data-coin-card
+      className={cn(
+        "group relative overflow-hidden rounded-3xl border-border/50 bg-card cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1",
+        className
+      )}
+      onPointerDown={handleCardPointerDown}
+      data-tour-step={tourStep}
+      data-tour-target={
+        isTourActive && currentStep === tourStep ? "coin-card" : undefined
+      }
+    >
+      <div
+        className={`relative w-full aspect-square bg-gradient-to-br from-muted/20 to-muted/10 overflow-hidden ${!isOwnCoin ? "cursor-pointer hover:opacity-90 transition-opacity" : ""}`}
+      >
+        {/* Platform Category Badge */}
+        <div className="absolute top-1.5 left-1.5 z-10">
+          {coin.scrapedContentId && (coin as any).metadata?.originalUrl ? (
+            <PlatformTag 
+              platform={(coin as any).metadata.originalUrl} 
+              className="shadow-lg"
+            />
+          ) : (
+            <Badge 
+              variant="secondary" 
+              className="text-[9px] bg-primary/20 backdrop-blur-sm border-primary/20 text-primary-foreground px-1.5 py-0.5 rounded-md shadow-lg"
+            >
+              NFT
+            </Badge>
+          )}
+        </div>
+
+        <div className="absolute top-1.5 right-1.5 flex items-center gap-0.5 rounded px-1.5 py-0.5 z-10">
+          <span className="text-[8px] text-muted-foreground font-medium">
+            {localCoin.createdAt && !isNaN(new Date(localCoin.createdAt).getTime())
+              ? new Date(localCoin.createdAt).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })
+              : new Date().toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })}
+          </span>
+        </div>
+        {isAudioContent && coin.metadata?.animation_url && (
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <audio
+              src={coin.metadata.animation_url}
+              className="w-full"
+              controls
+            />
+          </div>
+        )}
+        {isVideoContent && !isAudioContent && coin.metadata?.animation_url && (
+          <video
+            src={coin.metadata.animation_url}
+            className="w-full h-full object-cover"
+            controls
+            playsInline
+            onError={(e) => {
+              console.log("Video failed to load:", e.currentTarget.src);
+              handleImageError(e as any);
+            }}
+            data-testid={`video-coin-${coin.address}`}
+          />
+        )}
+        {!isVideoContent && !isAudioContent && getCurrentImageSrc() ? (
+          <img
+            key={`${coin.address}-${getCurrentImageSrc()}`}
+            src={getCurrentImageSrc() || ""}
+            alt={localCoin.metadata?.title || localCoin.name}
+            className="w-full h-full object-cover"
+            onError={handleImageError}
+            data-testid={`img-coin-${coin.address}`}
+          />
+        ) : (
+          !isAudioContent && (
+            <div className="w-full h-full flex items-center justify-center">
+              <Coins className="w-8 h-8 text-primary/40" />
+            </div>
+          )
+        )}
+
+        {(isAudioContent || isVideoContent) && (
+          <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm rounded-full p-2 hover:bg-black/80 transition-colors z-10">
+            <Play className="w-4 h-4 text-white fill-white" />
+          </div>
+        )}
+      </div>
+
+      {!isOwnCoin &&
+        (isMobile ? (
+          <MobileTradeModal
+            coin={coin as any}
+            open={tradeDialogOpen}
+            onOpenChange={setTradeDialogOpen}
+          />
+        ) : (
+          <TradeModal
+            coin={coin as any}
+            open={tradeDialogOpen}
+            onOpenChange={setTradeDialogOpen}
+          />
+        ))}
+
+      <div className="p-2 space-y-1.5 flex-1 flex flex-col">
+        <div className="flex-1 flex items-start justify-between">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-bold text-xs truncate text-foreground">
+              {localCoin.name}
+            </h3>
+            <p className="text-[10px] text-muted-foreground truncate">
+              {localCoin.symbol}
+            </p>
+          </div>
+          <div className="flex items-center gap-1 ml-1">
+            <div
+              className="flex items-center gap-1"
+              title={localCoin.creator_wallet || localCoin.creator || "Unknown"}
+            >
+              <img
+                src={
+                  creatorAvatar ||
+                  createAvatar(avataaars, {
+                    seed:
+                      localCoin.creator_wallet ||
+                      localCoin.creator ||
+                      "default",
+                    size: 14,
+                  }).toDataUri()
+                }
+                alt={`${localCoin.creator_wallet || localCoin.creator || "Creator"} avatar`}
+                className="w-3.5 h-3.5 rounded-full object-cover"
+                onError={(e) => {
+                  // Only fallback to dicebear if the custom avatar fails AND we haven't already set a fallback
+                  if (creatorAvatar) {
+                    const fallback = createAvatar(avataaars, {
+                      seed:
+                        localCoin.creator_wallet ||
+                        localCoin.creator ||
+                        "default",
+                      size: 14,
+                    }).toDataUri();
+                    e.currentTarget.src = fallback;
+                    setCreatorAvatar(null);
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-1 pt-1.5 border-t border-border/50">
+          <div className="flex items-center justify-between text-[10px]">
+            <div className="flex items-center gap-0.5">
+              <TrendingUp className="h-2.5 w-2.5 text-green-500" />
+              <span className="text-muted-foreground">MC:</span>
+              <span className="font-semibold text-foreground">
+                {marketCap && typeof marketCap === 'string'
+                  ? `$${parseFloat(marketCap).toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
+                  : typeof marketCap === 'number'
+                  ? `$${marketCap.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`
+                  : "$0"}
+              </span>
+            </div>
+            <div className="flex items-center gap-0.5">
+              <TrendingUp className="h-2.5 w-2.5 text-green-500" />
+              <span className="text-muted-foreground">Earn:</span>
+              <span className="font-semibold text-foreground">
+                {formatSmartCurrency(
+                  typeof (localCoin as any).creatorEarningsUSD === 'number' 
+                    ? (localCoin as any).creatorEarningsUSD 
+                    : parseFloat((localCoin as any).creatorEarningsUSD || 0) || 0
+                )}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between text-[10px]">
+            <div className="flex items-center gap-0.5">
+              <TrendingUp className="h-2.5 w-2.5 text-purple-500" />
+              <span className="text-muted-foreground">Vol:</span>
+              <span className="font-semibold text-foreground">
+                {volume24h && typeof volume24h === 'string' && parseFloat(volume24h) > 0
+                  ? `$${parseFloat(volume24h).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                  : typeof volume24h === 'number' && volume24h > 0
+                  ? `$${volume24h.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                  : "$0.00"}
+              </span>
+            </div>
+            <div className="flex items-center gap-0.5">
+              <User className="h-2.5 w-2.5 text-orange-500" />
+              <span className="font-semibold text-foreground">
+                {uniqueHolders !== null && uniqueHolders !== undefined ? uniqueHolders : "0"}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}

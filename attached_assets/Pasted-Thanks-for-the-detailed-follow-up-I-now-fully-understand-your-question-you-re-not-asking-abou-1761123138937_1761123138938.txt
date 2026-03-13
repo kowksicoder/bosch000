@@ -1,0 +1,105 @@
+Thanks for the detailed follow-up. I now fully understand your question — you're **not** asking about the SDK, you're asking:
+
+> Can developers use the **direct contract method** (`deploy()` or `deployCreatorCoin()`) to create coins on a **testnet**, especially **Base Sepolia**, using the ZoraFactory contract?
+
+---
+
+### ✅ Short Answer:
+
+**Yes**, developers **can** use the contract method (i.e., `deploy()` or `deployCreatorCoin()`) to create coins on **Base Sepolia (chain ID 84532)** because the **ZoraFactory contract is deployed there** at the same address as mainnet.
+
+---
+
+### 🧠 How We Know:
+
+From the documentation you shared and what’s publicly stated:
+
+| **Chain**    | **Chain ID** | **ZoraFactory Address**                      |
+| ------------ | ------------ | -------------------------------------------- |
+| Base Mainnet | 8453         | `0x777777751622c0d3258f214F9DF38E35BF45baF3` |
+| Base Sepolia | 84532        | `0x777777751622c0d3258f214F9DF38E35BF45baF3` |
+
+> This means **the factory is deployed and functional on Base Sepolia**, which is Zora’s supported testnet for the coins protocol.
+
+---
+
+### 🧩 Contract Deployment Method Overview:
+
+You can interact with the contract directly using:
+
+* `deploy(...)` → for general coins ("content coins")
+* `deployCreatorCoin(...)` → for official “creator coins”
+
+These methods are:
+
+* Available publicly via the ABI
+* Accept standard parameters (payout recipient, URI, owners, symbol, etc.)
+* Require a `poolConfig` (which determines how the coin will be paired, e.g., ETH, ZORA, etc.)
+
+---
+
+### ⚠️ Caveats (from the docs):
+
+1. **Not all pool configurations are available on Base Sepolia.**
+
+   * For example, `ZORA`, `CREATOR_COIN`, and `CREATOR_COIN_OR_ZORA` as currency types **are not supported** on Base Sepolia.
+   * This mostly impacts what you can do in the `poolConfig`.
+
+2. **You must provide a valid `poolConfig`.**
+
+   * This is complex to construct manually.
+   * Zora recommends using their internal (currently not public) **API endpoints** to generate these configs.
+
+3. **You can use ETH or WETH as the backing currency** — this is safe and supported on Base Sepolia.
+
+---
+
+### 🔧 How to Use It on Testnet:
+
+If you’re coding against the factory directly (not SDK), your flow looks like:
+
+```solidity
+IZoraFactory factory = IZoraFactory(FACTORY_ADDRESS); // same for Base Sepolia
+
+(factory.deploy or factory.deployCreatorCoin)(
+    payoutRecipient,
+    owners[],
+    uri,
+    name,
+    symbol,
+    poolConfig,
+    platformReferrer,
+    // Optional: postDeployHook, postDeployHookData
+    salt
+);
+```
+
+You just need to:
+
+* **Use a Base Sepolia RPC provider**
+* **Ensure `chainId` is 84532**
+* **Use test ETH on Base Sepolia**
+* **Build or fetch a valid `poolConfig`** (manually or via internal Zora API, if you have access)
+
+---
+
+### 🧪 Want to test it?
+
+You can deploy using Foundry/Hardhat or Remix with the correct ABI and parameters. Just make sure you're connected to Base Sepolia and funded with test ETH.
+
+---
+
+### ✅ Summary:
+
+| Feature                                | Supported on Base Sepolia? |
+| -------------------------------------- | -------------------------- |
+| `ZoraFactory.deploy()`                 | ✅ Yes                      |
+| `ZoraFactory.deployCreatorCoin()`      | ✅ Yes                      |
+| ETH-backed pool configurations         | ✅ Yes                      |
+| ZORA-backed pool configurations        | ❌ Not supported            |
+| Same factory address                   | ✅ Yes                      |
+| Address prediction via `coinAddress()` | ✅ Yes                      |
+
+---
+
+Let me know if you want help **generating a working `poolConfig` for testnet ETH** or need a **live deployable example** for Base Sepolia.

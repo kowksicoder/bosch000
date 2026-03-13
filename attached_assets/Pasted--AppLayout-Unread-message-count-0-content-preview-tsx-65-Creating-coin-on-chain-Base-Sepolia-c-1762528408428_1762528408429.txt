@@ -1,0 +1,61 @@
+[AppLayout] Unread message count: 0
+content-preview.tsx:65 🚀 Creating coin on chain: Base Sepolia
+content-preview.tsx:98 📤 Uploading metadata to IPFS...
+pinata.ts:4 PINATA_JWT available: true
+pinata.ts:5 Environment variables: {VITE_PINATA_JWT: true, VITE_PINATA_API_KEY: true, VITE_NEXT_PUBLIC_GATEWAY_URL: true}
+content-preview.tsx:100 ✅ Metadata uploaded: ipfs://QmTkWVyA4WgdzcLvrmJyc6iTSMxGL5FpNFnaRLfpRi8AJ4
+content-preview.tsx:103 💾 Creating database record...
+content-preview.tsx:104 📍 Using privy wallet address: 0x40E564fE1fac10Cc5BEa9a34457b6bC6291B4F8e
+queryClient.ts:22  POST https://a31a92b9-cf2b-4f24-aa03-83ffa207d3e2-00-mqucq00xtcjz.kirk.replit.dev/api/coins 400 (Bad Request)
+apiRequest @ queryClient.ts:22
+mutationFn @ content-preview.tsx:116
+await in mutationFn
+fn @ chunk-7X75LGXT.js?v=41c0e4f5:1189
+run @ chunk-7X75LGXT.js?v=41c0e4f5:494
+start @ chunk-7X75LGXT.js?v=41c0e4f5:536
+execute @ chunk-7X75LGXT.js?v=41c0e4f5:1225
+await in execute
+mutate @ chunk-7X75LGXT.js?v=41c0e4f5:2630
+(anonymous) @ chunk-7X75LGXT.js?v=41c0e4f5:3295
+onClick @ content-preview.tsx:274
+callCallback2 @ chunk-Z2GUPSCO.js?v=41c0e4f5:3674
+invokeGuardedCallbackDev @ chunk-Z2GUPSCO.js?v=41c0e4f5:3699
+invokeGuardedCallback @ chunk-Z2GUPSCO.js?v=41c0e4f5:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-Z2GUPSCO.js?v=41c0e4f5:3736
+executeDispatch @ chunk-Z2GUPSCO.js?v=41c0e4f5:7014
+processDispatchQueueItemsInOrder @ chunk-Z2GUPSCO.js?v=41c0e4f5:7034
+processDispatchQueue @ chunk-Z2GUPSCO.js?v=41c0e4f5:7043
+dispatchEventsForPlugins @ chunk-Z2GUPSCO.js?v=41c0e4f5:7051
+(anonymous) @ chunk-Z2GUPSCO.js?v=41c0e4f5:7174
+batchedUpdates$1 @ chunk-Z2GUPSCO.js?v=41c0e4f5:18913
+batchedUpdates @ chunk-Z2GUPSCO.js?v=41c0e4f5:3579
+dispatchEventForPluginEventSystem @ chunk-Z2GUPSCO.js?v=41c0e4f5:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-Z2GUPSCO.js?v=41c0e4f5:5478
+dispatchEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5472
+dispatchDiscreteEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5449Understand this error
+content-preview.tsx:180 ❌ Coin creation failed: Error: 400: {"error":"Invalid coin data","details":"[object Object]"}
+    at throwIfResNotOk (queryClient.ts:6:11)
+    at async apiRequest (queryClient.ts:29:3)
+    at async Object.mutationFn (content-preview.tsx:116:27)
+onError @ content-preview.tsx:180
+execute @ chunk-7X75LGXT.js?v=41c0e4f5:1254
+await in execute
+mutate @ chunk-7X75LGXT.js?v=41c0e4f5:2630
+(anonymous) @ chunk-7X75LGXT.js?v=41c0e4f5:3295
+onClick @ content-preview.tsx:274
+callCallback2 @ chunk-Z2GUPSCO.js?v=41c0e4f5:3674
+invokeGuardedCallbackDev @ chunk-Z2GUPSCO.js?v=41c0e4f5:3699
+invokeGuardedCallback @ chunk-Z2GUPSCO.js?v=41c0e4f5:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-Z2GUPSCO.js?v=41c0e4f5:3736
+executeDispatch @ chunk-Z2GUPSCO.js?v=41c0e4f5:7014
+processDispatchQueueItemsInOrder @ chunk-Z2GUPSCO.js?v=41c0e4f5:7034
+processDispatchQueue @ chunk-Z2GUPSCO.js?v=41c0e4f5:7043
+dispatchEventsForPlugins @ chunk-Z2GUPSCO.js?v=41c0e4f5:7051
+(anonymous) @ chunk-Z2GUPSCO.js?v=41c0e4f5:7174
+batchedUpdates$1 @ chunk-Z2GUPSCO.js?v=41c0e4f5:18913
+batchedUpdates @ chunk-Z2GUPSCO.js?v=41c0e4f5:3579
+dispatchEventForPluginEventSystem @ chunk-Z2GUPSCO.js?v=41c0e4f5:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-Z2GUPSCO.js?v=41c0e4f5:5478
+dispatchEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5472
+dispatchDiscreteEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5449Understand this error
+app-layout.tsx:344 [AppLayout] Unread message count: 0

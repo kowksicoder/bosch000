@@ -1,0 +1,253 @@
+🚀 Creating coin on chain: Base Sepolia
+content-preview.tsx:98 📤 Uploading metadata to IPFS...
+pinata.ts:4 PINATA_JWT available: true
+pinata.ts:5 Environment variables: {VITE_PINATA_JWT: true, VITE_PINATA_API_KEY: true, VITE_NEXT_PUBLIC_GATEWAY_URL: true}
+content-preview.tsx:100 ✅ Metadata uploaded: ipfs://QmXtZLuoBkF7cCfQhgovMq9emXhpubMBACHs8Rc6x9QhA4
+content-preview.tsx:103 💾 Creating database record...
+content-preview.tsx:107 📍 Using creator wallet address: 0xb1B3Bd7aa50cA7c49221846437D3C0089435F6b4
+app-layout.tsx:344 [AppLayout] Unread message count: 0
+content-preview.tsx:125 ✅ Database record created: b3452c7d-9f4a-45ff-87a4-6fafe9389197
+content-preview.tsx:128 💸 Using GASLESS deployment for ALL users!
+content-preview.tsx:129 📍 Smart wallet address: 0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf
+content-preview.tsx:130 ✅ Gas fees will be sponsored by Base Paymaster (FREE)
+gasless-deployment.ts:94 🪙 [Gasless] Deploying coin with params: {name: 'baselogo', symbol: 'BASEL', metadataUri: 'ipfs://QmXtZLuoBkF7cCfQhgovMq9emXhpubMBACHs8Rc6x9QhA4', smartAccountAddress: '0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf', platformReferrer: '0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7'}
+gasless-deployment.ts:109 📡 [Gasless] Using network: Base Sepolia (Chain ID: 84532)
+gasless-deployment.ts:110 📍 [Gasless] Smart account address: 0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf
+gasless-deployment.ts:111 💰 [Gasless] Payout recipient: 0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf
+gasless-deployment.ts:119 📤 [Gasless] Deploying coin using DIRECT contract call...
+gasless-deployment.ts:120 ⚠️  [Gasless] Gas will be sponsored by Base Paymaster
+zora-coins.ts:172 🪙 Creating coin with params: {creator: '0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf', name: 'baselogo', symbol: 'BASEL', metadataUri: 'ipfs://QmXtZLuoBkF7cCfQhgovMq9emXhpubMBACHs8Rc6x9QhA4', platformReferrer: '0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7'}
+zora-coins.ts:180 📡 Using network: Base Sepolia (Chain ID: 84532)
+zora-coins.ts:192 🔐 Generated deterministic coin salt: 0xd49a877e4cf992e37b5b7194416e14d561817d873b5cdfb16bce1e6a837cfa73
+zora-coins.ts:195 🔧 Simulating contract call...
+zora-coins.ts:128 🔧 Using ZORA as paired currency for chain 84532
+zora-coins.ts:129 📊 Tick range: -138000 to -81000
+zora-coins.ts:284 ❌ Coin creation failed: ContractFunctionExecutionError: The contract function "deployCreatorCoin" reverted.
+
+Contract Call:
+  address:   0x777777751622c0d3258f214F9DF38E35BF45baF3
+  function:  deployCreatorCoin(address payoutRecipient, address[] owners, string uri, string name, string symbol, bytes poolConfig, address platformReferrer, bytes32 coinSalt)
+  args:                       (0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf, ["0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf"], ipfs://QmXtZLuoBkF7cCfQhgovMq9emXhpubMBACHs8Rc6x9QhA4, baselogo, BASEL, 0x00000000000000000000000000000000000000000000000000000000000000040000000000000000000000001111111111166b7fe7bd91427724b487980afc6900000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001800000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffde4f00000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffec3980000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000b1a2bc2ec50000, 0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7, 0xd49a877e4cf992e37b5b7194416e14d561817d873b5cdfb16bce1e6a837cfa73)
+  sender:    0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf
+
+Docs: https://viem.sh/docs/contract/simulateContract
+Version: viem@2.38.3
+    at getContractError (chunk-VO76AJTQ.js?v=41c0e4f5:671:10)
+    at simulateContract (chunk-VO76AJTQ.js?v=41c0e4f5:5778:11)
+    at async createCoinOnBaseSepolia (zora-coins.ts:197:25)
+    at async deployGaslessCoin (gasless-deployment.ts:125:26)
+    at async Object.mutationFn (content-preview.tsx:132:28)Caused by: ContractFunctionRevertedError: The contract function "deployCreatorCoin" reverted.
+
+Version: viem@2.38.3
+    at chunk-VO76AJTQ.js?v=41c0e4f5:662:14
+    at getContractError (chunk-VO76AJTQ.js?v=41c0e4f5:670:5)
+    at simulateContract (chunk-VO76AJTQ.js?v=41c0e4f5:5778:11)
+    at async createCoinOnBaseSepolia (zora-coins.ts:197:25)
+    at async deployGaslessCoin (gasless-deployment.ts:125:26)
+    at async Object.mutationFn (content-preview.tsx:132:28)
+createCoinOnBaseSepolia @ zora-coins.ts:284
+await in createCoinOnBaseSepolia
+deployGaslessCoin @ gasless-deployment.ts:125
+await in deployGaslessCoin
+mutationFn @ content-preview.tsx:132
+await in mutationFn
+fn @ chunk-7X75LGXT.js?v=41c0e4f5:1189
+run @ chunk-7X75LGXT.js?v=41c0e4f5:494
+start @ chunk-7X75LGXT.js?v=41c0e4f5:536
+execute @ chunk-7X75LGXT.js?v=41c0e4f5:1225
+await in execute
+mutate @ chunk-7X75LGXT.js?v=41c0e4f5:2630
+(anonymous) @ chunk-7X75LGXT.js?v=41c0e4f5:3295
+onClick @ content-preview.tsx:281
+callCallback2 @ chunk-Z2GUPSCO.js?v=41c0e4f5:3674
+invokeGuardedCallbackDev @ chunk-Z2GUPSCO.js?v=41c0e4f5:3699
+invokeGuardedCallback @ chunk-Z2GUPSCO.js?v=41c0e4f5:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-Z2GUPSCO.js?v=41c0e4f5:3736
+executeDispatch @ chunk-Z2GUPSCO.js?v=41c0e4f5:7014
+processDispatchQueueItemsInOrder @ chunk-Z2GUPSCO.js?v=41c0e4f5:7034
+processDispatchQueue @ chunk-Z2GUPSCO.js?v=41c0e4f5:7043
+dispatchEventsForPlugins @ chunk-Z2GUPSCO.js?v=41c0e4f5:7051
+(anonymous) @ chunk-Z2GUPSCO.js?v=41c0e4f5:7174
+batchedUpdates$1 @ chunk-Z2GUPSCO.js?v=41c0e4f5:18913
+batchedUpdates @ chunk-Z2GUPSCO.js?v=41c0e4f5:3579
+dispatchEventForPluginEventSystem @ chunk-Z2GUPSCO.js?v=41c0e4f5:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-Z2GUPSCO.js?v=41c0e4f5:5478
+dispatchEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5472
+dispatchDiscreteEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5449Understand this error
+zora-coins.ts:287 Error message: The contract function "deployCreatorCoin" reverted.
+
+Contract Call:
+  address:   0x777777751622c0d3258f214F9DF38E35BF45baF3
+  function:  deployCreatorCoin(address payoutRecipient, address[] owners, string uri, string name, string symbol, bytes poolConfig, address platformReferrer, bytes32 coinSalt)
+  args:                       (0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf, ["0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf"], ipfs://QmXtZLuoBkF7cCfQhgovMq9emXhpubMBACHs8Rc6x9QhA4, baselogo, BASEL, 0x00000000000000000000000000000000000000000000000000000000000000040000000000000000000000001111111111166b7fe7bd91427724b487980afc6900000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001800000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffde4f00000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffec3980000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000b1a2bc2ec50000, 0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7, 0xd49a877e4cf992e37b5b7194416e14d561817d873b5cdfb16bce1e6a837cfa73)
+  sender:    0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf
+
+Docs: https://viem.sh/docs/contract/simulateContract
+Version: viem@2.38.3
+createCoinOnBaseSepolia @ zora-coins.ts:287
+await in createCoinOnBaseSepolia
+deployGaslessCoin @ gasless-deployment.ts:125
+await in deployGaslessCoin
+mutationFn @ content-preview.tsx:132
+await in mutationFn
+fn @ chunk-7X75LGXT.js?v=41c0e4f5:1189
+run @ chunk-7X75LGXT.js?v=41c0e4f5:494
+start @ chunk-7X75LGXT.js?v=41c0e4f5:536
+execute @ chunk-7X75LGXT.js?v=41c0e4f5:1225
+await in execute
+mutate @ chunk-7X75LGXT.js?v=41c0e4f5:2630
+(anonymous) @ chunk-7X75LGXT.js?v=41c0e4f5:3295
+onClick @ content-preview.tsx:281
+callCallback2 @ chunk-Z2GUPSCO.js?v=41c0e4f5:3674
+invokeGuardedCallbackDev @ chunk-Z2GUPSCO.js?v=41c0e4f5:3699
+invokeGuardedCallback @ chunk-Z2GUPSCO.js?v=41c0e4f5:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-Z2GUPSCO.js?v=41c0e4f5:3736
+executeDispatch @ chunk-Z2GUPSCO.js?v=41c0e4f5:7014
+processDispatchQueueItemsInOrder @ chunk-Z2GUPSCO.js?v=41c0e4f5:7034
+processDispatchQueue @ chunk-Z2GUPSCO.js?v=41c0e4f5:7043
+dispatchEventsForPlugins @ chunk-Z2GUPSCO.js?v=41c0e4f5:7051
+(anonymous) @ chunk-Z2GUPSCO.js?v=41c0e4f5:7174
+batchedUpdates$1 @ chunk-Z2GUPSCO.js?v=41c0e4f5:18913
+batchedUpdates @ chunk-Z2GUPSCO.js?v=41c0e4f5:3579
+dispatchEventForPluginEventSystem @ chunk-Z2GUPSCO.js?v=41c0e4f5:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-Z2GUPSCO.js?v=41c0e4f5:5478
+dispatchEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5472
+dispatchDiscreteEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5449Understand this error
+zora-coins.ts:288 Error stack: ContractFunctionExecutionError: The contract function "deployCreatorCoin" reverted.
+
+Contract Call:
+  address:   0x777777751622c0d3258f214F9DF38E35BF45baF3
+  function:  deployCreatorCoin(address payoutRecipient, address[] owners, string uri, string name, string symbol, bytes poolConfig, address platformReferrer, bytes32 coinSalt)
+  args:                       (0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf, ["0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf"], ipfs://QmXtZLuoBkF7cCfQhgovMq9emXhpubMBACHs8Rc6x9QhA4, baselogo, BASEL, 0x00000000000000000000000000000000000000000000000000000000000000040000000000000000000000001111111111166b7fe7bd91427724b487980afc6900000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001800000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffde4f00000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffec3980000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000b1a2bc2ec50000, 0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7, 0xd49a877e4cf992e37b5b7194416e14d561817d873b5cdfb16bce1e6a837cfa73)
+  sender:    0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf
+
+Docs: https://viem.sh/docs/contract/simulateContract
+Version: viem@2.38.3
+    at getContractError (https://e2284357-f492-411d-bf60-bc3a45dc94dd-00-jdi2nnbsqco8.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VO76AJTQ.js?v=41c0e4f5:671:10)
+    at simulateContract (https://e2284357-f492-411d-bf60-bc3a45dc94dd-00-jdi2nnbsqco8.spock.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-VO76AJTQ.js?v=41c0e4f5:5778:11)
+    at async createCoinOnBaseSepolia (https://e2284357-f492-411d-bf60-bc3a45dc94dd-00-jdi2nnbsqco8.spock.replit.dev/src/lib/zora-coins.ts:130:25)
+    at async deployGaslessCoin (https://e2284357-f492-411d-bf60-bc3a45dc94dd-00-jdi2nnbsqco8.spock.replit.dev/src/lib/gasless-deployment.ts:77:26)
+    at async Object.mutationFn (https://e2284357-f492-411d-bf60-bc3a45dc94dd-00-jdi2nnbsqco8.spock.replit.dev/src/components/content-preview.tsx:104:28)
+createCoinOnBaseSepolia @ zora-coins.ts:288
+await in createCoinOnBaseSepolia
+deployGaslessCoin @ gasless-deployment.ts:125
+await in deployGaslessCoin
+mutationFn @ content-preview.tsx:132
+await in mutationFn
+fn @ chunk-7X75LGXT.js?v=41c0e4f5:1189
+run @ chunk-7X75LGXT.js?v=41c0e4f5:494
+start @ chunk-7X75LGXT.js?v=41c0e4f5:536
+execute @ chunk-7X75LGXT.js?v=41c0e4f5:1225
+await in execute
+mutate @ chunk-7X75LGXT.js?v=41c0e4f5:2630
+(anonymous) @ chunk-7X75LGXT.js?v=41c0e4f5:3295
+onClick @ content-preview.tsx:281
+callCallback2 @ chunk-Z2GUPSCO.js?v=41c0e4f5:3674
+invokeGuardedCallbackDev @ chunk-Z2GUPSCO.js?v=41c0e4f5:3699
+invokeGuardedCallback @ chunk-Z2GUPSCO.js?v=41c0e4f5:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-Z2GUPSCO.js?v=41c0e4f5:3736
+executeDispatch @ chunk-Z2GUPSCO.js?v=41c0e4f5:7014
+processDispatchQueueItemsInOrder @ chunk-Z2GUPSCO.js?v=41c0e4f5:7034
+processDispatchQueue @ chunk-Z2GUPSCO.js?v=41c0e4f5:7043
+dispatchEventsForPlugins @ chunk-Z2GUPSCO.js?v=41c0e4f5:7051
+(anonymous) @ chunk-Z2GUPSCO.js?v=41c0e4f5:7174
+batchedUpdates$1 @ chunk-Z2GUPSCO.js?v=41c0e4f5:18913
+batchedUpdates @ chunk-Z2GUPSCO.js?v=41c0e4f5:3579
+dispatchEventForPluginEventSystem @ chunk-Z2GUPSCO.js?v=41c0e4f5:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-Z2GUPSCO.js?v=41c0e4f5:5478
+dispatchEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5472
+dispatchDiscreteEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5449Understand this error
+gasless-deployment.ts:163 ❌ [Gasless] Coin deployment failed: ContractFunctionExecutionError: The contract function "deployCreatorCoin" reverted.
+
+Contract Call:
+  address:   0x777777751622c0d3258f214F9DF38E35BF45baF3
+  function:  deployCreatorCoin(address payoutRecipient, address[] owners, string uri, string name, string symbol, bytes poolConfig, address platformReferrer, bytes32 coinSalt)
+  args:                       (0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf, ["0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf"], ipfs://QmXtZLuoBkF7cCfQhgovMq9emXhpubMBACHs8Rc6x9QhA4, baselogo, BASEL, 0x00000000000000000000000000000000000000000000000000000000000000040000000000000000000000001111111111166b7fe7bd91427724b487980afc6900000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001800000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffde4f00000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffec3980000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000b1a2bc2ec50000, 0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7, 0xd49a877e4cf992e37b5b7194416e14d561817d873b5cdfb16bce1e6a837cfa73)
+  sender:    0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf
+
+Docs: https://viem.sh/docs/contract/simulateContract
+Version: viem@2.38.3
+    at getContractError (chunk-VO76AJTQ.js?v=41c0e4f5:671:10)
+    at simulateContract (chunk-VO76AJTQ.js?v=41c0e4f5:5778:11)
+    at async createCoinOnBaseSepolia (zora-coins.ts:197:25)
+    at async deployGaslessCoin (gasless-deployment.ts:125:26)
+    at async Object.mutationFn (content-preview.tsx:132:28)Caused by: ContractFunctionRevertedError: The contract function "deployCreatorCoin" reverted.
+
+Version: viem@2.38.3
+    at chunk-VO76AJTQ.js?v=41c0e4f5:662:14
+    at getContractError (chunk-VO76AJTQ.js?v=41c0e4f5:670:5)
+    at simulateContract (chunk-VO76AJTQ.js?v=41c0e4f5:5778:11)
+    at async createCoinOnBaseSepolia (zora-coins.ts:197:25)
+    at async deployGaslessCoin (gasless-deployment.ts:125:26)
+    at async Object.mutationFn (content-preview.tsx:132:28)
+deployGaslessCoin @ gasless-deployment.ts:163
+await in deployGaslessCoin
+mutationFn @ content-preview.tsx:132
+await in mutationFn
+fn @ chunk-7X75LGXT.js?v=41c0e4f5:1189
+run @ chunk-7X75LGXT.js?v=41c0e4f5:494
+start @ chunk-7X75LGXT.js?v=41c0e4f5:536
+execute @ chunk-7X75LGXT.js?v=41c0e4f5:1225
+await in execute
+mutate @ chunk-7X75LGXT.js?v=41c0e4f5:2630
+(anonymous) @ chunk-7X75LGXT.js?v=41c0e4f5:3295
+onClick @ content-preview.tsx:281
+callCallback2 @ chunk-Z2GUPSCO.js?v=41c0e4f5:3674
+invokeGuardedCallbackDev @ chunk-Z2GUPSCO.js?v=41c0e4f5:3699
+invokeGuardedCallback @ chunk-Z2GUPSCO.js?v=41c0e4f5:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-Z2GUPSCO.js?v=41c0e4f5:3736
+executeDispatch @ chunk-Z2GUPSCO.js?v=41c0e4f5:7014
+processDispatchQueueItemsInOrder @ chunk-Z2GUPSCO.js?v=41c0e4f5:7034
+processDispatchQueue @ chunk-Z2GUPSCO.js?v=41c0e4f5:7043
+dispatchEventsForPlugins @ chunk-Z2GUPSCO.js?v=41c0e4f5:7051
+(anonymous) @ chunk-Z2GUPSCO.js?v=41c0e4f5:7174
+batchedUpdates$1 @ chunk-Z2GUPSCO.js?v=41c0e4f5:18913
+batchedUpdates @ chunk-Z2GUPSCO.js?v=41c0e4f5:3579
+dispatchEventForPluginEventSystem @ chunk-Z2GUPSCO.js?v=41c0e4f5:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-Z2GUPSCO.js?v=41c0e4f5:5478
+dispatchEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5472
+dispatchDiscreteEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5449Understand this error
+content-preview.tsx:187 ❌ Coin creation failed: ContractFunctionExecutionError: The contract function "deployCreatorCoin" reverted.
+
+Contract Call:
+  address:   0x777777751622c0d3258f214F9DF38E35BF45baF3
+  function:  deployCreatorCoin(address payoutRecipient, address[] owners, string uri, string name, string symbol, bytes poolConfig, address platformReferrer, bytes32 coinSalt)
+  args:                       (0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf, ["0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf"], ipfs://QmXtZLuoBkF7cCfQhgovMq9emXhpubMBACHs8Rc6x9QhA4, baselogo, BASEL, 0x00000000000000000000000000000000000000000000000000000000000000040000000000000000000000001111111111166b7fe7bd91427724b487980afc6900000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001800000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffde4f00000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffec3980000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000b000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000b1a2bc2ec50000, 0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7, 0xd49a877e4cf992e37b5b7194416e14d561817d873b5cdfb16bce1e6a837cfa73)
+  sender:    0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf
+
+Docs: https://viem.sh/docs/contract/simulateContract
+Version: viem@2.38.3
+    at getContractError (chunk-VO76AJTQ.js?v=41c0e4f5:671:10)
+    at simulateContract (chunk-VO76AJTQ.js?v=41c0e4f5:5778:11)
+    at async createCoinOnBaseSepolia (zora-coins.ts:197:25)
+    at async deployGaslessCoin (gasless-deployment.ts:125:26)
+    at async Object.mutationFn (content-preview.tsx:132:28)Caused by: ContractFunctionRevertedError: The contract function "deployCreatorCoin" reverted.
+
+Version: viem@2.38.3
+    at chunk-VO76AJTQ.js?v=41c0e4f5:662:14
+    at getContractError (chunk-VO76AJTQ.js?v=41c0e4f5:670:5)
+    at simulateContract (chunk-VO76AJTQ.js?v=41c0e4f5:5778:11)
+    at async createCoinOnBaseSepolia (zora-coins.ts:197:25)
+    at async deployGaslessCoin (gasless-deployment.ts:125:26)
+    at async Object.mutationFn (content-preview.tsx:132:28)
+onError @ content-preview.tsx:187
+execute @ chunk-7X75LGXT.js?v=41c0e4f5:1254
+await in execute
+mutate @ chunk-7X75LGXT.js?v=41c0e4f5:2630
+(anonymous) @ chunk-7X75LGXT.js?v=41c0e4f5:3295
+onClick @ content-preview.tsx:281
+callCallback2 @ chunk-Z2GUPSCO.js?v=41c0e4f5:3674
+invokeGuardedCallbackDev @ chunk-Z2GUPSCO.js?v=41c0e4f5:3699
+invokeGuardedCallback @ chunk-Z2GUPSCO.js?v=41c0e4f5:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-Z2GUPSCO.js?v=41c0e4f5:3736
+executeDispatch @ chunk-Z2GUPSCO.js?v=41c0e4f5:7014
+processDispatchQueueItemsInOrder @ chunk-Z2GUPSCO.js?v=41c0e4f5:7034
+processDispatchQueue @ chunk-Z2GUPSCO.js?v=41c0e4f5:7043
+dispatchEventsForPlugins @ chunk-Z2GUPSCO.js?v=41c0e4f5:7051
+(anonymous) @ chunk-Z2GUPSCO.js?v=41c0e4f5:7174
+batchedUpdates$1 @ chunk-Z2GUPSCO.js?v=41c0e4f5:18913
+batchedUpdates @ chunk-Z2GUPSCO.js?v=41c0e4f5:3579
+dispatchEventForPluginEventSystem @ chunk-Z2GUPSCO.js?v=41c0e4f5:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-Z2GUPSCO.js?v=41c0e4f5:5478
+dispatchEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5472
+dispatchDiscreteEvent @ chunk-Z2GUPSCO.js?v=41c0e4f5:5449Understand this error

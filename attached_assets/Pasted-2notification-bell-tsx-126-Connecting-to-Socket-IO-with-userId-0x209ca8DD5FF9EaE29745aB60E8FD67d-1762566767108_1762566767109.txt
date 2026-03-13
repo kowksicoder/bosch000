@@ -1,0 +1,42 @@
+2notification-bell.tsx:126 🔌 Connecting to Socket.IO with userId: 0x209ca8DD5FF9EaE29745aB60E8FD67dC2ad4E0D9
+SmartAccountContext.tsx:72 💼 Found wallet: privy
+SmartAccountContext.tsx:83 🔐 Initializing smart account on Base Sepolia...
+SmartAccountContext.tsx:84 📡 Using Base Paymaster RPC: https://api.developer.coinbase.com/rpc/v1/base-sepolia/34ut3gkiuZadCZR3FB4mWd8Gj1B2Jktt
+SmartAccountContext.tsx:101 👤 Owner address: 0x209ca8DD5FF9EaE29745aB60E8FD67dC2ad4E0D9
+socket-client.ts:38 ✅ Socket connected
+app-layout.tsx:344 [AppLayout] Unread message count: 0
+socket-client.ts:38 ✅ Socket connected
+SmartAccountContext.tsx:120 ✅ Smart account created: 0x7db0314379AE4F9aa3fb97D782b9CC158adc62c1
+SmartAccountContext.tsx:150 ✅ Smart account client ready
+SmartAccountContext.tsx:151 📍 Smart account address: 0x7db0314379AE4F9aa3fb97D782b9CC158adc62c1
+3socket-client.ts:38 ✅ Socket connected
+2chunk-BS7PNIHB.js?v=4ae3c41c:339 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+(anonymous) @ chunk-BS7PNIHB.js?v=4ae3c41c:339Understand this warning
+app-layout.tsx:344 [AppLayout] Unread message count: 0
+content-preview.tsx:65 🚀 Creating coin on chain: Base Sepolia
+content-preview.tsx:98 📤 Uploading metadata to IPFS...
+pinata.ts:4 PINATA_JWT available: true
+pinata.ts:5 Environment variables: Object
+content-preview.tsx:100 ✅ Metadata uploaded: ipfs://Qmec4PyVVogFTcaH3ze1XeKeJvMque9g3fiGaCSNENznZm
+content-preview.tsx:103 💾 Creating database record...
+content-preview.tsx:107 📍 Using creator wallet address: 0x209ca8DD5FF9EaE29745aB60E8FD67dC2ad4E0D9
+content-preview.tsx:125 ✅ Database record created: e82038bd-fbf5-4b20-ba5d-db8363047639
+content-preview.tsx:128 💸 Using GASLESS deployment for ALL users!
+content-preview.tsx:129 📍 Smart wallet address: 0x7db0314379AE4F9aa3fb97D782b9CC158adc62c1
+content-preview.tsx:130 ✅ Gas fees will be sponsored by Base Paymaster (FREE)
+gasless-deployment.ts:94 🪙 [Gasless] Deploying coin with params: Object
+gasless-deployment.ts:111 📡 [Gasless] Using network: Base Sepolia (Chain ID: 84532)
+gasless-deployment.ts:112 📍 [Gasless] Smart account address: 0x7db0314379AE4F9aa3fb97D782b9CC158adc62c1
+gasless-deployment.ts:113 💰 [Gasless] Payout recipient: 0x7db0314379AE4F9aa3fb97D782b9CC158adc62c1
+gasless-deployment.ts:121 📤 [Gasless] Deploying coin using DIRECT contract call...
+gasless-deployment.ts:122 ⚠️  [Gasless] Gas will be sponsored by Base Paymaster
+zora-coins.ts:196 🪙 Creating coin with params: Object
+zora-coins.ts:205 📡 Using network: Base Sepolia (Chain ID: 84532)
+zora-coins.ts:218 🔐 Generated unique coin salt (with timestamp): 0xb4e488a76403a8dfa8c4c181fde6586e18cd2ef6a85cac4bbb1a1ebff38b85c6
+zora-coins.ts:221 🔧 Simulating contract call...
+zora-coins.ts:151 🔧 Using ETH as paired currency for chain 84532
+zora-coins.ts:152 📊 Tick range: -138000 to -81000
+zora-coins.ts:252 📤 Using deploy function for ETH-backed (testnet) deployment
+zora-coins.ts:263 ✅ Contract simulation successful
+zora-coins.ts:264 📤 Sending transaction to factory contract...
+zora-coins.ts:273 📝 Encoded transaction data: 0xa423ada10000000000000000000000007db0314379ae4f9aa3fb97d782b9cc158adc62c10000000000000000000000000000000000000000000000000000000000000140000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000001e000000000000000000000000000000000000000000000000000000000000002200000000000000000000000000000000000000000000000000000000000000260000000000000000000000000f25af781c4f1df40ac1d06e6b80c17815ad311f700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000440b4e488a76403a8dfa8c4c181fde6586e18cd2ef6a85cac4bbb1a1ebff38b85c600000000000000000000000000000000000000000000000000000000000000010000000000000000000000007db0314379ae4f9aa3fb97d782b9cc158adc62c10000000000000000000000000000000000000000000000000000000000000035697066733a2f2f516d656334507956566f674654636148337a653158654b654a764d7175653967336669476143534e454e7a6e5a6d0000000000000000000000000000000000000000000000000000000000000000000000000000000000000662656576616100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005424545564100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001c00000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000001800000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffde4f00000000000000000000000000000000000000000000000000000000000000001fffffffffffffffffffffffffffff...

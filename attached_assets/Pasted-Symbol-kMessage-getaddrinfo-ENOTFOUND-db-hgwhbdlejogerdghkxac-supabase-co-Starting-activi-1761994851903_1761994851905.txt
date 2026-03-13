@@ -1,0 +1,122 @@
+Symbol(kMessage)]: 'getaddrinfo ENOTFOUND db.hgwhbdlejogerdghkxac.supabase.co'
+}
+⏰ Starting activity tracker cron job with schedule: 0 * * * *
+✅ Activity tracker cron job started successfully
+10:59:27 AM [express] Activity tracker cron started with schedule: 0 * * * *
+10:59:27 AM [express] serving on port 5000
+🔔 Starting notification cron jobs...
+✅ Started 8 notification cron jobs
+✅ Reward reminder cron job scheduled (daily at 10 AM)
+✅ Streak reminder cron started (runs at 9 AM, 3 PM, and 9 PM daily)
+✅ Streak reminder cron started (runs at 9 AM, 3 PM, and 9 PM daily)
+
+A PostCSS plugin did not pass the `from` option to `postcss.parse`. This may cause imported assets to be incorrectly transformed. If you've recently added a PostCSS plugin that raised this warning, please contact the package author to fix the issue.
+10:59:50 AM [express] GET /api/projects/featured 200 in 8ms
+10:59:50 AM [express] GET /api/creators 304 in 127ms :: [{"id":"c288e316-ad41-48e4-ab0a-46473c0b62e2"…
+10:59:51 AM [express] GET /api/zora/coins/top-volume 200 in 875ms :: {"coins":[{"__typename":"GraphQL…
+🔄 [CRON] Running scheduled activity tracker sync...
+📊 [CRON] Found 6 unrecorded coins to sync
+📊 Checking 6 coins for activity tracker recording...
+❌ Error checking registration status for BLOGFIX (0x123...): Address "0x123..." is invalid.
+
+- Address must be a hex value of 20 bytes (40 hex characters).
+- Address must match its checksum counterpart.
+
+Version: viem@2.38.3
+🔄 Recording YELLOW (0xe8aFE7B4687abad8603495deC3b9Fd37D697b663)...
+❌ Error recording individual coin YELLOW: The contract function "recordCoinCreation" reverted.
+
+Contract Call:
+  address:   0x71875350bd4fc5acf47c4d3d19aeaa1023a63057
+  function:  recordCoinCreation(address coin, address creator, string contentUrl, string coinName, string coinSymbol, uint256 createdAtTimestamp)
+  args:                        (0xe8aFE7B4687abad8603495deC3b9Fd37D697b663, 0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7, , YELLOW, YELLOW, 1761994800)
+  sender:    0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7
+
+Docs: https://viem.sh/docs/contract/simulateContract
+Version: viem@2.38.3
+🔄 Recording CREATEANDEARN (0x285f10f443aA139C1d0982815BF1B039aE438a3a)...
+❌ Error recording individual coin CREATEANDEARN: The contract function "recordCoinCreation" reverted.
+
+Contract Call:
+  address:   0x71875350bd4fc5acf47c4d3d19aeaa1023a63057
+  function:  recordCoinCreation(address coin, address creator, string contentUrl, string coinName, string coinSymbol, uint256 createdAtTimestamp)
+  args:                        (0x285f10f443aA139C1d0982815BF1B039aE438a3a, 0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7, , CreatorEarning, CREATEANDEARN, 1761994800)
+  sender:    0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7
+
+Docs: https://viem.sh/docs/contract/simulateContract
+Version: viem@2.38.3
+🔄 Recording TESTEST (0xDE7C9a53eDd5Ef151210Aa7C1Da9dC80068547Ab)...
+❌ Error recording individual coin TESTEST: The contract function "recordCoinCreation" reverted.
+
+Contract Call:
+  address:   0x71875350bd4fc5acf47c4d3d19aeaa1023a63057
+  function:  recordCoinCreation(address coin, address creator, string contentUrl, string coinName, string coinSymbol, uint256 createdAtTimestamp)
+  args:                        (0xDE7C9a53eDd5Ef151210Aa7C1Da9dC80068547Ab, 0xb843A2D0D4B9E628500d2E0f6f0382e063C14a95, , Test this test that, TESTEST, 1761994801)
+  sender:    0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7
+
+Docs: https://viem.sh/docs/contract/simulateContract
+Version: viem@2.38.3
+🔄 Recording VICTO (0x509059DBB581927C8641673126eBACD46AC359Ca)...
+❌ Error recording individual coin VICTO: The contract function "recordCoinCreation" reverted.
+
+Contract Call:
+  address:   0x71875350bd4fc5acf47c4d3d19aeaa1023a63057
+  function:  recordCoinCreation(address coin, address creator, string contentUrl, string coinName, string coinSymbol, uint256 createdAtTimestamp)
+  args:                        (0x509059DBB581927C8641673126eBACD46AC359Ca, 0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7, , VICTORIA, VICTO, 1761994801)
+  sender:    0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7
+
+Docs: https://viem.sh/docs/contract/simulateContract
+Version: viem@2.38.3
+🔄 Recording TESTTHIS (0xd4eC4b5D04EB1cc6344f25611542E540Da3AcBF7)...
+❌ Error recording individual coin TESTTHIS: The contract function "recordCoinCreation" reverted.
+
+Contract Call:
+  address:   0x71875350bd4fc5acf47c4d3d19aeaa1023a63057
+  function:  recordCoinCreation(address coin, address creator, string contentUrl, string coinName, string coinSymbol, uint256 createdAtTimestamp)
+  args:                        (0xd4eC4b5D04EB1cc6344f25611542E540Da3AcBF7, 0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7, , Test this test that, TESTTHIS, 1761994801)
+  sender:    0xf25af781c4F1Df40Ac1D06e6B80c17815AD311F7
+
+Docs: https://viem.sh/docs/contract/simulateContract
+Version: viem@2.38.3
+📊 Activity Tracker Sync Summary:
+  ✅ Already registered: 0
+  🆕 Newly recorded: 0
+  ❌ Failed: 6
+  📝 Total processed: 6
+❌ [CRON] Failed to record coins on activity tracker
+/home/runner/workspace/server/routes.ts:2953
+    await serveReactApp(req, res, next);
+    ^
+
+
+ReferenceError: serveReactApp is not defined
+    at <anonymous> (/home/runner/workspace/server/routes.ts:2953:5)
+    at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/runner/workspace/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/home/runner/workspace/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+    at /home/runner/workspace/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/home/runner/workspace/node_modules/express/lib/router/index.js:346:12)
+    at next (/home/runner/workspace/node_modules/express/lib/router/index.js:280:10)
+    at <anonymous> (/home/runner/workspace/server/index.ts:93:3)
+    at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/home/runner/workspace/node_modules/express/lib/router/index.js:328:13)
+    at /home/runner/workspace/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/home/runner/workspace/node_modules/express/lib/router/index.js:346:12)
+    at next (/home/runner/workspace/node_modules/express/lib/router/index.js:280:10)
+    at urlencodedParser (/home/runner/workspace/node_modules/body-parser/lib/types/urlencoded.js:94:7)
+    at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/home/runner/workspace/node_modules/express/lib/router/index.js:328:13)
+    at /home/runner/workspace/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/home/runner/workspace/node_modules/express/lib/router/index.js:346:12)
+    at next (/home/runner/workspace/node_modules/express/lib/router/index.js:280:10)
+    at jsonParser (/home/runner/workspace/node_modules/body-parser/lib/types/json.js:113:7)
+    at Layer.handle [as handle_request] (/home/runner/workspace/node_modules/express/lib/router/layer.js:95:5)
+    at trim_prefix (/home/runner/workspace/node_modules/express/lib/router/index.js:328:13)
+    at /home/runner/workspace/node_modules/express/lib/router/index.js:286:9
+    at Function.process_params (/home/runner/workspace/node_modules/express/lib/router/index.js:346:12)
+    at next (/home/runner/workspace/node_modules/express/lib/router/index.js:280:10)
+    at Immediate.<anonymous> (/home/runner/workspace/node_modules/express-session/index.js:514:7)
+    at process.processImmediate (node:internal/timers:485:21)
+
+Node.js v20.19.3

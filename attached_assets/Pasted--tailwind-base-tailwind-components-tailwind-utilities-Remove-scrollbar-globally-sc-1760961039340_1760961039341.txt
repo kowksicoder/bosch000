@@ -1,0 +1,405 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Remove scrollbar globally */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+@font-face {
+  font-family: 'Poppins Rounded';
+  src: url('./assets/fonts/PoppinsRounded-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Poppins Rounded';
+  src: url('./assets/fonts/PoppinsRounded-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --background: 0 0% 98%;
+  --foreground: 0 0% 6%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 6%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 6%;
+  --primary: 68 78% 66%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 94%;
+  --secondary-foreground: 0 0% 6%;
+  --muted: 0 0% 94%;
+  --muted-foreground: 0 0% 40%;
+  --accent: 68 78% 66%;
+  --accent-foreground: 0 0% 0%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 88%;
+  --input: 0 0% 94%;
+  --ring: 68 78% 66%;
+  --chart-1: 68 78% 66%;
+  --chart-2: 160 60% 45%;
+  --chart-3: 30 80% 55%;
+  --chart-4: 43 74% 66%;
+  --chart-5: 27 87% 67%;
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 0 0% 6%;
+  --sidebar-primary: 68 78% 66%;
+  --sidebar-primary-foreground: 0 0% 0%;
+  --sidebar-accent: 0 0% 94%;
+  --sidebar-accent-foreground: 0 0% 6%;
+  --sidebar-border: 0 0% 88%;
+  --sidebar-ring: 68 78% 66%;
+}
+
+.light {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 68 78% 66%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 68 78% 66%;
+  --radius: 0.5rem;
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 222.2 84% 4.9%;
+  --sidebar-primary: 68 78% 66%;
+  --sidebar-primary-foreground: 0 0% 0%;
+  --sidebar-accent: 210 40% 96.1%;
+  --sidebar-accent-foreground: 222.2 47.4% 11.2%;
+  --sidebar-border: 214.3 31.8% 91.4%;
+  --sidebar-ring: 68 78% 66%;
+}
+
+.dark {
+  --background: 0 0% 6%;
+  --foreground: 0 0% 98%;
+  --card: 0 0% 9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 0 0% 9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 68 78% 66%;
+  --primary-foreground: 0 0% 0%;
+  --secondary: 0 0% 14%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 0 0% 14%;
+  --muted-foreground: 0 0% 63%;
+  --accent: 68 78% 66%;
+  --accent-foreground: 0 0% 0%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 18%;
+  --input: 0 0% 14%;
+  --ring: 68 78% 66%;
+  --sidebar: 0 0% 6%;
+  --sidebar-foreground: 0 0% 98%;
+  --sidebar-primary: 68 78% 66%;
+  --sidebar-primary-foreground: 0 0% 0%;
+  --sidebar-accent: 0 0% 14%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 0 0% 18%;
+  --sidebar-ring: 68 78% 66%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply antialiased bg-background text-foreground;
+    font-family: 'Poppins Rounded', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Closing the gap of coin cards */
+  @media (min-width: 640px) {
+    .scrollbar-hide {
+      grid-auto-columns: calc((100% - 5 * 0.75rem) / 6);
+    }
+  }
+
+  .scrollbar-hide>* {
+    scroll-snap-align: start;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(68 78% 66%), hsl(75 70% 60%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass-card {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .spotify-card {
+    background: hsl(var(--card));
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--border));
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .spotify-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px hsl(var(--foreground) / 0.1), 0 0 0 1px hsl(var(--primary) / 0.1);
+  }
+
+  .hover-lift {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, rgba(205, 235, 99, 0.08), rgba(205, 235, 99, 0.04));
+    border: 1px solid rgba(205, 235, 99, 0.2);
+    backdrop-filter: blur(10px);
+  }
+
+  .spotify-green {
+    color: hsl(68 78% 66%);
+  }
+
+  .spotify-button {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    font-weight: 700;
+    text-transform: none;
+    border-radius: 500px;
+    padding: 12px 32px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: none;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+  }
+
+  .spotify-button:hover {
+    background: hsl(var(--primary) / 0.9);
+    transform: scale(1.04);
+  }
+
+  .spotify-secondary-button {
+    background: transparent;
+    color: hsl(var(--foreground));
+    font-weight: 700;
+    border: 2px solid hsl(var(--border));
+    border-radius: 500px;
+    padding: 10px 30px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    font-size: 14px;
+    letter-spacing: 0.1em;
+  }
+
+  .spotify-secondary-button:hover {
+    border-color: hsl(var(--foreground));
+    transform: scale(1.04);
+  }
+
+  .coin-card {
+    @apply bg-gradient-to-br from-muted/5 to-muted/10 backdrop-blur-sm border border-border/50 rounded-xl transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10;
+  }
+
+  .channel-card {
+    @apply backdrop-blur-sm border border-border/50 rounded-xl p-4 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 hover:transform hover:scale-[1.02];
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1));
+  }
+
+  .compact-channel-card {
+    @apply backdrop-blur-sm border border-border/30 rounded-2xl p-4 transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/20 hover:transform hover:scale-[1.05];
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(20, 20, 20, 0.6));
+  }
+
+  .compact-channel-card:hover {
+    background: linear-gradient(135deg, rgba(205, 235, 99, 0.1), rgba(20, 20, 20, 0.8));
+  }
+
+  /* Platform icon colors - preserve in light mode */
+  .platform-icon-youtube {
+    color: #FF0000 !important;
+  }
+  
+  .platform-icon-farcaster {
+    color: #8a63d2 !important;
+  }
+  
+  .platform-icon-gitcoin {
+    color: #02E2AC !important;
+  }
+  
+  .platform-icon-spotify {
+    color: #1DB954 !important;
+  }
+  
+  .platform-icon-music {
+    color: #1DB954 !important;
+  }
+  
+  .platform-icon-tiktok {
+    color: #000000 !important;
+  }
+  
+  .platform-icon-instagram {
+    color: #e6683c !important;
+  }
+  
+  .platform-icon-medium {
+    color: #000000 !important;
+  }
+  
+  .platform-icon-twitter {
+    color: #1DA1F2 !important;
+  }
+  
+  .platform-icon-blog {
+    color: #6366f1 !important;
+  }
+  
+  .platform-icon-giveth {
+    color: #5326EC !important;
+  }
+  
+  .platform-icon-all {
+    color: hsl(var(--primary)) !important;
+  }
+  
+  /* Light mode adjustments for better visibility */
+  .light .platform-icon-tiktok {
+    color: #EE1D52 !important; /* TikTok pink for light mode */
+  }
+  
+  .light .platform-icon-medium {
+    color: #00ab6c !important; /* Medium green for light mode */
+  }
+  
+  .light .platform-icon-twitter {
+    color: #000000 !important; /* Twitter X black */
+  }
+
+  /* Mobile-specific utilities */
+  .mobile-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+  }
+
+  .mobile-card {
+    @apply p-3 sm:p-4 md:p-6;
+  }
+
+  .mobile-text {
+    @apply text-sm sm:text-base;
+  }
+
+  .mobile-spacing {
+    @apply space-y-3 sm:space-y-4 md:space-y-6;
+  }
+
+  .mobile-button {
+    @apply text-sm sm:text-base px-4 py-2 sm:px-6 sm:py-3;
+  }
+
+  /* Remove all scrollbars on mobile */
+  @media (max-width: 768px) {
+    * {
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE and Edge */
+    }
+    
+    *::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+    
+    body, html {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+    
+    main {
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .5;
+  }
+}
+
+.pulse-animation {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+.modal-backdrop {
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.shadow-glow {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.shadow-glow-sm {
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+}

@@ -1,0 +1,166 @@
+Skip to content
+Logo
+Intro to XMTP
+Get started
+Why XMTP?
+FAQ
+Build with LLMs
+Dev support
+Roadmap
+SDKs
+Browser SDK
+Node SDK
+React Native SDK
+Android SDK
+iOS SDK
+Build core messaging
+Create an EOA or SCW signer
+Create a client
+Create conversations
+Send messages
+Manage group permissions
+Manage group metadata
+Support group invite links
+Manage inboxes, IDs, and installations
+Observe rate limits
+Fund an app
+Get started
+Calculate fees
+Fund an app
+Run your XMTP Gateway Service
+Update your SDK
+Glossary
+List, stream, sync, & back up
+List conversations
+Stream conversations and messages
+Sync conversations and messages
+Sync preferences
+Support backups
+History sync
+Support rich content types
+Understand content types
+Attachments
+Onchain transactions
+Onchain transaction references
+Reactions
+Replies
+Read receipts
+Custom content
+Fallback text for compatibility
+Support spam-free chat apps
+Understand user consent
+Support user consent
+Support push notifications
+Understand push notifications
+Support push notifications
+Run a push notifications server
+Try Android push notifications
+Try iOS push notifications
+Debug your app
+Sign and verify payloads
+
+
+Search...
+Logo
+Build agents
+Build chat apps
+Protocol
+Network
+Ask in ChatGPT
+
+On this page
+Installation
+Quickstart
+Get started with the XMTP Browser SDK
+Use the XMTP Browser SDK to build web-based apps, tools, and experiences with secure, private, and decentralized messaging.
+
+The guide provides some quickstart code, as well as a map to building a secure chat app with XMTP, including support for:
+
+End-to-end encrypted direct message and group chat conversations
+Rich content types (attachments, reactions, replies, and more)
+Spam-free chats using user consent preferences
+Installation
+Install @xmtp/browser-sdk as a dependency in your project.
+
+npm
+pnpm
+yarn
+bun
+
+npm i @xmtp/browser-sdk
+Quickstart
+Browser
+
+// 1. Create an EOA or SCW signer.
+// Details depend on your app's wallet implementation.
+import type { Signer, Identifier } from '@xmtp/browser-sdk';
+ 
+const signer: Signer = {
+  type: 'EOA',
+  getIdentifier: () => ({
+    identifier: '0x...', // Ethereum address as the identifier
+    identifierKind: 'Ethereum',
+  }),
+  signMessage: async (message: string): Uint8Array => {
+    // typically, signing methods return a hex string
+    // this string must be converted to bytes and returned in this function
+  },
+};
+ 
+// 2. Create the XMTP client
+import { Client } from '@xmtp/browser-sdk';
+const client = await Client.create(signer, {
+  // Note: dbEncryptionKey is not used for encryption in browser environments
+});
+ 
+// 3. Start conversations
+const group = await client.conversations.newGroup(
+  [bo.inboxId, caro.inboxId],
+  createGroupOptions /* optional */
+);
+ 
+// 4. Send messages
+await group.send('Hello everyone');
+ 
+// 5. List, stream, and sync
+// List existing conversations
+const allConversations = await client.conversations.list({
+  consentStates: [ConsentState.Allowed],
+});
+const allGroups = await client.conversations.listGroups({
+  consentStates: [ConsentState.Allowed],
+});
+const allDms = await client.conversations.listDms({
+  consentStates: [ConsentState.Allowed],
+});
+// Stream new messages
+const stream = await client.conversations.streamAllMessages({
+  consentStates: [ConsentState.Allowed],
+  onValue: (message) => {
+    console.log('New message:', message);
+  },
+  onError: (error) => {
+    console.error(error);
+  },
+});
+ 
+// Or use for-await loop
+for await (const message of stream) {
+  console.log('New message:', message);
+}
+// Sync all new welcomes, preference updates, conversations,
+// and messages from allowed conversations
+await client.conversations.syncAll(['allowed']);
+Edit this page on GitHub
+Last updated: 22/10/2025, 19:41
+Roadmap
+Previous
+shift
+←
+Node SDK
+Next
+shift
+→
+XMTP.org     XMTP status     XMTP.chat
+Privacy policy     Terms of service
+CC BY 4.0  Copyright © 2024-present XMTP.

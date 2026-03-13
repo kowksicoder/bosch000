@@ -1,0 +1,55 @@
+how many users are there on this platform.... why admin dashboard showing only 6
+
+JG
+
+gaeta35678
+Assistant
+BASIC
+13 minutes ago
+Read 12 files
+client/src/components/admin-message-composer.tsx
+client/src/components/admin-messaging-panel.tsx
+client/src/components/app-layout.tsx
+client/src/components/user-menu.tsx
+client/src/lib/zora-factory.ts
+client/src/pages/admin-login.tsx
+client/src/pages/admin.tsx
+server/db.ts
+server/routes.ts
+server/routes/admin.ts
+server/seed.ts
+shared/schema.ts
+Looking at the console logs and the admin dashboard code, I can see the issue. The admin dashboard is showing only 6 users because it's querying the creators table instead of the users table.
+
+Based on the schema in shared/schema.ts, there are two separate tables:
+
+users table - for Privy-authenticated users
+creators table - legacy table for wallet-based creators
+The admin dashboard at client/src/pages/admin.tsx is fetching from /api/creators endpoint, which queries the creators table:
+
+const { data: users = [], isLoading: isLoadingUsers } = useQuery<any[]>({
+  queryKey: ["/api/creators"],
+});
+However, your actual users are likely stored in the users table (with Privy authentication). The 6 entries in the creators table are probably just the seeded demo data.
+
+Let me check the actual user count by updating the admin dashboard to show both tables:
+
+client/src/pages/admin.tsx
++13
+-7
+Now I need to add the /api/users endpoint to the server:
+
+server/routes.ts
++12
+-1
+Summary:
+
+The admin dashboard was showing only 6 users because it's querying the creators table (legacy wallet-based creators), not the users table where Privy-authenticated users are stored.
+
+The changes I made:
+
+Added a query to fetch from /api/users endpoint (registered users)
+Updated the Total Users stat to show combined count: registered users + legacy creators
+Updated the Users tab to display both tables separately with labels
+Added the /api/users endpoint to fetch from the users table
+Now you'll see the actual total number of users on your platform!

@@ -1,0 +1,86 @@
+
+- Address must be a hex value of 20 bytes (40 hex characters).
+- Address must match its checksum counterpart.
+
+Version: viem@2.38.3
+    at encodeAddress (chunk-4KVX2WCO.js?v=41c0e4f5:2097:11)
+    at prepareParam (chunk-4KVX2WCO.js?v=41c0e4f5:2048:12)
+    at prepareParams (chunk-4KVX2WCO.js?v=41c0e4f5:2032:25)
+    at encodeAbiParameters (chunk-4KVX2WCO.js?v=41c0e4f5:2020:26)
+    at encodeDeployData (chunk-3TICTX6T.js?v=41c0e4f5:2948:16)
+    at getSenderAddress (permissionless_accounts.js?v=41c0e4f5:359:11)
+    at permissionless_accounts.js?v=41c0e4f5:478:35
+    at async toSimpleSmartAccount (permissionless_accounts.js?v=41c0e4f5:461:46)
+    at async SmartAccountContext.tsx:109:23
+(anonymous) @ SmartAccountContext.tsx:150
+await in (anonymous)
+(anonymous) @ SmartAccountContext.tsx:158Understand this error
+SmartAccountContext.tsx:156 🔄 Retrying smart account initialization...
+SmartAccountContext.tsx:72 💼 Found wallet: privy
+SmartAccountContext.tsx:81 🔐 Initializing smart account on Base Sepolia...
+SmartAccountContext.tsx:82 📡 Using Base Paymaster RPC: https://api.developer.coinbase.com/rpc/v1/base-sepolia/https://api.developer.coinbase.com/rpc/v1/base-sepolia/34ut3gkiuZadCZR3FB4mWd8Gj1B2Jktt
+SmartAccountContext.tsx:99 👤 Owner address: 0x40E564fE1fac10Cc5BEa9a34457b6bC6291B4F8e
+SmartAccountContext.tsx:150 ❌ Failed to initialize smart account: InvalidAddressError: Address "undefined" is invalid.
+
+- Address must be a hex value of 20 bytes (40 hex characters).
+- Address must match its checksum counterpart.
+
+Version: viem@2.38.3
+    at encodeAddress (chunk-4KVX2WCO.js?v=41c0e4f5:2097:11)
+    at prepareParam (chunk-4KVX2WCO.js?v=41c0e4f5:2048:12)
+    at prepareParams (chunk-4KVX2WCO.js?v=41c0e4f5:2032:25)
+    at encodeAbiParameters (chunk-4KVX2WCO.js?v=41c0e4f5:2020:26)
+    at encodeDeployData (chunk-3TICTX6T.js?v=41c0e4f5:2948:16)
+    at getSenderAddress (permissionless_accounts.js?v=41c0e4f5:359:11)
+    at permissionless_accounts.js?v=41c0e4f5:478:35
+    at async toSimpleSmartAccount (permissionless_accounts.js?v=41c0e4f5:461:46)
+    at async SmartAccountContext.tsx:109:23
+(anonymous) @ SmartAccountContext.tsx:150
+await in (anonymous)
+(anonymous) @ SmartAccountContext.tsx:158Understand this error
+SmartAccountContext.tsx:156 🔄 Retrying smart account initialization...
+SmartAccountContext.tsx:72 💼 Found wallet: privy
+SmartAccountContext.tsx:81 🔐 Initializing smart account on Base Sepolia...
+SmartAccountContext.tsx:82 📡 Using Base Paymaster RPC: https://api.developer.coinbase.com/rpc/v1/base-sepolia/https://api.developer.coinbase.com/rpc/v1/base-sepolia/34ut3gkiuZadCZR3FB4mWd8Gj1B2Jktt
+SmartAccountContext.tsx:99 👤 Owner address: 0x40E564fE1fac10Cc5BEa9a34457b6bC6291B4F8e
+SmartAccountContext.tsx:150 ❌ Failed to initialize smart account: InvalidAddressError: Address "undefined" is invalid.
+
+- Address must be a hex value of 20 bytes (40 hex characters).
+- Address must match its checksum counterpart.
+
+Version: viem@2.38.3
+    at encodeAddress (chunk-4KVX2WCO.js?v=41c0e4f5:2097:11)
+    at prepareParam (chunk-4KVX2WCO.js?v=41c0e4f5:2048:12)
+    at prepareParams (chunk-4KVX2WCO.js?v=41c0e4f5:2032:25)
+    at encodeAbiParameters (chunk-4KVX2WCO.js?v=41c0e4f5:2020:26)
+    at encodeDeployData (chunk-3TICTX6T.js?v=41c0e4f5:2948:16)
+    at getSenderAddress (permissionless_accounts.js?v=41c0e4f5:359:11)
+    at permissionless_accounts.js?v=41c0e4f5:478:35
+    at async toSimpleSmartAccount (permissionless_accounts.js?v=41c0e4f5:461:46)
+    at async SmartAccountContext.tsx:109:23
+(anonymous) @ SmartAccountContext.tsx:150
+await in (anonymous)
+(anonymous) @ SmartAccountContext.tsx:158Understand this error
+SmartAccountContext.tsx:72 💼 Found wallet: privy
+SmartAccountContext.tsx:81 🔐 Initializing smart account on Base Sepolia...
+SmartAccountContext.tsx:82 📡 Using Base Paymaster RPC: https://api.developer.coinbase.com/rpc/v1/base-sepolia/https://api.developer.coinbase.com/rpc/v1/base-sepolia/34ut3gkiuZadCZR3FB4mWd8Gj1B2Jktt
+SmartAccountContext.tsx:99 👤 Owner address: 0x40E564fE1fac10Cc5BEa9a34457b6bC6291B4F8e
+SmartAccountContext.tsx:150 ❌ Failed to initialize smart account: InvalidAddressError: Address "undefined" is invalid.
+
+- Address must be a hex value of 20 bytes (40 hex characters).
+- Address must match its checksum counterpart.
+
+Version: viem@2.38.3
+    at encodeAddress (chunk-4KVX2WCO.js?v=41c0e4f5:2097:11)
+    at prepareParam (chunk-4KVX2WCO.js?v=41c0e4f5:2048:12)
+    at prepareParams (chunk-4KVX2WCO.js?v=41c0e4f5:2032:25)
+    at encodeAbiParameters (chunk-4KVX2WCO.js?v=41c0e4f5:2020:26)
+    at encodeDeployData (chunk-3TICTX6T.js?v=41c0e4f5:2948:16)
+    at getSenderAddress (permissionless_accounts.js?v=41c0e4f5:359:11)
+    at permissionless_accounts.js?v=41c0e4f5:478:35
+    at async toSimpleSmartAccount (permissionless_accounts.js?v=41c0e4f5:461:46)
+    at async SmartAccountContext.tsx:109:23
+(anonymous) @ SmartAccountContext.tsx:150
+await in (anonymous)
+(anonymous) @ SmartAccountContext.tsx:171
+commitHookEffectListM...

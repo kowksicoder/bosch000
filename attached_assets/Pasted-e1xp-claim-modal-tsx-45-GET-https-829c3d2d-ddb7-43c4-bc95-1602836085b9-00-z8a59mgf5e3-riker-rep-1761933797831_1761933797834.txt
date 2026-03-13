@@ -1,0 +1,81 @@
+e1xp-claim-modal.tsx:45 
+ GET https://829c3d2d-ddb7-43c4-bc95-1602836085b9-00-z8a59mgf5e3.riker.replit.dev/api/e1xp/status 401 (Unauthorized)
+queryFn	@	e1xp-claim-modal.tsx:45
+await in queryFn		
+fetchFn	@	chunk-7X75LGXT.js?v=4ef5374a:840
+run	@	chunk-7X75LGXT.js?v=4ef5374a:494
+start	@	chunk-7X75LGXT.js?v=4ef5374a:536
+fetch	@	chunk-7X75LGXT.js?v=4ef5374a:926
+executeFetch_fn	@	chunk-7X75LGXT.js?v=4ef5374a:2211
+onSubscribe	@	chunk-7X75LGXT.js?v=4ef5374a:1898
+subscribe	@	chunk-7X75LGXT.js?v=4ef5374a:24
+(anonymous)	@	chunk-7X75LGXT.js?v=4ef5374a:3022
+subscribeToStore	@	chunk-Z2GUPSCO.js?v=4ef5374a:11984
+commitHookEffectListMount	@	chunk-Z2GUPSCO.js?v=4ef5374a:16915
+commitPassiveMountOnFiber	@	chunk-Z2GUPSCO.js?v=4ef5374a:18156
+commitPassiveMountEffects_complete	@	chunk-Z2GUPSCO.js?v=4ef5374a:18129
+commitPassiveMountEffects_begin	@	chunk-Z2GUPSCO.js?v=4ef5374a:18119
+commitPassiveMountEffects	@	chunk-Z2GUPSCO.js?v=4ef5374a:18109
+flushPassiveEffectsImpl	@	chunk-Z2GUPSCO.js?v=4ef5374a:19490
+flushPassiveEffects	@	chunk-Z2GUPSCO.js?v=4ef5374a:19447
+commitRootImpl	@	chunk-Z2GUPSCO.js?v=4ef5374a:19416
+commitRoot	@	chunk-Z2GUPSCO.js?v=4ef5374a:19277
+performSyncWorkOnRoot	@	chunk-Z2GUPSCO.js?v=4ef5374a:18895
+flushSyncCallbacks	@	chunk-Z2GUPSCO.js?v=4ef5374a:9119
+flushSync	@	chunk-Z2GUPSCO.js?v=4ef5374a:18959
+scheduleRefresh	@	chunk-Z2GUPSCO.js?v=4ef5374a:20004
+(anonymous)	@	@react-refresh:228
+performReactRefresh	@	@react-refresh:217
+(anonymous)	@	@react-refresh:608
+setTimeout		
+(anonymous)	@	@react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate	@	@react-refresh:648
+(anonymous)	@	e1xp-claim-modal.tsx:246
+(anonymous)	@	client:34
+(anonymous)	@	client:218
+(anonymous)	@	client:193
+queueUpdate	@	client:193
+await in queueUpdate		
+(anonymous)	@	client:642
+handleMessage	@	client:640
+(anonymous)	@	client:550
+
+e1xp-claim-modal.tsx:35 
+ GET https://829c3d2d-ddb7-43c4-bc95-1602836085b9-00-z8a59mgf5e3.riker.replit.dev/api/e1xp/status 401 (Unauthorized)
+queryFn	@	e1xp-claim-modal.tsx:35
+await in queryFn		
+fetchFn	@	chunk-7X75LGXT.js?v=4ef5374a:840
+run	@	chunk-7X75LGXT.js?v=4ef5374a:494
+start	@	chunk-7X75LGXT.js?v=4ef5374a:536
+fetch	@	chunk-7X75LGXT.js?v=4ef5374a:926
+executeFetch_fn	@	chunk-7X75LGXT.js?v=4ef5374a:2211
+setOptions	@	chunk-7X75LGXT.js?v=4ef5374a:1955
+(anonymous)	@	chunk-7X75LGXT.js?v=4ef5374a:3032
+commitHookEffectListMount	@	chunk-Z2GUPSCO.js?v=4ef5374a:16915
+commitPassiveMountOnFiber	@	chunk-Z2GUPSCO.js?v=4ef5374a:18156
+commitPassiveMountEffects_complete	@	chunk-Z2GUPSCO.js?v=4ef5374a:18129
+commitPassiveMountEffects_begin	@	chunk-Z2GUPSCO.js?v=4ef5374a:18119
+commitPassiveMountEffects	@	chunk-Z2GUPSCO.js?v=4ef5374a:18109
+flushPassiveEffectsImpl	@	chunk-Z2GUPSCO.js?v=4ef5374a:19490
+flushPassiveEffects	@	chunk-Z2GUPSCO.js?v=4ef5374a:19447
+commitRootImpl	@	chunk-Z2GUPSCO.js?v=4ef5374a:19416
+commitRoot	@	chunk-Z2GUPSCO.js?v=4ef5374a:19277
+performSyncWorkOnRoot	@	chunk-Z2GUPSCO.js?v=4ef5374a:18895
+flushSyncCallbacks	@	chunk-Z2GUPSCO.js?v=4ef5374a:9119
+flushSync	@	chunk-Z2GUPSCO.js?v=4ef5374a:18959
+scheduleRefresh	@	chunk-Z2GUPSCO.js?v=4ef5374a:20004
+(anonymous)	@	@react-refresh:228
+performReactRefresh	@	@react-refresh:217
+(anonymous)	@	@react-refresh:608
+setTimeout		
+(anonymous)	@	@react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate	@	@react-refresh:648
+(anonymous)	@	e1xp-claim-modal.tsx:246
+(anonymous)	@	client:34
+(anonymous)	@	client:218
+(anonymous)	@	client:193
+queueUpdate	@	client:193
+await in queueUpdate		
+(anonymous)	@	client:642
+handleMessage	@	client:640
+(anonymous)	@	client:550

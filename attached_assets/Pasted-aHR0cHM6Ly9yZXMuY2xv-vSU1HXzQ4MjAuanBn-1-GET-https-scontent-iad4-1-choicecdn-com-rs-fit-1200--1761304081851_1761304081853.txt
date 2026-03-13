@@ -1,0 +1,69 @@
+aHR0cHM6Ly9yZXMuY2xv…vSU1HXzQ4MjAuanBn:1 
+ GET https://scontent-iad4-1.choicecdn.com/-/rs:fit:1200:1200/f:best/aHR0cHM6Ly9…MuY2xvdWRpbmFyeS5jb20vYmFzZS1hcHAvdmlkZW8vdXBsb2FkL3NvXzAvSU1HXzQ4MjAuanBn 404 (Not Found)
+Image		
+commitMount	@	chunk-Z2GUPSCO.js?v=b47f5567:8412
+commitLayoutEffectOnFiber	@	chunk-Z2GUPSCO.js?v=b47f5567:17102
+commitLayoutMountEffects_complete	@	chunk-Z2GUPSCO.js?v=b47f5567:17980
+commitLayoutEffects_begin	@	chunk-Z2GUPSCO.js?v=b47f5567:17969
+commitLayoutEffects	@	chunk-Z2GUPSCO.js?v=b47f5567:17920
+commitRootImpl	@	chunk-Z2GUPSCO.js?v=b47f5567:19353
+commitRoot	@	chunk-Z2GUPSCO.js?v=b47f5567:19277
+performSyncWorkOnRoot	@	chunk-Z2GUPSCO.js?v=b47f5567:18895
+flushSyncCallbacks	@	chunk-Z2GUPSCO.js?v=b47f5567:9119
+(anonymous)	@	chunk-Z2GUPSCO.js?v=b47f5567:18627
+
+chunk-ILUNCV6Q.js?v=b47f5567:339 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+profile-card-modal.tsx:65 
+ GET https://19f1867c-005f-4d14-a471-dbb3fdc79e11-00-2wmhv4uin5d64.spock.replit.…4B9E628500d2E0f6f0382e063C14a95/0xdde8346… 500 (Internal Server Error)
+queryFn	@	profile-card-modal.tsx:65
+profile-card-modal.tsx:78 
+ GET https://19f1867c-005f-4d14-a471-dbb3fdc79e11-00-2wmhv4uin5d64.spock.replit.dev/api/creators/address/0xdde8346… 404 (Not Found)
+queryFn	@	profile-card-modal.tsx:78
+fetchFn	@	chunk-7X75LGXT.js?v=b47f5567:840
+run	@	chunk-7X75LGXT.js?v=b47f5567:494
+start	@	chunk-7X75LGXT.js?v=b47f5567:536
+fetch	@	chunk-7X75LGXT.js?v=b47f5567:926
+executeFetch_fn	@	chunk-7X75LGXT.js?v=b47f5567:2211
+onSubscribe	@	chunk-7X75LGXT.js?v=b47f5567:1898
+subscribe	@	chunk-7X75LGXT.js?v=b47f5567:24
+(anonymous)	@	chunk-7X75LGXT.js?v=b47f5567:3022
+subscribeToStore	@	chunk-Z2GUPSCO.js?v=b47f5567:11984
+commitHookEffectListMount	@	chunk-Z2GUPSCO.js?v=b47f5567:16915
+commitPassiveMountOnFiber	@	chunk-Z2GUPSCO.js?v=b47f5567:18156
+commitPassiveMountEffects_complete	@	chunk-Z2GUPSCO.js?v=b47f5567:18129
+commitPassiveMountEffects_begin	@	chunk-Z2GUPSCO.js?v=b47f5567:18119
+commitPassiveMountEffects	@	chunk-Z2GUPSCO.js?v=b47f5567:18109
+flushPassiveEffectsImpl	@	chunk-Z2GUPSCO.js?v=b47f5567:19490
+flushPassiveEffects	@	chunk-Z2GUPSCO.js?v=b47f5567:19447
+commitRootImpl	@	chunk-Z2GUPSCO.js?v=b47f5567:19416
+commitRoot	@	chunk-Z2GUPSCO.js?v=b47f5567:19277
+performSyncWorkOnRoot	@	chunk-Z2GUPSCO.js?v=b47f5567:18895
+flushSyncCallbacks	@	chunk-Z2GUPSCO.js?v=b47f5567:9119
+(anonymous)	@	chunk-Z2GUPSCO.js?v=b47f5567:18627
+points.tsx:63 
+ POST https://19f1867c-005f-4d14-a471-dbb3fdc79e11-00-2wmhv4uin5d64.spock.replit.dev/api/e1xp/claim-daily 500 (Internal Server Error)
+mutationFn	@	points.tsx:63
+fn	@	chunk-7X75LGXT.js?v=b47f5567:1189
+run	@	chunk-7X75LGXT.js?v=b47f5567:494
+start	@	chunk-7X75LGXT.js?v=b47f5567:536
+execute	@	chunk-7X75LGXT.js?v=b47f5567:1225
+await in execute		
+mutate	@	chunk-7X75LGXT.js?v=b47f5567:2630
+(anonymous)	@	chunk-7X75LGXT.js?v=b47f5567:3295
+onClick	@	points.tsx:253
+callCallback2	@	chunk-Z2GUPSCO.js?v=b47f5567:3674
+invokeGuardedCallbackDev	@	chunk-Z2GUPSCO.js?v=b47f5567:3699
+invokeGuardedCallback	@	chunk-Z2GUPSCO.js?v=b47f5567:3733
+invokeGuardedCallbackAndCatchFirstError	@	chunk-Z2GUPSCO.js?v=b47f5567:3736
+executeDispatch	@	chunk-Z2GUPSCO.js?v=b47f5567:7014
+processDispatchQueueItemsInOrder	@	chunk-Z2GUPSCO.js?v=b47f5567:7034
+processDispatchQueue	@	chunk-Z2GUPSCO.js?v=b47f5567:7043
+dispatchEventsForPlugins	@	chunk-Z2GUPSCO.js?v=b47f5567:7051
+(anonymous)	@	chunk-Z2GUPSCO.js?v=b47f5567:7174
+batchedUpdates$1	@	chunk-Z2GUPSCO.js?v=b47f5567:18913
+batchedUpdates	@	chunk-Z2GUPSCO.js?v=b47f5567:3579
+dispatchEventForPluginEventSystem	@	chunk-Z2GUPSCO.js?v=b47f5567:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay	@	chunk-Z2GUPSCO.js?v=b47f5567:5478
+dispatchEvent	@	chunk-Z2GUPSCO.js?v=b47f5567:5472
+dispatchDiscreteEvent	@	chunk-Z2GUPSCO.js?v=b47f5567:5449
+﻿

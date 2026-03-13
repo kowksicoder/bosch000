@@ -1,0 +1,63 @@
+
+SmartAccountContext.tsx:156 🔄 Retrying smart account initialization...
+SmartAccountContext.tsx:72 💼 Found wallet: privy
+SmartAccountContext.tsx:81 🔐 Initializing smart account on Base Sepolia...
+SmartAccountContext.tsx:82 📡 Using Base Paymaster RPC: https://api.developer.coinbase.com/rpc/v1/base-sepolia/https://api.developer.coinbase.com/rpc/v1/base-sepolia/34ut3gkiuZadCZR3FB4mWd8Gj1B2Jktt
+SmartAccountContext.tsx:99 👤 Owner address: 0x9F23c10f0D79EDbEB0b0dc825C1C89633F79cCdF
+SmartAccountContext.tsx:150 ❌ Failed to initialize smart account: InvalidAddressError: Address "undefined" is invalid.
+
+- Address must be a hex value of 20 bytes (40 hex characters).
+- Address must match its checksum counterpart.
+
+Version: viem@2.38.3
+    at async SmartAccountContext.tsx:109:23
+SmartAccountContext.tsx:156 🔄 Retrying smart account initialization...
+SmartAccountContext.tsx:72 💼 Found wallet: privy
+SmartAccountContext.tsx:81 🔐 Initializing smart account on Base Sepolia...
+SmartAccountContext.tsx:82 📡 Using Base Paymaster RPC: https://api.developer.coinbase.com/rpc/v1/base-sepolia/https://api.developer.coinbase.com/rpc/v1/base-sepolia/34ut3gkiuZadCZR3FB4mWd8Gj1B2Jktt
+SmartAccountContext.tsx:99 👤 Owner address: 0x40E564fE1fac10Cc5BEa9a34457b6bC6291B4F8e
+SmartAccountContext.tsx:150 ❌ Failed to initialize smart account: InvalidAddressError: Address "undefined" is invalid.
+
+- Address must be a hex value of 20 bytes (40 hex characters).
+- Address must match its checksum counterpart.
+
+Version: viem@2.38.3
+    at async SmartAccountContext.tsx:109:23
+SmartAccountContext.tsx:156 🔄 Retrying smart account initialization...
+SmartAccountContext.tsx:72 💼 Found wallet: privy
+SmartAccountContext.tsx:81 🔐 Initializing smart account on Base Sepolia...
+SmartAccountContext.tsx:82 📡 Using Base Paymaster RPC: https://api.developer.coinbase.com/rpc/v1/base-sepolia/https://api.developer.coinbase.com/rpc/v1/base-sepolia/34ut3gkiuZadCZR3FB4mWd8Gj1B2Jktt
+SmartAccountContext.tsx:99 👤 Owner address: 0x40E564fE1fac10Cc5BEa9a34457b6bC6291B4F8e
+SmartAccountContext.tsx:150 ❌ Failed to initialize smart account: InvalidAddressError: Address "undefined" is invalid.
+
+- Address must be a hex value of 20 bytes (40 hex characters).
+- Address must match its checksum counterpart.
+
+Version: viem@2.38.3
+    at async SmartAccountContext.tsx:109:23
+SmartAccountContext.tsx:156 🔄 Retrying smart account initialization...
+SmartAccountContext.tsx:72 💼 Found wallet: privy
+SmartAccountContext.tsx:81 🔐 Initializing smart account on Base Sepolia...
+SmartAccountContext.tsx:82 📡 Using Base Paymaster RPC: https://api.developer.coinbase.com/rpc/v1/base-sepolia/https://api.developer.coinbase.com/rpc/v1/base-sepolia/34ut3gkiuZadCZR3FB4mWd8Gj1B2Jktt
+SmartAccountContext.tsx:99 👤 Owner address: 0x9F23c10f0D79EDbEB0b0dc825C1C89633F79cCdF
+SmartAccountContext.tsx:150 ❌ Failed to initialize smart account: InvalidAddressError: Address "undefined" is invalid.
+
+- Address must be a hex value of 20 bytes (40 hex characters).
+- Address must match its checksum counterpart.
+
+Version: viem@2.38.3
+    at async SmartAccountContext.tsx:109:23
+SmartAccountContext.tsx:156 🔄 Retrying smart account initialization...
+SmartAccountContext.tsx:72 💼 Found wallet: privy
+SmartAccountContext.tsx:81 🔐 Initializing smart account on Base Sepolia...
+SmartAccountContext.tsx:82 📡 Using Base Paymaster RPC: https://api.developer.coinbase.com/rpc/v1/base-sepolia/https://api.developer.coinbase.com/rpc/v1/base-sepolia/34ut3gkiuZadCZR3FB4mWd8Gj1B2Jktt
+SmartAccountContext.tsx:99 👤 Owner address: 0x40E564fE1fac10Cc5BEa9a34457b6bC6291B4F8e
+SmartAccountContext.tsx:150 ❌ Failed to initialize smart account: InvalidAddressError: Address "undefined" is invalid.
+
+- Address must be a hex value of 20 bytes (40 hex characters).
+- Address must match its checksum counterpart.
+
+Version: viem@2.38.3
+    at async SmartAccountContext.tsx:109:23
+﻿
+

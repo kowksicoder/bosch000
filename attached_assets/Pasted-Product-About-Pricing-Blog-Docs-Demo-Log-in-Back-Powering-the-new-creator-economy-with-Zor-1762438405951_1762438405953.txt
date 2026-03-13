@@ -1,0 +1,161 @@
+Product
+
+About
+Pricing
+Blog
+Docs
+Demo
+Log in
+Back
+Powering the new creator economy with Zora
+How Zora uses Privy to onboard users and build a fully onchain social app, where every post, profile, and interaction is a market
+
+
+Debbie Soon
+
+|
+Jul 31, 2025
+
+
+Zora has always been ahead of the curve. What began as an NFT minting platform has since evolved into a social app designed for the new creator economy. Content isn’t just viewed and liked, it is also traded, generating returns both for the original creator and their supporters.
+
+In the Zora ecosystem, every post is a coin, which pairs with the coin of its creator. In turn, every creator coin pairs with $ZORA. This structure ties content, identity, and value into one continuous market. As more creators join, they generate more posts, leading to more trading activity and attention.
+
+It is a self-reinforcing flywheel where creators earn, traders participate, and content powers onboarding.
+
+
+Zora’s growth in recent weeks reflects the power of that design. Over the past quarter, the app has hit new all-time highs in post volume, trading activity, daily active accounts, and aggregate coin valuations. Today, a total of 1.6 million coins have been created across over 200K creators, with total trading volume exceeding $445 million. Individual creator coins have crossed $10K, $100K, and even $1M in FDV. And the momentum is compounding.
+
+
+Powering this kind of experience requires wallet infrastructure built for consumer-grade UX: fast, secure, mobile-native, and invisible to the user.
+
+That’s where Privy comes in.
+
+From NFT auctions to an onchain social economy
+Zora’s path hasn’t been linear, but it’s always been intentional. Over the past five years, the team has shipped dozens of product experiments, from perpetual NFT auctions and redeemable goods, to timed edition drops, and even launching their own L2.
+
+That said, each iteration built toward the same idea: content as a financial primitive. Not just something to consume, but something to own, trade, and build on.
+
+Zora’s latest evolution brings that to life.
+
+Every profile is now represented by a Creator Coin (an ERC20).
+
+Posts are also coins, and automatically pair with the creator’s coin.
+
+All creator coins pair with $ZORA, the base asset of the ecosystem.
+
+Creators earn 1% of every trade.
+
+50% of their Creator Coin supply streams to them over 5 years.
+
+
+This structure links identity, output, and value into a single symbiotic market, and one that rewards both long-term creators and early believers.
+
+“People like to say Zora pivots. I prefer to say we iterate.”
+— Jacob Horne, Co-founder of Zora
+Zora’s model blurs the lines between social network and financial protocol. Every action on Zora, be it posting, collecting, or trading, feeds into a growing loop of value creation.
+
+More creators means more content
+
+More content means more trading
+
+More trading drives attention
+
+More attention drives new users
+
+Because creators earn on every trade and unlock their coin supply over time, their incentives are built for the long term. Traders, meanwhile, get early exposure and a transparent release schedule.
+
+It’s a model designed around digital ownership, and one that allows for both creators and consumers of content to win.
+
+Onboarding through culture, not cash
+What makes Zora different is how it flips the traditional crypto funnel.
+
+Instead of starting with money, wallets, or token swaps, users come in through content. They follow a creator. They tap a post. They buy a coin. And just like that, they’re onchain.
+
+It’s a radically different onramp from what the crypto industry was built on, and one that meets consumers where they already are.
+
+
+But to make that kind of onboarding work, Zora needed wallet infrastructure that could match the speed and familiarity of a social feed.
+
+How Zora uses Privy to power embedded wallets
+Privy handles all of Zora’s embedded wallet infrastructure, making every account fully onchain without breaking the user experience or introducing unnecessary friction.
+
+With Privy, Zora gets:
+
+Fully self-custodial wallets for its users with secure key management
+
+Wallets that feel native to the app, with no pop-ups or extensions
+
+Full design control to maintain brand identity
+
+Mobile-first performance and scalability
+
+Built-in analytics to track user growth and engagement
+
+
+New users simply sign up with an email, and a Privy wallet is spun up instantly. Posts, Creator Coins, and $ZORA are all held and tradable directly from that wallet – no extra steps required.
+
+The result is an onboarding experience that feels more like using Instagram than installing a wallet. But under the hood, it’s a fully-fledged onchain account, with all the power and ownership that implies.
+
+Today, Privy powers the wallet infrastructure for over 4 million Zora users, including more than 2 million monthly active users, and growing.
+
+Why Zora chose Privy
+For Zora, it wasn’t just about speed. It was about staying focused on what mattered: shipping new features, building markets, and scaling the creator economy.
+
+Privy provided the infrastructure to make that possible, more importantly without forcing tradeoffs on security, developer time, or user experience.
+
+“We spend all of our time and energy building the most rewarding social network possible for creators and their communities. We are entirely onchain native with our own app, protocol and markets that we obsess over daily.
+Having Privy as a partner who is equally obsessive about the developer experience for wallets means we can focus on what we do best, while they make it easier for us to have the world's leading crypto consumer experience.”
+— Jacob Horne
+What’s next
+With momentum growing, Zora is expanding across use cases, geographies, and creator types. Today, the Zora platform already sees everyone from podcasters and pro gamers to hip hop artists and crypto-native builders. Their creator coin flywheel is also giving rise to new discovery tools, community-led growth loops, and novel expressions of digital patronage, where owning a coin can be as much about speculation as it is belonging.
+
+The model is working, and it’s inspiring a broader shift in how people think about value on the internet. Creators aren’t just building followings anymore. They’re building their own economies, one in which anyone can participate.
+
+As Zora turns content into capital, Privy is proud to power the infrastructure that makes it feel seamless.
+
+We can’t wait to see what gets built next.
+
+Case study
+Share this post
+
+RELATED POSTS
+
+Case study
+Turning trading into a social experience with fomo
+
+Debbie Soon
+
+|
+Oct 30, 2025
+
+
+Case study
+Building the future of sports gaming with Football.Fun
+
+Debbie Soon
+
+|
+Oct 16, 2025
+
+Product
+Docs
+Demo
+Features
+Security
+Company
+About us
+Careers
+Blog
+Customer love
+Resources
+Status
+Support
+Privacy policy
+Terms of service
+Brand guidelines
+Technical decision are
+moral decisions.
+
+©2024 Horkos, Inc
+

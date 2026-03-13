@@ -1,0 +1,489 @@
+import { Link, useLocation } from "wouter";
+import { usePrivy } from "@privy-io/react-auth";
+import {
+  Home,
+  TrendingUp,
+  Users,
+  MessageCircle,
+  Settings,
+  Search,
+  Flame,
+  ShoppingBag,
+  Sparkles,
+  User,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+  Compass,
+  BookOpen,
+  HelpCircle,
+  Menu,
+  X,
+  PlusCircle,
+  MessageSquare,
+  Zap, // Imported Zap icon
+} from "lucide-react";
+import { ThemeToggle } from "./theme-toggle";
+import { NotificationBell } from "./notification-bell";
+import { UserMenu } from "./user-menu";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+} from "./ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { Badge } from "./ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+
+const publicNavigationItems = [
+  { icon: Compass, label: "Explore", path: "/" },
+  { icon: Users, label: "Creators", path: "/creators" },
+  { icon: Search, label: "Search", path: "/search" },
+  { icon: Sparkles, label: "Create", path: "/create" },
+];
+
+const authenticatedNavigationItems = [
+  { icon: Compass, label: "Explore", path: "/" },
+  { icon: Users, label: "Creators", path: "/creators" },
+  { icon: Search, label: "Search", path: "/search" },
+  { icon: MessageCircle, label: "Inbox", path: "/inbox" },
+  { icon: Flame, label: "Streaks", path: "/streaks" },
+  { icon: Sparkles, label: "Create", path: "/create" },
+];
+
+export function AppLayout({ children }: { children: React.ReactNode }) {
+  const [location, setLocation] = useLocation(); // Added setLocation
+  const { authenticated, user, logout, login } = usePrivy();
+  const isAdminRoute = location.startsWith("/admin");
+  const navigationItems = authenticated
+    ? authenticatedNavigationItems
+    : publicNavigationItems;
+  const isMobile = useIsMobile();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Fetch coins count
+  const { data: coinsData } = useQuery({
+    queryKey: ["/api/zora/coins/top-volume"],
+  });
+
+  // Fetch creators count
+  const { data: creatorsData } = useQuery({
+    queryKey: ["/api/creators"],
+  });
+
+  const coinsCount = (coinsData as any)?.coins?.length || 0;
+  const creatorsCount = (creatorsData as any)?.length || 0;
+
+  const handleLogin = () => {
+    try {
+      login();
+    } catch (error) {
+      console.error("Login error:", error);
+    }
+  };
+
+  return (
+    <SidebarProvider defaultOpen={true}>
+      <div className="flex min-h-screen w-full bg-background pb-16 md:pb-0">
+        {/* Sidebar - Hidden on mobile */}
+        {!isAdminRoute && (
+          <Sidebar collapsible="icon" className="border-r border-transparent hidden md:flex">
+            <SidebarHeader className="border-b border-border p-4">
+              <Link href="/" className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <Sparkles className="h-4 w-4" />
+                </div>
+                <div className="flex-1 group-data-[collapsible=icon]:hidden">
+                  <h1 className="text-lg font-bold tracking-tight">
+                    creat8<span className="text-primary">*</span>
+                  </h1>
+                  <p className="text-xs text-muted-foreground"></p>
+                </div>
+              </Link>
+            </Header>
+
+            <SidebarContent className="p-2">
+              {/* General Section */}
+              <div className="mb-6">
+                <SidebarGroup>
+                  <SidebarGroupLabel>General</SidebarGroupLabel>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {navigationItems.map((item) => {
+                        const isActive = location === item.path;
+                        return (
+                          <SidebarMenuItem key={item.path}>
+                            <SidebarMenuButton
+                              asChild
+                              isActive={isActive}
+                              tooltip={item.label}
+                              className="h-10"
+                            >
+                              <Link href={item.path}>
+                                <item.icon className="h-4 w-4" />
+                                <span>{item.label}</span>
+                              </Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        );
+                      })}
+                      <SidebarMenuItem>
+                        <SidebarMenuButton asChild isActive={location === "/points"}>
+                          <Link href="/points">
+                            <Zap className="h-4 w-4" />
+                            <span>E1XP Points</span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              </div>
+
+              {/* Resources Section */}
+              <SidebarGroup>
+                <SidebarGroupLabel>Resources</SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className="h-10">
+                        <Link href="/faq">
+                          <HelpCircle className="h-4 w-4" />
+                          <span>FAQ</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton asChild className="h-10">
+                        <Link href="/docs">
+                          <BookOpen className="h-4 w-4" />
+                          <span>Docs</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            </SidebarContent>
+
+            <SidebarFooter className="border-t border-border p-2">
+              {authenticated && user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="h-12 w-full justify-start gap-3 px-3"
+                    >
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage
+                          src={
+                            user.google?.profilePictureUrl ||
+                            user.twitter?.profilePictureUrl ||
+                            user.farcaster?.pfp
+                          }
+                        />
+                        <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                          {user.google?.name?.charAt(0) ||
+                            user.twitter?.username?.charAt(0) ||
+                            user.farcaster?.username?.charAt(0) ||
+                            "U"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 text-left group-data-[collapsible=icon]:hidden">
+                        <div className="text-sm font-medium">
+                          {user.google?.name ||
+                            user.twitter?.username ||
+                            user.farcaster?.displayName ||
+                            "User"}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Online
+                        </div>
+                      </div>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem asChild>
+                      <Link href="/profile" className="flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        <span>View Profile</span>
+                        <span className="ml-auto text-xs text-muted-foreground">
+                          ⌘K
+                        </span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/settings"
+                        className="flex items-center gap-2"
+                      >
+                        <Settings className="h-4 w-4" />
+                        <span>Settings</span>
+                        <span className="ml-auto text-xs text-muted-foreground">
+                          ⌘G
+                        </span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => logout()}
+                      className="flex items-center gap-2 text-destructive focus:text-destructive"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Log out</span>
+                      <span className="ml-auto text-xs">⌘Q</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : null}
+
+              <div className="flex items-center gap-2 px-2 pt-2 group-data-[collapsible=icon]:justify-center">
+                <ThemeToggle />
+              </div>
+            </SidebarFooter>
+          </Sidebar>
+        )}
+
+        {/* Main Content Area */}
+        <SidebarInset className="flex flex-col w-full">
+          {/* Top Navigation - Desktop (hidden on admin routes) */}
+          {!isAdminRoute && (
+            <header className="sticky top-0 z-50 border-b border-transparent bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+              <div className="flex h-16 items-center justify-between px-4 max-w-7xl mx-auto w-full gap-4">
+                {/* Mobile Logo */}
+                <Link href="/" className="flex md:hidden items-center gap-2">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                    <Sparkles className="h-4 w-4" />
+                  </div>
+                  <div className="flex-1">
+                    <h1 className="text-sm font-bold tracking-tight">
+                      creat8<span className="text-primary">*</span>
+                    </h1>
+                  </div>
+                </Link>
+
+                <SidebarTrigger className="hidden md:flex" />
+
+                {/* Search Bar */}
+                <div
+                  className="flex-1 max-w-md mx-4 hidden md:block"
+                  data-testid="header-search"
+                >
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Link href="/search">
+                      <input
+                        type="text"
+                        placeholder="Search creators, coins..."
+                        className="w-full h-9 pl-9 pr-4 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                        readOnly
+                      />
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Stats Buttons */}
+                <div className="hidden lg:flex items-center gap-2">
+                  <Button variant="outline" size="sm" className="h-9">
+                    <TrendingUp className="h-4 w-4 mr-1.5 text-green-500" />
+                    <span className="text-xs font-semibold">
+                      Total MC: $2.5M
+                    </span>
+                  </Button>
+                  <Button variant="outline" size="sm" className="h-9">
+                    <Sparkles className="h-4 w-4 mr-1.5 text-primary" />
+                    <span className="text-xs font-semibold">Coins: 1,234</span>
+                  </Button>
+                </div>
+
+                {/* Right Section */}
+                <div className="flex items-center gap-3">
+                  <ThemeToggle />
+                  <NotificationBell />
+                  {authenticated ? (
+                    <>
+                      <Link href="/create">
+                        <Button
+                          variant="default"
+                          size="sm"
+                          className="hidden md:flex bg-gradient-to-r from-purple-400 via-pink-400 to-blue-300 hover:from-purple-500 hover:via-pink-500 hover:to-blue-400 text-black font-semibold border-0 transition-all"
+                        >
+                          <PlusCircle className="mr-2 h-4 w-4" />
+                          Create
+                        </Button>
+                      </Link>
+                      <UserMenu />
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        onClick={handleLogin}
+                        variant="default"
+                        size="sm"
+                        className="hidden md:flex bg-gradient-to-r from-purple-400 via-pink-400 to-blue-300 text-black font-semibold border-0 hover:opacity-90"
+                      >
+                        Login
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </header>
+          )}
+
+          {/* Mobile Header */}
+          <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b">
+            <div className="flex items-center justify-between h-14 px-4">
+              <Link href="/">
+                <h1 className="text-xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-300 bg-clip-text text-transparent">
+                  CreatorLand
+                </h1>
+              </Link>
+              <div className="flex items-center gap-2">
+                {authenticated ? (
+                  <>
+                    <NotificationBell />
+                    <UserMenu />
+                  </>
+                ) : (
+                  <Button
+                    onClick={handleLogin}
+                    variant="default"
+                    size="sm"
+                    className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-300 text-black font-semibold border-0 hover:opacity-90"
+                    data-testid="button-mobile-login"
+                  >
+                    Login
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Page Content */}
+          <main className="flex-1 overflow-auto">{children}</main>
+        </SidebarInset>
+
+        {/* Mobile Bottom Navigation - Compact design */}
+        {!isAdminRoute && (
+          <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden">
+            <div className="bg-card/95 backdrop-blur-xl border-t border-border">
+              <div className="flex items-center justify-around h-16 px-1">
+                <Link href="/">
+                  <div
+                    className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+                      location === "/"
+                        ? "text-primary"
+                        : "text-muted-foreground active:opacity-70"
+                    }`}
+                  >
+                    <Home className="h-5 w-5" />
+                    <span className="text-[10px] font-medium">Home</span>
+                  </div>
+                </Link>
+
+                <Link href="/">
+                  <div
+                    className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all relative ${
+                      location === "/" || location === "/search"
+                        ? "text-primary"
+                        : "text-muted-foreground active:opacity-70"
+                    }`}
+                  >
+                    <Compass className="h-5 w-5" />
+                    <span className="text-[10px] font-medium">Explore</span>
+                    {coinsCount > 0 && (
+                      <div className="absolute top-0.5 right-0.5 bg-destructive text-destructive-foreground rounded-full h-4 min-w-4 px-1 flex items-center justify-center text-[8px] font-bold">
+                        {coinsCount > 99 ? "99+" : coinsCount}
+                      </div>
+                    )}
+                  </div>
+                </Link>
+
+                <Link href="/creators">
+                  <div
+                    className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+                      location === "/creators"
+                        ? "text-primary"
+                        : "text-muted-foreground active:opacity-70"
+                    }`}
+                  >
+                    <Users className="h-5 w-5" />
+                    <span className="text-[10px] font-medium">Creators</span>
+                    {creatorsCount > 0 && (
+                      <div className="absolute top-0.5 right-0.5 bg-primary text-primary-foreground rounded-full h-4 min-w-4 px-1 flex items-center justify-center text-[8px] font-bold">
+                        {creatorsCount > 99 ? "99+" : creatorsCount}
+                      </div>
+                    )}
+                  </div>
+                </Link>
+
+                <Link href="/search">
+                  <div
+                    className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+                      location === "/search"
+                        ? "text-primary"
+                        : "text-muted-foreground active:opacity-70"
+                    }`}
+                  >
+                    <Search className="h-5 w-5" />
+                    <span className="text-[10px] font-medium">Search</span>
+                  </div>
+                </Link>
+
+                <Link href="/create">
+                  <div
+                    className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+                      location === "/create"
+                        ? "text-primary"
+                        : "text-muted-foreground active:opacity-70"
+                    }`}
+                  >
+                    <Sparkles className="h-5 w-5" />
+                    <span className="text-[10px] font-medium">Create</span>
+                  </div>
+                </Link>
+
+                <Link href="/inbox">
+                  <div
+                    className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
+                      location === "/inbox"
+                        ? "text-primary"
+                        : "text-muted-foreground active:opacity-70"
+                    }`}
+                  >
+                    <MessageCircle className="h-5 w-5" />
+                    <span className="text-[10px] font-medium">Inbox</span>
+                  </div>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </SidebarProvider>
+  );
+}

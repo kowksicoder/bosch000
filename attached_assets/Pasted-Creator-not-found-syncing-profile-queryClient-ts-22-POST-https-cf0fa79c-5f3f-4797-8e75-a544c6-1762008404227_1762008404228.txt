@@ -1,0 +1,40 @@
+Creator not found, syncing profile...
+queryClient.ts:22  POST https://cf0fa79c-5f3f-4797-8e75-a544c64fdfe5-00-29uw2q0ecme46.riker.replit.dev/api/creators/sync 400 (Bad Request)
+apiRequest @ queryClient.ts:22
+handleSaveProfile @ profile.tsx:324
+callCallback2 @ chunk-Z2GUPSCO.js?v=1d213987:3674
+invokeGuardedCallbackDev @ chunk-Z2GUPSCO.js?v=1d213987:3699
+invokeGuardedCallback @ chunk-Z2GUPSCO.js?v=1d213987:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-Z2GUPSCO.js?v=1d213987:3736
+executeDispatch @ chunk-Z2GUPSCO.js?v=1d213987:7014
+processDispatchQueueItemsInOrder @ chunk-Z2GUPSCO.js?v=1d213987:7034
+processDispatchQueue @ chunk-Z2GUPSCO.js?v=1d213987:7043
+dispatchEventsForPlugins @ chunk-Z2GUPSCO.js?v=1d213987:7051
+(anonymous) @ chunk-Z2GUPSCO.js?v=1d213987:7174
+batchedUpdates$1 @ chunk-Z2GUPSCO.js?v=1d213987:18913
+batchedUpdates @ chunk-Z2GUPSCO.js?v=1d213987:3579
+dispatchEventForPluginEventSystem @ chunk-Z2GUPSCO.js?v=1d213987:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-Z2GUPSCO.js?v=1d213987:5478
+dispatchEvent @ chunk-Z2GUPSCO.js?v=1d213987:5472
+dispatchDiscreteEvent @ chunk-Z2GUPSCO.js?v=1d213987:5449Understand this error
+profile.tsx:375 Profile update error: Error: 400: {"error":"Failed to sync creator profile"}
+    at throwIfResNotOk (queryClient.ts:6:11)
+    at async apiRequest (queryClient.ts:29:3)
+    at async handleSaveProfile (profile.tsx:324:30)
+handleSaveProfile @ profile.tsx:375
+await in handleSaveProfile
+callCallback2 @ chunk-Z2GUPSCO.js?v=1d213987:3674
+invokeGuardedCallbackDev @ chunk-Z2GUPSCO.js?v=1d213987:3699
+invokeGuardedCallback @ chunk-Z2GUPSCO.js?v=1d213987:3733
+invokeGuardedCallbackAndCatchFirstError @ chunk-Z2GUPSCO.js?v=1d213987:3736
+executeDispatch @ chunk-Z2GUPSCO.js?v=1d213987:7014
+processDispatchQueueItemsInOrder @ chunk-Z2GUPSCO.js?v=1d213987:7034
+processDispatchQueue @ chunk-Z2GUPSCO.js?v=1d213987:7043
+dispatchEventsForPlugins @ chunk-Z2GUPSCO.js?v=1d213987:7051
+(anonymous) @ chunk-Z2GUPSCO.js?v=1d213987:7174
+batchedUpdates$1 @ chunk-Z2GUPSCO.js?v=1d213987:18913
+batchedUpdates @ chunk-Z2GUPSCO.js?v=1d213987:3579
+dispatchEventForPluginEventSystem @ chunk-Z2GUPSCO.js?v=1d213987:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-Z2GUPSCO.js?v=1d213987:5478
+dispatchEvent @ chunk-Z2GUPSCO.js?v=1d213987:5472
+dispatchDiscreteEvent @ chunk-Z2GUPSCO.js?v=1d213987:5449Understand this error

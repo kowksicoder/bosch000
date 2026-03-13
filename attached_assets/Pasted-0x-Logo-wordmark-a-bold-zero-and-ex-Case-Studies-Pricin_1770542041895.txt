@@ -1,0 +1,860 @@
+0x Logo wordmark, a bold "zero" and "ex"
+Case Studies
+Pricing
+Contact us
+Go to dashboard
+
+Coinbase Case Study: 0x as a strategic partner for Coinbase
+
+
+Swap API
+Powerful trades with a few lines of code
+We’ve been building world-class Swaps since 2017 so you don’t have to. Access the most efficient liquidity for web3 tokens through a single API.
+
+Get started
+
+
+
+
+Your gateway into web3
+
+Best prices, all-in
+Keep users in your app by offering the best trading experience directly inside your product. Access to 7+ million tokens at the best prices all-in, with the lowest revert rate in the industry.
+
+
+Unlock revenue
+Monetization features that help you sustainably grow your business, with multiple fee collection options. Control your balance sheet by collecting fees in either the buy or sell token.
+
+
+Security & reliability
+Enterprise grade services you can build your business on, with 99.99% uptime. Built with security first and multiple third party audits to ensure there are no vulnerabilities to exploit.
+
+Advanced routing for any trade
+0x Argon Router’s multihop and multiplex routing delivers the best prices and optimal trading path for users.
+
+
+Uniswap V2
+
+0x RFQ
+
+Balancer v2
+
+Sushiswap v3
+
+Dodo
+
+Curve
+
+Lido
+
+Best in class performance
+Battle-tested since 2017, 0x is the trusted leader in the decentralized exchange infrastructure.
+
+99.92%
+Historical Uptime
+
+4.4%
+Revert rates
+Lowest in Defi
+
+<250ms
+Median response time
+
+521+
+Integrators
+
+Built for serious onchain apps
+
+Built for Users
+The best trading experience directly inside your product
+
+
+Built for Businesses
+Fully integrates with business needs, from Rev Ops to Compliance
+
+
+Built for Developers
+Thoughtful products that just work, get started in a few minutes
+
+
+16 EVM Networks:
+
+Available on the largest chains, including Ethereum, Base, Arbitrum, BNB Chain, Polygon and more.
+
+
+Deepest Coverage:
+
+Access 9M+ tokens with unrivaled liquidity from 130+ exchanges, including tokens with buy/sell taxes.
+
+
+Slippage & MEV Protection:
+
+Designed to minimize the impact of sandwich attacks and MEV. Users save an average of ~50-80% on slippage.
+
+
+Exclusive RFQ Liquidity:
+
+Unlock top-tier liquidity coverage from sophisticated market makers. 0x RFQ outperforms AMMs on price 46% of the time where available.
+
+
+Integrate in 5 minutes or less
+Embed crypto trading in your app with just a few lines of code.
+
+Swap
+
+Gasless
+
+
+Play
+
+
+const main = async () => {
+
+	 const sellAmount = parseUnits("1000", await usdc.read.decimals());
+
+  	// fetch quote
+  	const quoteParams = new URLSearchParams({
+  		chainId: client.chain.id.toString(),
+    	sellToken: usdc.address,
+    	buyToken: weth.address,
+    	sellAmount: sellAmount.toString(),
+      taker: client.account.address,
+    });
+
+  const quoteResponse = await fetch(
+    "https://api.0x.org/swap/allowance-holder/quote" + quoteParams.toString(),
+    {
+      headers,
+    }
+  );
+
+  const quote = await quoteResponse.json();
+  console.log("Quote to swap 1000 USDC for WETH: ", quote);
+
+}
+main();
+
+Copy
+Developer Guides
+
+
+
+Build with Swap API
+
+Example ERC-20 swap app built on Next.js with Swap API.
+
+
+Code Examples
+
+A collection of 0x API code examples - copy, paste, go.
+
+
+Monetize your app
+
+A guide on monetization options using 0x Swap API.
+
+
+Swap API
+
+Power crypto trading in your app with Swap API
+
+
+Build with Gasless API
+
+Build a gasless swap app on Next.js with 0x Gasless API
+
+
+Build with Swap API
+
+Example ERC-20 swap app built on Next.js with Swap API.
+
+
+Code Examples
+
+A collection of 0x API code examples - copy, paste, go.
+
+
+Monetize your app
+
+A guide on monetization options using 0x Swap API.
+
+
+Swap API
+
+Power crypto trading in your app with Swap API
+
+
+Build with Gasless API
+
+Build a gasless swap app on Next.js with 0x Gasless API
+
+
+Build with Swap API
+
+Example ERC-20 swap app built on Next.js with Swap API.
+
+
+Code Examples
+
+A collection of 0x API code examples - copy, paste, go.
+
+
+Monetize your app
+
+A guide on monetization options using 0x Swap API.
+
+
+Swap API
+
+Power crypto trading in your app with Swap API
+
+
+Build with Gasless API
+
+Build a gasless swap app on Next.js with 0x Gasless API
+
+Tap into a decade of onchain expertise
+Developer Guides
+Build on Base with 0x
+Build on Base with 0x
+
+A comprehensive analysis on DEX liquidity aggregators’ performance
+A comprehensive analysis on DEX liquidity aggregators’ performance
+
+Announcing 0x Swap API v1
+Announcing 0x Swap API v1
+
+Access all DEX liquidity through 0x Swap API
+Access all DEX liquidity through 0x Swap API
+
+Announcing the 0xpo Summit 2022
+Announcing the 0xpo Summit 2022
+
+Abstract partners with 0x to power DEX trading
+Abstract partners with 0x to power DEX trading
+
+2025 Revisited: Ship and Scale
+2025 Revisited: Ship and Scale
+
+Powering the Monad ecosystem with Swap API
+Powering the Monad ecosystem with Swap API
+
+Fundamentals: Bridges
+Fundamentals: Bridges
+
+0x 101: Introduction to Plasma
+0x 101: Introduction to Plasma
+
+Why RFQ is critical for bringing equities onchain
+Why RFQ is critical for bringing equities onchain
+
+Delivering superior trade execution with 0x RFQ
+Delivering superior trade execution with 0x RFQ
+
+Monad Mobil3 Hackathon Bounty Showcase
+Monad Mobil3 Hackathon Bounty Showcase
+
+Efficient trading infrastructure for tokenized equities
+Efficient trading infrastructure for tokenized equities
+
+0x 101: Order books on Monad
+0x 101: Order books on Monad
+
+0x 101: Introduction to Monad
+0x 101: Introduction to Monad
+
+0x acquires Flood.bid to optimize trade execution on Solana and Ethereum
+0x acquires Flood.bid to optimize trade execution on Solana and Ethereum
+
+0x Bounty Showcase from Monad Hackathon
+0x Bounty Showcase from Monad Hackathon
+
+Power your AI agents with Swap API
+Power your AI agents with Swap API
+
+Fundamentals: AI agents
+Fundamentals: AI agents
+
+Fundamentals: Intents
+Fundamentals: Intents
+
+Fundamentals: SocialFi
+Fundamentals: SocialFi
+
+Unlock powerful onchain insights with 0x Trade Analytics API
+Unlock powerful onchain insights with 0x Trade Analytics API
+
+Fundamentals: Smart Contract Wallets
+Fundamentals: Smart Contract Wallets
+
+Compliance made easy with 0x Address Screening
+Compliance made easy with 0x Address Screening
+
+0x's next-gen pricing engine is now live
+0x's next-gen pricing engine is now live
+
+Introducing state-of-the-art Buy/Sell Tax support
+Introducing state-of-the-art Buy/Sell Tax support
+
+Take control of your balance sheet with 0x v2
+Take control of your balance sheet with 0x v2
+
+0x v2 bug bounty program
+0x v2 bug bounty program
+
+What does the "best price" in DeFi really mean?
+What does the "best price" in DeFi really mean?
+
+Eliminate allowance risk with Permit2
+Eliminate allowance risk with Permit2
+
+Introducing 0x's next-gen pricing engine
+Introducing 0x's next-gen pricing engine
+
+0x Dev Digest: May 2024
+0x Dev Digest: May 2024
+
+Frame spotlight: Paycaster
+Frame spotlight: Paycaster
+
+Frame spotlight: Airstack
+Frame spotlight: Airstack
+
+Power up your Farcaster Frames with 0x swaps
+Power up your Farcaster Frames with 0x swaps
+
+0x Dev Digest: April 2024
+0x Dev Digest: April 2024
+
+Introducing 0x Trade Analytics
+Introducing 0x Trade Analytics
+
+Coinbase Case Study
+Coinbase Case Study
+
+Introducing gasless swaps and approvals with Gasless API
+Introducing gasless swaps and approvals with Gasless API
+
+Bitcoin ETFs have arrived
+Bitcoin ETFs have arrived
+
+Building in the open: 0x pricing update
+Building in the open: 0x pricing update
+
+Matcha leverages Gasless API to bring users the most frictionless trading experience in DeFi
+Matcha leverages Gasless API to bring users the most frictionless trading experience in DeFi
+
+0x Dev Digest: October 2023
+0x Dev Digest: October 2023
+
+Monetize crypto trading in your app with Swap API
+Monetize crypto trading in your app with Swap API
+
+0x Dev Digest: September 2023
+0x Dev Digest: September 2023
+
+A comprehensive analysis of RFQ performance
+A comprehensive analysis of RFQ performance
+
+Unlock optimal trades in Swap API with 0x RFQ liquidity
+Unlock optimal trades in Swap API with 0x RFQ liquidity
+
+0x Dev Digest: August 2023
+0x Dev Digest: August 2023
+
+Portal launches swaps in its white label MPC wallet powered by 0x
+Portal launches swaps in its white label MPC wallet powered by 0x
+
+0x Swap API is now live on Base
+0x Swap API is now live on Base
+
+Introducing paid plans for Swap API
+Introducing paid plans for Swap API
+
+Decreasing Frictions in DeFi hackathon recap
+Decreasing Frictions in DeFi hackathon recap
+
+0x's pricing principles
+0x's pricing principles
+
+0x Dev Digest: June 2023
+0x Dev Digest: June 2023
+
+App spotlight: tastycrypto
+App spotlight: tastycrypto
+
+App spotlight: 31Third
+App spotlight: 31Third
+
+0x 101: Intro to gasless API
+0x 101: Intro to gasless API
+
+Inspiration for building with Swap API
+Inspiration for building with Swap API
+
+0x Dev Digest: May 2023
+0x Dev Digest: May 2023
+
+Fundamentals: What are gas fees?
+Fundamentals: What are gas fees?
+
+Decreasing Frictions in DeFi Hackathon
+Decreasing Frictions in DeFi Hackathon
+
+Swap API liquidity management
+Swap API liquidity management
+
+0x 101: Getting started with Swap API
+0x 101: Getting started with Swap API
+
+0x 101: Intro to Swap API
+0x 101: Intro to Swap API
+
+0x 101: Intro to 0x Orders
+0x 101: Intro to 0x Orders
+
+0x 101: Intro to 0x Protocol
+0x 101: Intro to 0x Protocol
+
+A new home for 0x Protocol
+A new home for 0x Protocol
+
+Say hi to the new 0x
+Say hi to the new 0x
+
+0x Year in Review 2022
+0x Year in Review 2022
+
+0x Swap API expands to Arbitrum
+0x Swap API expands to Arbitrum
+
+Managed liquidity
+Managed liquidity
+
+0x Smart Order Routing
+0x Smart Order Routing
+
+App spotlight: Taho
+App spotlight: Taho
+
+Fundamentals: What is a Layer 2 chain?
+Fundamentals: What is a Layer 2 chain?
+
+Fundamentals: What is the difference between quoted, executed, and adjusted prices?
+Fundamentals: What is the difference between quoted, executed, and adjusted prices?
+
+Fundamentals: What is price impact?
+Fundamentals: What is price impact?
+
+Fundamentals: What is slippage?
+Fundamentals: What is slippage?
+
+Fundamentals: What is an automated market maker (AMM)?
+Fundamentals: What is an automated market maker (AMM)?
+
+Fundamentals: What is market making?
+Fundamentals: What is market making?
+
+Fundamentals: What is a DEX aggregator?
+Fundamentals: What is a DEX aggregator?
+
+Fundamentals: What is liquidity?
+Fundamentals: What is liquidity?
+
+Fundamentals: What is a decentralized exchange (DEX)?
+Fundamentals: What is a decentralized exchange (DEX)?
+
+0x at ETHDenver 2023
+0x at ETHDenver 2023
+
+The 0x Mission and Values
+The 0x Mission and Values
+
+Announcing support for new testnets
+Announcing support for new testnets
+
+0x Swap API expands to Binance Smart Chain
+0x Swap API expands to Binance Smart Chain
+
+Scaling DeFi — Layer One
+Scaling DeFi — Layer One
+
+Introducing Slippage Protection
+Introducing Slippage Protection
+
+San Francisco Blockchain Week 2022 Recap
+San Francisco Blockchain Week 2022 Recap
+
+0x Swap API adds new liquidity sources
+0x Swap API adds new liquidity sources
+
+Review of slippage performance
+Review of slippage performance
+
+Phuture case study
+Phuture case study
+
+Measuring the impact of hidden DEX costs
+Measuring the impact of hidden DEX costs
+
+Market making in DeFi
+Market making in DeFi
+
+Introducing 0x Labs
+Introducing 0x Labs
+
+Introducing 0x Explorer
+Introducing 0x Explorer
+
+Growing DeFi with professional market makers
+Growing DeFi with professional market makers
+
+0x 101: How to Access 0x Data
+0x 101: How to Access 0x Data
+
+GameStop chooses 0x Swap API
+GameStop chooses 0x Swap API
+
+Build on Base with 0x
+Build on Base with 0x
+
+A comprehensive analysis on DEX liquidity aggregators’ performance
+A comprehensive analysis on DEX liquidity aggregators’ performance
+
+Announcing 0x Swap API v1
+Announcing 0x Swap API v1
+
+Access all DEX liquidity through 0x Swap API
+Access all DEX liquidity through 0x Swap API
+
+Announcing the 0xpo Summit 2022
+Announcing the 0xpo Summit 2022
+
+Abstract partners with 0x to power DEX trading
+Abstract partners with 0x to power DEX trading
+
+2025 Revisited: Ship and Scale
+2025 Revisited: Ship and Scale
+
+Powering the Monad ecosystem with Swap API
+Powering the Monad ecosystem with Swap API
+
+Fundamentals: Bridges
+Fundamentals: Bridges
+
+0x 101: Introduction to Plasma
+0x 101: Introduction to Plasma
+
+Why RFQ is critical for bringing equities onchain
+Why RFQ is critical for bringing equities onchain
+
+Delivering superior trade execution with 0x RFQ
+Delivering superior trade execution with 0x RFQ
+
+Monad Mobil3 Hackathon Bounty Showcase
+Monad Mobil3 Hackathon Bounty Showcase
+
+Efficient trading infrastructure for tokenized equities
+Efficient trading infrastructure for tokenized equities
+
+0x 101: Order books on Monad
+0x 101: Order books on Monad
+
+0x 101: Introduction to Monad
+0x 101: Introduction to Monad
+
+0x acquires Flood.bid to optimize trade execution on Solana and Ethereum
+0x acquires Flood.bid to optimize trade execution on Solana and Ethereum
+
+0x Bounty Showcase from Monad Hackathon
+0x Bounty Showcase from Monad Hackathon
+
+Power your AI agents with Swap API
+Power your AI agents with Swap API
+
+Fundamentals: AI agents
+Fundamentals: AI agents
+
+Fundamentals: Intents
+Fundamentals: Intents
+
+Fundamentals: SocialFi
+Fundamentals: SocialFi
+
+Unlock powerful onchain insights with 0x Trade Analytics API
+Unlock powerful onchain insights with 0x Trade Analytics API
+
+Fundamentals: Smart Contract Wallets
+Fundamentals: Smart Contract Wallets
+
+Compliance made easy with 0x Address Screening
+Compliance made easy with 0x Address Screening
+
+0x's next-gen pricing engine is now live
+0x's next-gen pricing engine is now live
+
+Introducing state-of-the-art Buy/Sell Tax support
+Introducing state-of-the-art Buy/Sell Tax support
+
+Take control of your balance sheet with 0x v2
+Take control of your balance sheet with 0x v2
+
+0x v2 bug bounty program
+0x v2 bug bounty program
+
+What does the "best price" in DeFi really mean?
+What does the "best price" in DeFi really mean?
+
+Eliminate allowance risk with Permit2
+Eliminate allowance risk with Permit2
+
+Introducing 0x's next-gen pricing engine
+Introducing 0x's next-gen pricing engine
+
+0x Dev Digest: May 2024
+0x Dev Digest: May 2024
+
+Frame spotlight: Paycaster
+Frame spotlight: Paycaster
+
+Frame spotlight: Airstack
+Frame spotlight: Airstack
+
+Power up your Farcaster Frames with 0x swaps
+Power up your Farcaster Frames with 0x swaps
+
+0x Dev Digest: April 2024
+0x Dev Digest: April 2024
+
+Introducing 0x Trade Analytics
+Introducing 0x Trade Analytics
+
+Coinbase Case Study
+Coinbase Case Study
+
+Introducing gasless swaps and approvals with Gasless API
+Introducing gasless swaps and approvals with Gasless API
+
+Bitcoin ETFs have arrived
+Bitcoin ETFs have arrived
+
+Building in the open: 0x pricing update
+Building in the open: 0x pricing update
+
+Matcha leverages Gasless API to bring users the most frictionless trading experience in DeFi
+Matcha leverages Gasless API to bring users the most frictionless trading experience in DeFi
+
+0x Dev Digest: October 2023
+0x Dev Digest: October 2023
+
+Monetize crypto trading in your app with Swap API
+Monetize crypto trading in your app with Swap API
+
+0x Dev Digest: September 2023
+0x Dev Digest: September 2023
+
+A comprehensive analysis of RFQ performance
+A comprehensive analysis of RFQ performance
+
+Unlock optimal trades in Swap API with 0x RFQ liquidity
+Unlock optimal trades in Swap API with 0x RFQ liquidity
+
+0x Dev Digest: August 2023
+0x Dev Digest: August 2023
+
+Portal launches swaps in its white label MPC wallet powered by 0x
+Portal launches swaps in its white label MPC wallet powered by 0x
+
+0x Swap API is now live on Base
+0x Swap API is now live on Base
+
+Introducing paid plans for Swap API
+Introducing paid plans for Swap API
+
+Decreasing Frictions in DeFi hackathon recap
+Decreasing Frictions in DeFi hackathon recap
+
+0x's pricing principles
+0x's pricing principles
+
+0x Dev Digest: June 2023
+0x Dev Digest: June 2023
+
+App spotlight: tastycrypto
+App spotlight: tastycrypto
+
+App spotlight: 31Third
+App spotlight: 31Third
+
+0x 101: Intro to gasless API
+0x 101: Intro to gasless API
+
+Inspiration for building with Swap API
+Inspiration for building with Swap API
+
+0x Dev Digest: May 2023
+0x Dev Digest: May 2023
+
+Fundamentals: What are gas fees?
+Fundamentals: What are gas fees?
+
+Decreasing Frictions in DeFi Hackathon
+Decreasing Frictions in DeFi Hackathon
+
+Swap API liquidity management
+Swap API liquidity management
+
+0x 101: Getting started with Swap API
+0x 101: Getting started with Swap API
+
+0x 101: Intro to Swap API
+0x 101: Intro to Swap API
+
+0x 101: Intro to 0x Orders
+0x 101: Intro to 0x Orders
+
+0x 101: Intro to 0x Protocol
+0x 101: Intro to 0x Protocol
+
+A new home for 0x Protocol
+A new home for 0x Protocol
+
+Say hi to the new 0x
+Say hi to the new 0x
+
+0x Year in Review 2022
+0x Year in Review 2022
+
+0x Swap API expands to Arbitrum
+0x Swap API expands to Arbitrum
+
+Managed liquidity
+Managed liquidity
+
+0x Smart Order Routing
+0x Smart Order Routing
+
+App spotlight: Taho
+App spotlight: Taho
+
+Fundamentals: What is a Layer 2 chain?
+Fundamentals: What is a Layer 2 chain?
+
+Fundamentals: What is the difference between quoted, executed, and adjusted prices?
+Fundamentals: What is the difference between quoted, executed, and adjusted prices?
+
+Fundamentals: What is price impact?
+Fundamentals: What is price impact?
+
+Fundamentals: What is slippage?
+Fundamentals: What is slippage?
+
+Fundamentals: What is an automated market maker (AMM)?
+Fundamentals: What is an automated market maker (AMM)?
+
+Fundamentals: What is market making?
+Fundamentals: What is market making?
+
+Fundamentals: What is a DEX aggregator?
+Fundamentals: What is a DEX aggregator?
+
+Fundamentals: What is liquidity?
+Fundamentals: What is liquidity?
+
+Fundamentals: What is a decentralized exchange (DEX)?
+Fundamentals: What is a decentralized exchange (DEX)?
+
+0x at ETHDenver 2023
+0x at ETHDenver 2023
+
+The 0x Mission and Values
+The 0x Mission and Values
+
+Announcing support for new testnets
+Announcing support for new testnets
+
+0x Swap API expands to Binance Smart Chain
+0x Swap API expands to Binance Smart Chain
+
+Scaling DeFi — Layer One
+Scaling DeFi — Layer One
+
+Introducing Slippage Protection
+Introducing Slippage Protection
+
+San Francisco Blockchain Week 2022 Recap
+San Francisco Blockchain Week 2022 Recap
+
+0x Swap API adds new liquidity sources
+0x Swap API adds new liquidity sources
+
+Review of slippage performance
+Review of slippage performance
+
+Phuture case study
+Phuture case study
+
+Measuring the impact of hidden DEX costs
+Measuring the impact of hidden DEX costs
+
+Market making in DeFi
+Market making in DeFi
+
+Introducing 0x Labs
+Introducing 0x Labs
+
+Introducing 0x Explorer
+Introducing 0x Explorer
+
+Growing DeFi with professional market makers
+Growing DeFi with professional market makers
+
+0x 101: How to Access 0x Data
+0x 101: How to Access 0x Data
+
+GameStop chooses 0x Swap API
+GameStop chooses 0x Swap API
+
+Build on Base with 0x
+Build on Base with 0x
+
+A comprehensive analysis on DEX liquidity aggregators’ performance
+A comprehensive analysis on DEX liquidity aggregators’ performance
+
+Announcing 0x Swap API v1
+Announcing 0x Swap API v1
+
+Access all DEX liquidity through 0x Swap API
+Access all DEX liquidity through 0x Swap API
+
+Announcing the 0xpo Summit 2022
+Announcing the 0xpo Summit 2022
+
+0x Logo in SVG
+Enter your email
+Subscribe to our newsletter for the latest alpha
+Product
+Swap API
+Gasless API
+Trade Analytcs API
+Developers
+Documentation ↗
+Help ↗
+Stack Exchange ↗
+Contact Us
+Give feedback
+Company
+Terms of Service
+Privacy Notice
+Cookie Notice
+API License Agreement
+Careers
+Press
+Media Kit
+0x Protocol
+Community
+Twitter / X
+Warpcast
+Github
+Reddit
+© ZeroEx Holdings, Inc. All rights reserved.

@@ -1,0 +1,36 @@
+🚀 Creating coin on chain: Base Sepolia
+content-preview.tsx:98 📤 Uploading metadata to IPFS...
+pinata.ts:4 PINATA_JWT available: true
+pinata.ts:5 Environment variables: Object
+content-preview.tsx:100 ✅ Metadata uploaded: ipfs://QmbPg4NTRxsQsBsgFKxYdsYVnFUDWiu4ccz15AC5fc2RHL
+content-preview.tsx:103 💾 Creating database record...
+content-preview.tsx:107 📍 Using creator wallet address: 0xb1B3Bd7aa50cA7c49221846437D3C0089435F6b4
+content-preview.tsx:125 ✅ Database record created: 980d7ea8-b673-4dfc-af3f-0b793af53526
+content-preview.tsx:128 💸 Using GASLESS deployment for ALL users!
+content-preview.tsx:129 📍 Smart wallet address: 0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf
+content-preview.tsx:130 ✅ Gas fees will be sponsored by Base Paymaster (FREE)
+gasless-deployment.ts:93 🪙 [Gasless] Deploying coin with params: Object
+gasless-deployment.ts:108 📡 [Gasless] Using network: Base Sepolia (Chain ID: 84532)
+gasless-deployment.ts:109 📍 [Gasless] Smart account address: 0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf
+gasless-deployment.ts:110 💰 [Gasless] Payout recipient: 0xb455EF3a55Cbdc201D4B6a420AdF14184B1D1Eaf
+gasless-deployment.ts:119 📤 [Gasless] Deploying coin using Zora SDK...
+gasless-deployment.ts:120 ⚠️  [Gasless] Gas will be sponsored by Base Paymaster
+app-layout.tsx:344 [AppLayout] Unread message count: 0
+@zoralabs_coins-sdk.js?v=41c0e4f5:2857  POST https://api-sdk.zora.engineering/create/content 500 (Internal Server Error)
+o @ @zoralabs_coins-sdk.js?v=41c0e4f5:2857
+await in o
+post @ @zoralabs_coins-sdk.js?v=41c0e4f5:2877
+postCreateContent @ @zoralabs_coins-sdk.js?v=41c0e4f5:3138
+postCreateContent2 @ @zoralabs_coins-sdk.js?v=41c0e4f5:3242
+createCoinCall @ @zoralabs_coins-sdk.js?v=41c0e4f5:3307Understand this error
+gasless-deployment.ts:167 ❌ [Gasless] Coin deployment failed: Error: Failed to create content calldata
+    at createCoinCall (@zoralabs_coins-sdk.js?v=41c0e4f5:3319:11)
+    at async createCoin (@zoralabs_coins-sdk.js?v=41c0e4f5:3343:23)
+    at async deployGaslessCoin (gasless-deployment.ts:122:20)
+    at async Object.mutationFn (content-preview.tsx:132:28)
+deployGaslessCoin @ gasless-deployment.ts:167Understand this error
+content-preview.tsx:187 ❌ Coin creation failed: Error: Failed to create content calldata
+    at createCoinCall (@zoralabs_coins-sdk.js?v=41c0e4f5:3319:11)
+    at async createCoin (@zoralabs_coins-sdk.js?v=41c0e4f5:3343:23)
+    at async deployGaslessCoin (gasless-deployment.ts:122:20)
+    at async Object.mutationFn (content-preview.tsx:132:28)

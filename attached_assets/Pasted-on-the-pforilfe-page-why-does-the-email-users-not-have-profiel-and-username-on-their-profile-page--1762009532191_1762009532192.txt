@@ -1,0 +1,110 @@
+on the pforilfe page, why does the email users not have profiel and username on their profile page ?
+E1
+General
+Explore
+20
+Creators
+6
+Search
+Inbox
+0
+Streaks
+Create
+Profile
+Profile
+E1XP Points
+Referrals
+Resources
+FAQ
+Docs
+Toggle theme
+Toggle Sidebar
+Search creators, coins...
+
+MC: $2.5M
+
+Coins: 1,2k
+Toggle theme
+
+Create
+
+aarnos
+
+aarnos
+
+@
+0
+Posts
+0
+Followers
+0
+Following
+0
+MC
+$0.00
+Earn
+Edit Profile
+
+No coins created yet
+Start creating your first coin!
+
+AP
+
+aarnos
+Assistant
+BASIC
+8 minutes ago
+Read 13 files
+Looking at the profile page code in client/src/pages/profile.tsx, I can see the issue. The profile page is trying to fetch creator data using the wallet address, but email-only users don't have a wallet address. Let me trace through the flow:
+
+The profile page uses privyUser?.wallet?.address to get the address
+For email users, this will be undefined
+The query ['/api/creators/address', address] is disabled when there's no address
+The getDisplayName() function has a fallback for email users, but the UI doesn't show it properly
+The main issues are:
+
+Creator lookup fails for email users - The page tries to fetch creator by address, but email users may not have an address
+Username display logic - The code checks for creatorData?.name but email users might not have creator data loaded
+Let me fix this by updating the profile page to handle email users properly:
+
+client/src/pages/profile.tsx
++24
+-12
+Now the profile page should properly display information for email users. The key changes:
+
+Fetch creator by Privy ID - This works for both email and wallet users
+Better display name logic - Falls back to email prefix for email users
+Username display - Shows email prefix if no wallet address
+Use creator address from DB - Email users will have an address once they create their first coin or it gets set during signup
+The email users should now see their username (from the auto-generated username in the creator profile) and be able to edit it via the "Edit Profile" button.
+
+Checkpoint made
+Fix email user profile display
+24 minutes ago
+•
+
+d47775ef
+
+Go to this checkpoint
+the email users cant save/edit the profiles, cant add anew usernae, etc
+
+AP
+
+aarnos
+Assistant
+BASIC
+4 minutes ago
+Read 11 files
+Looking at the code, I can see the issue. The profile edit functionality in client/src/pages/profile.tsx is trying to update the creator using the creator's id, but for email users, the getCreatorByPrivyId query might be failing or returning null, preventing them from saving their profile.
+
+Let me trace through the issue:
+
+Email users log in and get a privyId but no wallet address
+The profile page fetches creator by privyId
+When saving, it tries to update using creator.id, but the creator might not exist or the endpoint might be failing
+Let me fix the profile save functionality to properly handle email users:
+
+client/src/pages/profile.tsx
++23
+-3
+Now let's also make sure the username field is properly populated for email users:

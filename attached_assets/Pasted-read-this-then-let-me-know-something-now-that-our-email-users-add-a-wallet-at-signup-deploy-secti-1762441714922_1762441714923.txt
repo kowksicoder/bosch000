@@ -1,0 +1,45 @@
+read this: then let me know something - now that our email users add a wallet at signup/deploy section - what/how exaclty will those wallet work for them? also, for wallet signups, how do they get thier earnings?
+
+TX
+
+antonioxang
+Assistant
+38 minutes ago
+Read 10 files
+Based on the Zora article and your current codebase, let me explain how wallets work for different user types:
+
+How Wallets Work Now
+For Email Users (who add wallet at signup/deploy):
+Initial State: Email users sign up with just an email via Privy
+At Coin Creation/Deploy: They're prompted to add a walletAddress (payout address)
+How Their Wallet Works:
+Identity: Still tracked by Privy ID and email
+Wallet Address: The wallet they add is stored in creator.walletAddress field
+Earnings: All earnings from trades/fees go to their walletAddress
+Trading: They can still trade using Privy's embedded wallet (created automatically)
+Payouts: Creator fees (1% per trade) are sent to their specified walletAddress
+For Wallet Signups:
+Initial State: They connect with a wallet (MetaMask, etc.)
+Identity: Tracked by wallet address + Privy ID
+How They Get Earnings:
+Automatic: All earnings go directly to their connected wallet address
+Same Address: creator.address and creator.walletAddress are typically the same
+No Extra Step: They don't need to add a separate payout address
+Key Difference
+Looking at your code in client/src/components/content-preview.tsx (rag://rag_source_10):
+
+// For EMAIL users - they must ADD a wallet for payouts
+if (!creator.walletAddress) {
+  // Shows wallet input to collect payout address
+  walletAddress: walletAddressInput.trim()
+}
+// For WALLET users - already have it
+// creator.address === creator.walletAddress (usually)
+The Earnings Flow
+Based on server/routes.ts (rag://rag_source_0):
+
+Trade happens → Fees collected
+Earnings recorded → Sent to creator.walletAddress or creator.address
+Notification sent → User sees earnings in app
+Actual payout → Goes to their specified wallet address on Base chain
+The key insight: Email users still need a real wallet address for payouts. Privy's embedded wallet is for convenience/trading, but earnings need a real withdrawal destination. Wallet users already have this built-in.

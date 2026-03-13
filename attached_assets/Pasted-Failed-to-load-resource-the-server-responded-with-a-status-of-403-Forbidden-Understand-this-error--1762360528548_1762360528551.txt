@@ -1,0 +1,51 @@
+Failed to load resource: the server responded with a status of 403 (Forbidden)Understand this error
+  POST https://8dbd2be1-04d3-4808-aa35-792d1fe27e06-00-1qsmbkmsm3zy2.janeway.replit.dev/api/admin/send-message 403 (Forbidden)
+mutationFn @ src/components/admin…saging-panel.tsx:38
+fn @ @fs/home/runner/work….js?v=793e0417:1189
+run @ @fs/home/runner/work…T.js?v=793e0417:494
+start @ @fs/home/runner/work…T.js?v=793e0417:536
+execute @ @fs/home/runner/work….js?v=793e0417:1225
+await in execute
+mutate @ @fs/home/runner/work….js?v=793e0417:2630
+(anonymous) @ @fs/home/runner/work….js?v=793e0417:3295
+onClick @ src/components/admin…aging-panel.tsx:189
+callCallback2 @ @fs/home/runner/work….js?v=793e0417:3674
+invokeGuardedCallbackDev @ @fs/home/runner/work….js?v=793e0417:3699
+invokeGuardedCallback @ @fs/home/runner/work….js?v=793e0417:3733
+invokeGuardedCallbackAndCatchFirstError @ @fs/home/runner/work….js?v=793e0417:3736
+executeDispatch @ @fs/home/runner/work….js?v=793e0417:7014
+processDispatchQueueItemsInOrder @ @fs/home/runner/work….js?v=793e0417:7034
+processDispatchQueue @ @fs/home/runner/work….js?v=793e0417:7043
+dispatchEventsForPlugins @ @fs/home/runner/work….js?v=793e0417:7051
+(anonymous) @ @fs/home/runner/work….js?v=793e0417:7174
+batchedUpdates$1 @ @fs/home/runner/work…js?v=793e0417:18913
+batchedUpdates @ @fs/home/runner/work….js?v=793e0417:3579
+dispatchEventForPluginEventSystem @ @fs/home/runner/work….js?v=793e0417:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ @fs/home/runner/work….js?v=793e0417:5478
+dispatchEvent @ @fs/home/runner/work….js?v=793e0417:5472
+dispatchDiscreteEvent @ @fs/home/runner/work….js?v=793e0417:5449Understand this error
+  POST https://8dbd2be1-04d3-4808-aa35-792d1fe27e06-00-1qsmbkmsm3zy2.janeway.replit.dev/api/admin/send-message 403 (Forbidden)
+mutationFn @ src/components/admin…saging-panel.tsx:38
+fn @ @fs/home/runner/work….js?v=793e0417:1189
+run @ @fs/home/runner/work…T.js?v=793e0417:494
+start @ @fs/home/runner/work…T.js?v=793e0417:536
+execute @ @fs/home/runner/work….js?v=793e0417:1225
+await in execute
+mutate @ @fs/home/runner/work….js?v=793e0417:2630
+(anonymous) @ @fs/home/runner/work….js?v=793e0417:3295
+onClick @ src/components/admin…aging-panel.tsx:189
+callCallback2 @ @fs/home/runner/work….js?v=793e0417:3674
+invokeGuardedCallbackDev @ @fs/home/runner/work….js?v=793e0417:3699
+invokeGuardedCallback @ @fs/home/runner/work….js?v=793e0417:3733
+invokeGuardedCallbackAndCatchFirstError @ @fs/home/runner/work….js?v=793e0417:3736
+executeDispatch @ @fs/home/runner/work….js?v=793e0417:7014
+processDispatchQueueItemsInOrder @ @fs/home/runner/work….js?v=793e0417:7034
+processDispatchQueue @ @fs/home/runner/work….js?v=793e0417:7043
+dispatchEventsForPlugins @ @fs/home/runner/work….js?v=793e0417:7051
+(anonymous) @ @fs/home/runner/work….js?v=793e0417:7174
+batchedUpdates$1 @ @fs/home/runner/work…js?v=793e0417:18913
+batchedUpdates @ @fs/home/runner/work….js?v=793e0417:3579
+dispatchEventForPluginEventSystem @ @fs/home/runner/work….js?v=793e0417:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ @fs/home/runner/work….js?v=793e0417:5478
+dispatchEvent @ @fs/home/runner/work….js?v=793e0417:5472
+dispatchDiscreteEvent @ @fs/home/runner/work….js?v=793e0417:5449Understand this error

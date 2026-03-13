@@ -1,0 +1,1134 @@
+api/login-streak/check-in:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)Understand this error
+ Warning: Encountered two children with the same key, `T`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521Understand this error
+ Warning: Encountered two children with the same key, `S`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521Understand this error
+ Warning: Encountered two children with the same key, `T`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521Understand this error
+ Warning: Encountered two children with the same key, `S`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521Understand this error
+ Warning: Encountered two children with the same key, `T`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performSyncWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18874
+flushSyncCallbacks @ @fs/home/runner/work….js?v=58143990:9119
+(anonymous) @ @fs/home/runner/work…js?v=58143990:18627
+setTimeout
+scheduleFn @ @fs/home/runner/work…T.js?v=58143990:555
+flush @ @fs/home/runner/work…T.js?v=58143990:569
+batch @ @fs/home/runner/work…T.js?v=58143990:587
+dispatch_fn2 @ @fs/home/runner/work….js?v=58143990:1338
+execute @ @fs/home/runner/work….js?v=58143990:1209
+mutate @ @fs/home/runner/work….js?v=58143990:2630
+(anonymous) @ @fs/home/runner/work….js?v=58143990:3295
+onClick @ src/pages/streaks.tsx:335
+callCallback2 @ @fs/home/runner/work….js?v=58143990:3674
+invokeGuardedCallbackDev @ @fs/home/runner/work….js?v=58143990:3699
+invokeGuardedCallback @ @fs/home/runner/work….js?v=58143990:3733
+invokeGuardedCallbackAndCatchFirstError @ @fs/home/runner/work….js?v=58143990:3736
+executeDispatch @ @fs/home/runner/work….js?v=58143990:7014
+processDispatchQueueItemsInOrder @ @fs/home/runner/work….js?v=58143990:7034
+processDispatchQueue @ @fs/home/runner/work….js?v=58143990:7043
+dispatchEventsForPlugins @ @fs/home/runner/work….js?v=58143990:7051
+(anonymous) @ @fs/home/runner/work….js?v=58143990:7174
+batchedUpdates$1 @ @fs/home/runner/work…js?v=58143990:18913
+batchedUpdates @ @fs/home/runner/work….js?v=58143990:3579
+dispatchEventForPluginEventSystem @ @fs/home/runner/work….js?v=58143990:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ @fs/home/runner/work….js?v=58143990:5478
+dispatchEvent @ @fs/home/runner/work….js?v=58143990:5472
+dispatchDiscreteEvent @ @fs/home/runner/work….js?v=58143990:5449Understand this error
+ Warning: Encountered two children with the same key, `S`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performSyncWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18874
+flushSyncCallbacks @ @fs/home/runner/work….js?v=58143990:9119
+(anonymous) @ @fs/home/runner/work…js?v=58143990:18627
+setTimeout
+scheduleFn @ @fs/home/runner/work…T.js?v=58143990:555
+flush @ @fs/home/runner/work…T.js?v=58143990:569
+batch @ @fs/home/runner/work…T.js?v=58143990:587
+dispatch_fn2 @ @fs/home/runner/work….js?v=58143990:1338
+execute @ @fs/home/runner/work….js?v=58143990:1209
+mutate @ @fs/home/runner/work….js?v=58143990:2630
+(anonymous) @ @fs/home/runner/work….js?v=58143990:3295
+onClick @ src/pages/streaks.tsx:335
+callCallback2 @ @fs/home/runner/work….js?v=58143990:3674
+invokeGuardedCallbackDev @ @fs/home/runner/work….js?v=58143990:3699
+invokeGuardedCallback @ @fs/home/runner/work….js?v=58143990:3733
+invokeGuardedCallbackAndCatchFirstError @ @fs/home/runner/work….js?v=58143990:3736
+executeDispatch @ @fs/home/runner/work….js?v=58143990:7014
+processDispatchQueueItemsInOrder @ @fs/home/runner/work….js?v=58143990:7034
+processDispatchQueue @ @fs/home/runner/work….js?v=58143990:7043
+dispatchEventsForPlugins @ @fs/home/runner/work….js?v=58143990:7051
+(anonymous) @ @fs/home/runner/work….js?v=58143990:7174
+batchedUpdates$1 @ @fs/home/runner/work…js?v=58143990:18913
+batchedUpdates @ @fs/home/runner/work….js?v=58143990:3579
+dispatchEventForPluginEventSystem @ @fs/home/runner/work….js?v=58143990:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ @fs/home/runner/work….js?v=58143990:5478
+dispatchEvent @ @fs/home/runner/work….js?v=58143990:5472
+dispatchDiscreteEvent @ @fs/home/runner/work….js?v=58143990:5449Understand this error
+  POST https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/api/login-streak/check-in 500 (Internal Server Error)
+mutationFn @ src/pages/streaks.tsx:43
+fn @ @fs/home/runner/work….js?v=58143990:1189
+run @ @fs/home/runner/work…T.js?v=58143990:494
+start @ @fs/home/runner/work…T.js?v=58143990:536
+execute @ @fs/home/runner/work….js?v=58143990:1225
+await in execute
+mutate @ @fs/home/runner/work….js?v=58143990:2630
+(anonymous) @ @fs/home/runner/work….js?v=58143990:3295
+onClick @ src/pages/streaks.tsx:335
+callCallback2 @ @fs/home/runner/work….js?v=58143990:3674
+invokeGuardedCallbackDev @ @fs/home/runner/work….js?v=58143990:3699
+invokeGuardedCallback @ @fs/home/runner/work….js?v=58143990:3733
+invokeGuardedCallbackAndCatchFirstError @ @fs/home/runner/work….js?v=58143990:3736
+executeDispatch @ @fs/home/runner/work….js?v=58143990:7014
+processDispatchQueueItemsInOrder @ @fs/home/runner/work….js?v=58143990:7034
+processDispatchQueue @ @fs/home/runner/work….js?v=58143990:7043
+dispatchEventsForPlugins @ @fs/home/runner/work….js?v=58143990:7051
+(anonymous) @ @fs/home/runner/work….js?v=58143990:7174
+batchedUpdates$1 @ @fs/home/runner/work…js?v=58143990:18913
+batchedUpdates @ @fs/home/runner/work….js?v=58143990:3579
+dispatchEventForPluginEventSystem @ @fs/home/runner/work….js?v=58143990:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ @fs/home/runner/work….js?v=58143990:5478
+dispatchEvent @ @fs/home/runner/work….js?v=58143990:5472
+dispatchDiscreteEvent @ @fs/home/runner/work….js?v=58143990:5449Understand this error
+ Warning: Encountered two children with the same key, `T`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performConcurrentWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18678
+workLoop @ @fs/home/runner/work…O.js?v=58143990:197
+flushWork @ @fs/home/runner/work…O.js?v=58143990:176
+performWorkUntilDeadline @ @fs/home/runner/work…O.js?v=58143990:384Understand this error
+ Warning: Encountered two children with the same key, `S`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performConcurrentWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18678
+workLoop @ @fs/home/runner/work…O.js?v=58143990:197
+flushWork @ @fs/home/runner/work…O.js?v=58143990:176
+performWorkUntilDeadline @ @fs/home/runner/work…O.js?v=58143990:384Understand this error
+ Warning: Encountered two children with the same key, `T`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performSyncWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18874
+flushSyncCallbacks @ @fs/home/runner/work….js?v=58143990:9119
+(anonymous) @ @fs/home/runner/work…js?v=58143990:18627
+setTimeout
+scheduleFn @ @fs/home/runner/work…T.js?v=58143990:555
+flush @ @fs/home/runner/work…T.js?v=58143990:569
+batch @ @fs/home/runner/work…T.js?v=58143990:587
+dispatch_fn2 @ @fs/home/runner/work….js?v=58143990:1338
+execute @ @fs/home/runner/work….js?v=58143990:1209
+mutate @ @fs/home/runner/work….js?v=58143990:2630
+(anonymous) @ @fs/home/runner/work….js?v=58143990:3295
+onClick @ src/pages/streaks.tsx:335
+callCallback2 @ @fs/home/runner/work….js?v=58143990:3674
+invokeGuardedCallbackDev @ @fs/home/runner/work….js?v=58143990:3699
+invokeGuardedCallback @ @fs/home/runner/work….js?v=58143990:3733
+invokeGuardedCallbackAndCatchFirstError @ @fs/home/runner/work….js?v=58143990:3736
+executeDispatch @ @fs/home/runner/work….js?v=58143990:7014
+processDispatchQueueItemsInOrder @ @fs/home/runner/work….js?v=58143990:7034
+processDispatchQueue @ @fs/home/runner/work….js?v=58143990:7043
+dispatchEventsForPlugins @ @fs/home/runner/work….js?v=58143990:7051
+(anonymous) @ @fs/home/runner/work….js?v=58143990:7174
+batchedUpdates$1 @ @fs/home/runner/work…js?v=58143990:18913
+batchedUpdates @ @fs/home/runner/work….js?v=58143990:3579
+dispatchEventForPluginEventSystem @ @fs/home/runner/work….js?v=58143990:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ @fs/home/runner/work….js?v=58143990:5478
+dispatchEvent @ @fs/home/runner/work….js?v=58143990:5472
+dispatchDiscreteEvent @ @fs/home/runner/work….js?v=58143990:5449Understand this error
+ Warning: Encountered two children with the same key, `S`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performSyncWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18874
+flushSyncCallbacks @ @fs/home/runner/work….js?v=58143990:9119
+(anonymous) @ @fs/home/runner/work…js?v=58143990:18627
+setTimeout
+scheduleFn @ @fs/home/runner/work…T.js?v=58143990:555
+flush @ @fs/home/runner/work…T.js?v=58143990:569
+batch @ @fs/home/runner/work…T.js?v=58143990:587
+dispatch_fn2 @ @fs/home/runner/work….js?v=58143990:1338
+execute @ @fs/home/runner/work….js?v=58143990:1209
+mutate @ @fs/home/runner/work….js?v=58143990:2630
+(anonymous) @ @fs/home/runner/work….js?v=58143990:3295
+onClick @ src/pages/streaks.tsx:335
+callCallback2 @ @fs/home/runner/work….js?v=58143990:3674
+invokeGuardedCallbackDev @ @fs/home/runner/work….js?v=58143990:3699
+invokeGuardedCallback @ @fs/home/runner/work….js?v=58143990:3733
+invokeGuardedCallbackAndCatchFirstError @ @fs/home/runner/work….js?v=58143990:3736
+executeDispatch @ @fs/home/runner/work….js?v=58143990:7014
+processDispatchQueueItemsInOrder @ @fs/home/runner/work….js?v=58143990:7034
+processDispatchQueue @ @fs/home/runner/work….js?v=58143990:7043
+dispatchEventsForPlugins @ @fs/home/runner/work….js?v=58143990:7051
+(anonymous) @ @fs/home/runner/work….js?v=58143990:7174
+batchedUpdates$1 @ @fs/home/runner/work…js?v=58143990:18913
+batchedUpdates @ @fs/home/runner/work….js?v=58143990:3579
+dispatchEventForPluginEventSystem @ @fs/home/runner/work….js?v=58143990:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ @fs/home/runner/work….js?v=58143990:5478
+dispatchEvent @ @fs/home/runner/work….js?v=58143990:5472
+dispatchDiscreteEvent @ @fs/home/runner/work….js?v=58143990:5449Understand this error
+  POST https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/api/login-streak/check-in 500 (Internal Server Error)
+mutationFn @ src/pages/streaks.tsx:43
+fn @ @fs/home/runner/work….js?v=58143990:1189
+run @ @fs/home/runner/work…T.js?v=58143990:494
+start @ @fs/home/runner/work…T.js?v=58143990:536
+execute @ @fs/home/runner/work….js?v=58143990:1225
+await in execute
+mutate @ @fs/home/runner/work….js?v=58143990:2630
+(anonymous) @ @fs/home/runner/work….js?v=58143990:3295
+onClick @ src/pages/streaks.tsx:335
+callCallback2 @ @fs/home/runner/work….js?v=58143990:3674
+invokeGuardedCallbackDev @ @fs/home/runner/work….js?v=58143990:3699
+invokeGuardedCallback @ @fs/home/runner/work….js?v=58143990:3733
+invokeGuardedCallbackAndCatchFirstError @ @fs/home/runner/work….js?v=58143990:3736
+executeDispatch @ @fs/home/runner/work….js?v=58143990:7014
+processDispatchQueueItemsInOrder @ @fs/home/runner/work….js?v=58143990:7034
+processDispatchQueue @ @fs/home/runner/work….js?v=58143990:7043
+dispatchEventsForPlugins @ @fs/home/runner/work….js?v=58143990:7051
+(anonymous) @ @fs/home/runner/work….js?v=58143990:7174
+batchedUpdates$1 @ @fs/home/runner/work…js?v=58143990:18913
+batchedUpdates @ @fs/home/runner/work….js?v=58143990:3579
+dispatchEventForPluginEventSystem @ @fs/home/runner/work….js?v=58143990:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ @fs/home/runner/work….js?v=58143990:5478
+dispatchEvent @ @fs/home/runner/work….js?v=58143990:5472
+dispatchDiscreteEvent @ @fs/home/runner/work….js?v=58143990:5449Understand this error
+ Warning: Encountered two children with the same key, `T`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performConcurrentWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18678
+workLoop @ @fs/home/runner/work…O.js?v=58143990:197
+flushWork @ @fs/home/runner/work…O.js?v=58143990:176
+performWorkUntilDeadline @ @fs/home/runner/work…O.js?v=58143990:384Understand this error
+ Warning: Encountered two children with the same key, `S`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performConcurrentWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18678
+workLoop @ @fs/home/runner/work…O.js?v=58143990:197
+flushWork @ @fs/home/runner/work…O.js?v=58143990:176
+performWorkUntilDeadline @ @fs/home/runner/work…O.js?v=58143990:384Understand this error
+ Warning: Encountered two children with the same key, `T`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performConcurrentWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18678
+workLoop @ @fs/home/runner/work…O.js?v=58143990:197
+flushWork @ @fs/home/runner/work…O.js?v=58143990:176
+performWorkUntilDeadline @ @fs/home/runner/work…O.js?v=58143990:384Understand this error
+ Warning: Encountered two children with the same key, `S`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performConcurrentWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18678
+workLoop @ @fs/home/runner/work…O.js?v=58143990:197
+flushWork @ @fs/home/runner/work…O.js?v=58143990:176
+performWorkUntilDeadline @ @fs/home/runner/work…O.js?v=58143990:384Understand this error
+ Warning: Encountered two children with the same key, `T`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performSyncWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18874
+flushSyncCallbacks @ @fs/home/runner/work….js?v=58143990:9119
+(anonymous) @ @fs/home/runner/work…js?v=58143990:18627
+setTimeout
+scheduleFn @ @fs/home/runner/work…T.js?v=58143990:555
+flush @ @fs/home/runner/work…T.js?v=58143990:569
+batch @ @fs/home/runner/work…T.js?v=58143990:587
+dispatch_fn2 @ @fs/home/runner/work….js?v=58143990:1338
+execute @ @fs/home/runner/work….js?v=58143990:1209
+mutate @ @fs/home/runner/work….js?v=58143990:2630
+(anonymous) @ @fs/home/runner/work….js?v=58143990:3295
+onClick @ src/pages/streaks.tsx:335
+callCallback2 @ @fs/home/runner/work….js?v=58143990:3674
+invokeGuardedCallbackDev @ @fs/home/runner/work….js?v=58143990:3699
+invokeGuardedCallback @ @fs/home/runner/work….js?v=58143990:3733
+invokeGuardedCallbackAndCatchFirstError @ @fs/home/runner/work….js?v=58143990:3736
+executeDispatch @ @fs/home/runner/work….js?v=58143990:7014
+processDispatchQueueItemsInOrder @ @fs/home/runner/work….js?v=58143990:7034
+processDispatchQueue @ @fs/home/runner/work….js?v=58143990:7043
+dispatchEventsForPlugins @ @fs/home/runner/work….js?v=58143990:7051
+(anonymous) @ @fs/home/runner/work….js?v=58143990:7174
+batchedUpdates$1 @ @fs/home/runner/work…js?v=58143990:18913
+batchedUpdates @ @fs/home/runner/work….js?v=58143990:3579
+dispatchEventForPluginEventSystem @ @fs/home/runner/work….js?v=58143990:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ @fs/home/runner/work….js?v=58143990:5478
+dispatchEvent @ @fs/home/runner/work….js?v=58143990:5472
+dispatchDiscreteEvent @ @fs/home/runner/work….js?v=58143990:5449Understand this error
+ Warning: Encountered two children with the same key, `S`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performSyncWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18874
+flushSyncCallbacks @ @fs/home/runner/work….js?v=58143990:9119
+(anonymous) @ @fs/home/runner/work…js?v=58143990:18627
+setTimeout
+scheduleFn @ @fs/home/runner/work…T.js?v=58143990:555
+flush @ @fs/home/runner/work…T.js?v=58143990:569
+batch @ @fs/home/runner/work…T.js?v=58143990:587
+dispatch_fn2 @ @fs/home/runner/work….js?v=58143990:1338
+execute @ @fs/home/runner/work….js?v=58143990:1209
+mutate @ @fs/home/runner/work….js?v=58143990:2630
+(anonymous) @ @fs/home/runner/work….js?v=58143990:3295
+onClick @ src/pages/streaks.tsx:335
+callCallback2 @ @fs/home/runner/work….js?v=58143990:3674
+invokeGuardedCallbackDev @ @fs/home/runner/work….js?v=58143990:3699
+invokeGuardedCallback @ @fs/home/runner/work….js?v=58143990:3733
+invokeGuardedCallbackAndCatchFirstError @ @fs/home/runner/work….js?v=58143990:3736
+executeDispatch @ @fs/home/runner/work….js?v=58143990:7014
+processDispatchQueueItemsInOrder @ @fs/home/runner/work….js?v=58143990:7034
+processDispatchQueue @ @fs/home/runner/work….js?v=58143990:7043
+dispatchEventsForPlugins @ @fs/home/runner/work….js?v=58143990:7051
+(anonymous) @ @fs/home/runner/work….js?v=58143990:7174
+batchedUpdates$1 @ @fs/home/runner/work…js?v=58143990:18913
+batchedUpdates @ @fs/home/runner/work….js?v=58143990:3579
+dispatchEventForPluginEventSystem @ @fs/home/runner/work….js?v=58143990:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ @fs/home/runner/work….js?v=58143990:5478
+dispatchEvent @ @fs/home/runner/work….js?v=58143990:5472
+dispatchDiscreteEvent @ @fs/home/runner/work….js?v=58143990:5449Understand this error
+  POST https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/api/login-streak/check-in 500 (Internal Server Error)
+mutationFn @ src/pages/streaks.tsx:43
+fn @ @fs/home/runner/work….js?v=58143990:1189
+run @ @fs/home/runner/work…T.js?v=58143990:494
+start @ @fs/home/runner/work…T.js?v=58143990:536
+execute @ @fs/home/runner/work….js?v=58143990:1225
+await in execute
+mutate @ @fs/home/runner/work….js?v=58143990:2630
+(anonymous) @ @fs/home/runner/work….js?v=58143990:3295
+onClick @ src/pages/streaks.tsx:335
+callCallback2 @ @fs/home/runner/work….js?v=58143990:3674
+invokeGuardedCallbackDev @ @fs/home/runner/work….js?v=58143990:3699
+invokeGuardedCallback @ @fs/home/runner/work….js?v=58143990:3733
+invokeGuardedCallbackAndCatchFirstError @ @fs/home/runner/work….js?v=58143990:3736
+executeDispatch @ @fs/home/runner/work….js?v=58143990:7014
+processDispatchQueueItemsInOrder @ @fs/home/runner/work….js?v=58143990:7034
+processDispatchQueue @ @fs/home/runner/work….js?v=58143990:7043
+dispatchEventsForPlugins @ @fs/home/runner/work….js?v=58143990:7051
+(anonymous) @ @fs/home/runner/work….js?v=58143990:7174
+batchedUpdates$1 @ @fs/home/runner/work…js?v=58143990:18913
+batchedUpdates @ @fs/home/runner/work….js?v=58143990:3579
+dispatchEventForPluginEventSystem @ @fs/home/runner/work….js?v=58143990:7173
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ @fs/home/runner/work….js?v=58143990:5478
+dispatchEvent @ @fs/home/runner/work….js?v=58143990:5472
+dispatchDiscreteEvent @ @fs/home/runner/work….js?v=58143990:5449Understand this error
+ Warning: Encountered two children with the same key, `T`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performConcurrentWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18678
+workLoop @ @fs/home/runner/work…O.js?v=58143990:197
+flushWork @ @fs/home/runner/work…O.js?v=58143990:176
+performWorkUntilDeadline @ @fs/home/runner/work…O.js?v=58143990:384Understand this error
+ Warning: Encountered two children with the same key, `S`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performConcurrentWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18678
+workLoop @ @fs/home/runner/work…O.js?v=58143990:197
+flushWork @ @fs/home/runner/work…O.js?v=58143990:176
+performWorkUntilDeadline @ @fs/home/runner/work…O.js?v=58143990:384Understand this error
+ Warning: Encountered two children with the same key, `T`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performConcurrentWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18678
+workLoop @ @fs/home/runner/work…O.js?v=58143990:197
+flushWork @ @fs/home/runner/work…O.js?v=58143990:176
+performWorkUntilDeadline @ @fs/home/runner/work…O.js?v=58143990:384Understand this error
+ Warning: Encountered two children with the same key, `S`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+    at div
+    at div
+    at _c (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at Streaks (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/pages/streaks.tsx:29:46)
+    at Route (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:265:16)
+    at Switch (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=58143990:321:17)
+    at main
+    at main
+    at SidebarInset (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:417:25)
+    at div
+    at div
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at SidebarProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/ui/sidebar.tsx:59:3)
+    at AppLayout (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/components/app-layout.tsx:79:29)
+    at Router
+    at Provider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3Y2DXVW4.js?v=58143990:38:15)
+    at TooltipProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=58143990:64:5)
+    at ThemeProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/theme-provider.tsx:20:33)
+    at Hr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71280:13)
+    at oc2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72019:24)
+    at Ma2 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:70626:24)
+    at Xc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80794:17)
+    at dp (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:72536:23)
+    at Dr3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:71134:24)
+    at Jc3 (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@privy-io_react-auth.js?v=58143990:80782:22)
+    at AppPrivyProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/src/lib/privy-provider.tsx:19:36)
+    at Hydrate (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3552:11)
+    at WagmiProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-Q6DMQ37O.js?v=58143990:3576:11)
+    at QueryClientProvider (https://43b15776-61f1-4fab-b5b2-015ec16de452-00-2gzfjod5tcv7r.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7X75LGXT.js?v=58143990:2805:3)
+    at App
+printWarning @ @fs/home/runner/work…O.js?v=58143990:521
+error @ @fs/home/runner/work…O.js?v=58143990:505
+warnOnInvalidKey @ @fs/home/runner/work…js?v=58143990:10219
+reconcileChildrenArray @ @fs/home/runner/work…js?v=58143990:10235
+reconcileChildFibers2 @ @fs/home/runner/work…js?v=58143990:10559
+reconcileChildren @ @fs/home/runner/work…js?v=58143990:14292
+updateHostComponent @ @fs/home/runner/work…js?v=58143990:14807
+beginWork @ @fs/home/runner/work…js?v=58143990:15935
+beginWork$1 @ @fs/home/runner/work…js?v=58143990:19753
+performUnitOfWork @ @fs/home/runner/work…js?v=58143990:19198
+workLoopSync @ @fs/home/runner/work…js?v=58143990:19137
+renderRootSync @ @fs/home/runner/work…js?v=58143990:19116
+performConcurrentWorkOnRoot @ @fs/home/runner/work…js?v=58143990:18678
+workLoop @ @fs/home/runner/work…O.js?v=58143990:197
+flushWork @ @fs/home/runner/work…O.js?v=58143990:176
+performWorkUntilDeadline @ @fs/home/runner/work…O.js?v=58143990:384Understand this error
