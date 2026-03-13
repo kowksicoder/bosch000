@@ -49,38 +49,7 @@ function AuthHandler({ children }: { children: React.ReactNode }) {
         const creatorData = await creatorResponse.json();
         console.log('✅ Creator profile synced:', creatorData.id);
 
-        // Trigger daily login to award welcome bonus (works for both email and wallet users)
-        if (privyId) {
-          const response = await fetch('/api/login-streak/check-in', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-              privyId, 
-              address: address || null // address can be null for email users
-            }),
-            credentials: 'include',
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            if (data.isFirstLogin) {
-              console.log('✅ Welcome bonus awarded!', data);
-              // Show success notification to user
-              const event = new CustomEvent('e1xp-claimed', { 
-                detail: { 
-                  points: data.pointsEarned || 10,
-                  message: 'Welcome to CoinIT! 🎉'
-                }
-              });
-              window.dispatchEvent(event);
-            } else if (data.pointsEarned > 0) {
-              console.log('✅ Daily login bonus!', data);
-            }
-          } else {
-            const errorData = await response.json();
-            console.error('❌ Failed to award welcome bonus:', errorData);
-          }
-        }
+        // Daily check-ins are manual (claim modal / streaks page)
 
         hasHandledLogin.current = true;
       } catch (error) {
@@ -103,7 +72,7 @@ export function AppPrivyProvider({ children }: { children: React.ReactNode }) {
         loginMethods: ['email', 'wallet'],
         appearance: {
           theme: 'dark',
-          accentColor: '#22c55e',
+          accentColor: '#1CAC78',
           logo: 'https://i.ibb.co/JRQCPsZK/ev122logo-1-1.png',
           landingHeader: 'Welcome to Every1.fun',
           showWalletLoginFirst: false,

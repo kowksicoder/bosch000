@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy, getAccessToken } from "@privy-io/react-auth";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,12 +23,31 @@ export default function Streaks() {
     queryKey: ["/api/e1xp/status"],
     enabled: authenticated,
     refetchInterval: 5000,
+    queryFn: async () => {
+      const headers: Record<string, string> = {};
+      try {
+        const accessToken = await getAccessToken();
+        if (accessToken) {
+          headers.Authorization = `Bearer ${accessToken}`;
+        }
+      } catch (error) {
+        console.error("Failed to get access token:", error);
+      }
+      const response = await fetch("/api/e1xp/status", {
+        credentials: "include",
+        headers,
+      });
+      if (!response.ok) throw new Error("Failed to fetch E1XP status");
+      return response.json();
+    },
   });
 
   const weeklyCalendar = e1xpStatus?.weeklyCalendar || [false, false, false, false, false, false, false];
   const currentStreak = e1xpStatus?.streak || 0;
   const longestStreak = e1xpStatus?.longestStreak || 0;
   const totalPoints = e1xpStatus?.points || 0;
+  const canClaimDaily = Boolean(e1xpStatus?.canClaimDaily);
+  const statusReady = !isLoading && !!e1xpStatus;
 
   const checkInMutation = useMutation({
     mutationFn: async () => {
@@ -213,15 +232,17 @@ export default function Streaks() {
             checkInMutation.mutate();
           }
         }}
-        disabled={checkInMutation.isPending || !e1xpStatus?.canClaimDaily}
+        disabled={checkInMutation.isPending || !statusReady || !canClaimDaily}
         className="w-full h-14 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-bold rounded-2xl shadow-xl text-lg disabled:opacity-50 disabled:cursor-not-allowed"
         data-testid="button-check-in"
       >
         <Zap className="h-5 w-5 mr-2" />
-        {checkInMutation.isPending 
-          ? "Checking In..." 
-          : !e1xpStatus?.canClaimDaily 
-          ? "Already Claimed Today ✅" 
+        {checkInMutation.isPending
+          ? "Checking In..."
+          : !statusReady
+          ? "Loading..."
+          : !canClaimDaily
+          ? "Already Claimed Today ✅"
           : "Check In Today"}
       </Button>
 

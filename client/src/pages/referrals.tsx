@@ -18,12 +18,32 @@ export default function Referrals() {
   const [copied, setCopied] = useState(false);
   const [showQR, setShowQR] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
+  const [isEditingCode, setIsEditingCode] = useState(false);
+  const [customCode, setCustomCode] = useState("");
+  const [savingCode, setSavingCode] = useState(false);
 
   const address = privyUser?.wallet?.address;
+  const privyId = privyUser?.id;
 
   const { data: creator } = useQuery<Creator>({
     queryKey: ['/api/creators/address', address],
     enabled: !!address && authenticated,
+  });
+
+  const { data: referralData } = useQuery({
+    queryKey: ['/api/referrals/generate', privyId || address],
+    enabled: authenticated && (!!privyId || !!address),
+    queryFn: async () => {
+      const response = await fetch("/api/referrals/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ privyId, address }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to generate referral link");
+      }
+      return response.json();
+    },
   });
 
   const { data: referrals = [] } = useQuery<Referral[]>({
@@ -41,8 +61,14 @@ export default function Referrals() {
     enabled: !!address && authenticated,
   });
 
-  const referralCode = creator?.referralCode || creator?.name || address?.slice(0, 8);
-  const referralLink = `${window.location.origin}?ref=${referralCode}`;
+  const referralCode =
+    referralData?.referralCode ||
+    creator?.referralCode ||
+    creator?.name ||
+    "";
+  const referralLink =
+    referralData?.referralLink ||
+    (referralCode ? `${window.location.origin}?ref=${referralCode}` : "");
   const points = e1xpStatus?.points || parseInt(creator?.points || "0");
   const totalReferrals = referrals.length;
   const earnedPoints =
@@ -72,8 +98,17 @@ export default function Referrals() {
     }
   }, [creator, referralCode, referralLink]);
 
+  useEffect(() => {
+    if (!isEditingCode) {
+      setCustomCode(referralCode || "");
+    }
+  }, [referralCode, isEditingCode]);
+
   const handleCopy = async () => {
     try {
+      if (!referralLink) {
+        throw new Error("No referral link available");
+      }
       await navigator.clipboard.writeText(referralLink);
       setCopied(true);
       toast({
@@ -91,6 +126,14 @@ export default function Referrals() {
   };
 
   const handleShowQR = async () => {
+    if (!referralLink) {
+      toast({
+        title: "Referral link unavailable",
+        description: "Please try again in a moment.",
+        variant: "destructive",
+      });
+      return;
+    }
     if (!qrCodeUrl) {
       const url = await QRCode.toDataURL(referralLink, {
         width: 300,
@@ -103,6 +146,50 @@ export default function Referrals() {
       setQrCodeUrl(url);
     }
     setShowQR(!showQR);
+  };
+
+  const handleUpdateReferralCode = async () => {
+    if (!customCode.trim()) {
+      toast({
+        title: "Referral code required",
+        description: "Enter a referral code to save.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setSavingCode(true);
+      const response = await fetch("/api/referrals/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          referralCode: customCode.trim(),
+          privyId,
+          address,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to update referral code");
+      }
+
+      toast({
+        title: "Referral code updated",
+        description: `Your new code is ${data.referralCode}.`,
+      });
+      setIsEditingCode(false);
+      queryClient.invalidateQueries({ queryKey: ['/api/referrals/generate', privyId || address] });
+    } catch (error) {
+      toast({
+        title: "Update failed",
+        description: error instanceof Error ? error.message : "Unable to update referral code.",
+        variant: "destructive",
+      });
+    } finally {
+      setSavingCode(false);
+    }
   };
 
   const handleClaimReferralRewards = async () => {
@@ -251,14 +338,70 @@ export default function Referrals() {
 
       {/* Referral Link */}
       <Card className="p-5 rounded-3xl border-2">
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <div>
+            <p className="text-xs text-muted-foreground">Your referral code</p>
+            {!isEditingCode ? (
+              <p className="text-lg font-semibold">
+                {referralCode ? `@${referralCode}` : "—"}
+              </p>
+            ) : (
+              <div className="flex items-center gap-2">
+                <input
+                  value={customCode}
+                  onChange={(event) => setCustomCode(event.target.value)}
+                  className="h-9 w-44 rounded-xl border border-border bg-background px-3 text-sm font-medium"
+                  placeholder="yourname"
+                />
+                <Button
+                  size="sm"
+                  onClick={handleUpdateReferralCode}
+                  disabled={savingCode}
+                  className="h-9 rounded-xl px-3"
+                >
+                  {savingCode ? "Saving..." : "Save"}
+                </Button>
+              </div>
+            )}
+            {isEditingCode && (
+              <p className="text-xs text-muted-foreground mt-2">
+                Use 3-20 letters, numbers, or underscores.
+              </p>
+            )}
+          </div>
+          {!isEditingCode && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="rounded-xl"
+              onClick={() => setIsEditingCode(true)}
+            >
+              Edit
+            </Button>
+          )}
+          {isEditingCode && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="rounded-xl"
+              onClick={() => {
+                setIsEditingCode(false);
+                setCustomCode(referralCode || "");
+              }}
+            >
+              Cancel
+            </Button>
+          )}
+        </div>
         <div className="flex items-center gap-3">
           <div className="flex-1 bg-muted/30 rounded-2xl px-4 py-3 text-sm font-mono truncate">
-            {referralLink}
+            {referralLink || "Generate your referral link"}
           </div>
           <Button
             size="icon"
             onClick={handleCopy}
             className="rounded-xl h-12 w-12 shrink-0"
+            disabled={!referralLink}
           >
             {copied ? <Check className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
           </Button>

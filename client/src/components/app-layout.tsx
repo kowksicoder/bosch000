@@ -343,6 +343,24 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [referralInput, setReferralInput] = useState("");
   const [referralError, setReferralError] = useState<string | null>(null);
   const [isApplyingReferral, setIsApplyingReferral] = useState(false);
+  const [hasSyncedUser, setHasSyncedUser] = useState(false);
+  const { data: walletLedger } = useQuery({
+    queryKey: ["/api/ledger/naira", user?.id],
+    enabled: authenticated,
+    queryFn: async () => {
+      const accessToken = await getAccessToken();
+      const headers: Record<string, string> = {};
+      if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
+      const response = await fetch("/api/ledger/naira", {
+        credentials: "include",
+        headers,
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch wallet balance");
+      }
+      return response.json();
+    },
+  });
 
   // Fetch coins count
   const { data: coinsData } = useQuery({
@@ -363,6 +381,39 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   const coinsCount = (coinsData as any)?.coins?.length || 0;
   const creatorsCount = (creatorsData as any)?.length || 0;
+
+  // Ensure user/creator records exist on first login (welcome notification depends on this)
+  useEffect(() => {
+    if (!authenticated || !user?.id || hasSyncedUser) return;
+
+    const syncUser = async () => {
+      try {
+        const accessToken = await getAccessToken();
+        const headers: Record<string, string> = {
+          "Content-Type": "application/json",
+        };
+        if (accessToken) {
+          headers.Authorization = `Bearer ${accessToken}`;
+        }
+
+        await fetch("/api/creators/sync", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            privyId: user.id,
+            address: user.wallet?.address || null,
+            email: user.email?.address || null,
+          }),
+        });
+      } catch (error) {
+        console.warn("[AppLayout] Failed to sync user on login:", error);
+      } finally {
+        setHasSyncedUser(true);
+      }
+    };
+
+    syncUser();
+  }, [authenticated, user, getAccessToken, hasSyncedUser]);
 
   const applyReferralCode = useCallback(
     async (
@@ -587,35 +638,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     setReferralError(null);
     setReferralPromptOpen(true);
 
-    const reminderKey = `${referralReminderPrefix}${user.id}`;
-    const lastReminder = Number(localStorage.getItem(reminderKey) || 0);
-    if (Date.now() - lastReminder > 1000 * 60 * 60 * 24) {
-      const sendReminder = async () => {
-        try {
-          const accessToken = await getAccessToken();
-          const headers: Record<string, string> = {
-            "Content-Type": "application/json",
-          };
-          if (accessToken) {
-            headers.Authorization = `Bearer ${accessToken}`;
-          }
-          await fetch("/api/notifications", {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              userId: user.id,
-              type: "referral",
-              title: "Add your invite code",
-              message: "Got a referral code? Add it now to unlock bonus E1XP rewards.",
-            }),
-          });
-          localStorage.setItem(reminderKey, Date.now().toString());
-        } catch (error) {
-          console.warn("[Referral] Failed to send reminder notification:", error);
-        }
-      };
-      sendReminder();
-    }
   }, [authenticated, user, getAccessToken]);
 
   // Allow other screens to open the referral prompt
@@ -876,7 +898,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   </div>
                   <div className="flex-1">
                     <h1 className="text-sm font-bold tracking-tight">
-                      creat8<span className="text-primary">*</span>
+                      Every1
                     </h1>
                   </div>
                 </Link>
@@ -901,6 +923,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       <SearchIcon className="h-5 w-5" />
                     </Button>
                   </Link>
+                  {authenticated && (
+                    <Link href="/wallet" className="hidden md:flex">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-9 rounded-full"
+                        data-testid="button-wallet-balance"
+                      >
+                        ₦{Number(walletLedger?.availableNgn || 0).toLocaleString("en-US", { maximumFractionDigits: 0 })}
+                      </Button>
+                    </Link>
+                  )}
                   <ThemeToggle />
                   <NotificationBell />
                   {authenticated ? (
@@ -962,6 +996,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                     </Link>
                     <NotificationBell />
                     <ThemeToggle />
+                    {authenticated && (
+                      <Link href="/wallet">
+                        <Button variant="outline" size="sm" className="h-8 rounded-full px-3">
+                          ₦{Number(walletLedger?.availableNgn || 0).toLocaleString("en-US", { maximumFractionDigits: 0 })}
+                        </Button>
+                      </Link>
+                    )}
                     <UserMenu />
                   </>
                 ) : (

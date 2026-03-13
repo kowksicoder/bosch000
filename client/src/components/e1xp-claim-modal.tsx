@@ -80,7 +80,7 @@ export function E1XPClaimModal() {
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0']
+        colors: ['#1CAC78', '#49BD93', '#77CDAE', '#A4DEC9']
       });
 
       toast({

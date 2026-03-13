@@ -19,7 +19,7 @@ export default function FAQ() {
       </div>
 
       <p className="text-lg items-center text-muted-foreground">
-        Everything you need to know about creat8*
+        Everything you need to know about Every1
       </p>
 
       <Card>
@@ -29,9 +29,9 @@ export default function FAQ() {
         <CardContent>
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1">
-              <AccordionTrigger>What is creat8*?</AccordionTrigger>
+              <AccordionTrigger>What is Every1?</AccordionTrigger>
               <AccordionContent className="text-muted-foreground">
-                creat8* is a Naira‑first creator economy where creators launch coins and fans can buy, sell, and support their work. You can follow creators, join missions, earn rewards, and grow a real community around creative projects.
+                Every1 is a Naira‑first creator economy where creators launch coins and fans can buy, sell, and support their work. You can follow creators, join missions, earn rewards, and grow a real community around creative projects.
               </AccordionContent>
             </AccordionItem>
 
@@ -185,7 +185,6 @@ export default function FAQ() {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-16">
             <AccordionItem value="item-17">
               <AccordionTrigger>
                 What if I have a problem or question?

@@ -26,6 +26,12 @@ import { detectPlatform } from "./platform-detector";
 import { scrapeByPlatform } from "./platform-scrapers";
 import { migrateOldData } from "./migrate-old-data";
 import { sendTelegramNotification } from "./telegram-bot";
+import {
+  generateUniqueReferralCode,
+  isValidReferralCode,
+  isWalletLikeReferralCode,
+  sanitizeReferralCode,
+} from "./referral-utils";
 import { RegistryService } from "./registry-service";
 import { ActivityTrackerService } from "./activity-tracker-service";
 import { base, baseSepolia } from "viem/chains";
@@ -224,26 +230,33 @@ async function awardPoints(
   });
 }
 
-// Helper function to get referral code from username/name
-async function generateReferralCode(address: string): Promise<string> {
-  const creator = await storage.getCreatorByAddress(address);
-
-  if (creator?.name) {
-    // Use username/name as referral code
-    await storage.updateCreator(creator.id, {
-      referralCode: creator.name
-    });
-    return creator.name;
-  }
-
-  // Fallback to shortened address if no name
-  const code = address.slice(0, 8);
-  if (creator) {
-    await storage.updateCreator(creator.id, {
-      referralCode: code
-    });
-  }
-  return code;
+// Helper function to resolve a clean, unique referral code (email-first)
+async function generateReferralCode({
+  email,
+  username,
+  privyId,
+  address,
+  existingCode,
+  userId,
+  creatorId,
+}: {
+  email?: string | null;
+  username?: string | null;
+  privyId?: string | null;
+  address?: string | null;
+  existingCode?: string | null;
+  userId?: string | null;
+  creatorId?: string | null;
+}) {
+  return generateUniqueReferralCode({
+    email,
+    username,
+    privyId,
+    address,
+    existingCode,
+    userId,
+    creatorId,
+  });
 }
 
 const WEEKLY_CHALLENGE_CONFIG = {
@@ -269,17 +282,31 @@ async function ensureUserRecord({
   address,
   email,
   fallbackName,
+  referralCode,
 }: {
   privyId: string;
   address: string | null;
   email: string | null;
   fallbackName?: string | null;
+  referralCode?: string | null;
 }) {
   let user =
     (privyId ? await storage.getUserByPrivyId(privyId) : null) ||
     (address ? await storage.getUserByAddress(address) : null);
 
-  if (user) return user;
+  if (user) {
+    const needsRefresh =
+      referralCode &&
+      (!user.referralCode || isWalletLikeReferralCode(user.referralCode));
+    if (needsRefresh) {
+      try {
+        user = await storage.updateUser(user.id, { referralCode }) || user;
+      } catch (error) {
+        console.warn("[ensureUserRecord] Failed to update referral code:", error);
+      }
+    }
+    return user;
+  }
 
   const { getDefaultUsername } = await import("./username-generator");
   const baseUsername =
@@ -287,6 +314,15 @@ async function ensureUserRecord({
     getDefaultUsername(email || undefined, privyId);
   const uniqueSuffix = privyId ? privyId.slice(-6) : Date.now().toString(36).slice(-6);
   const username = `${baseUsername}-${uniqueSuffix}`.slice(0, 30);
+
+  const resolvedReferralCode =
+    referralCode ||
+    (await generateReferralCode({
+      email,
+      username: baseUsername,
+      privyId,
+      address,
+    }));
 
   try {
     user = await storage.createUser({
@@ -296,6 +332,7 @@ async function ensureUserRecord({
       username,
       displayName: fallbackName?.trim() || baseUsername,
       e1xpPoints: 100,
+      referralCode: resolvedReferralCode,
     } as any);
   } catch (error) {
     console.warn("[ensureUserRecord] Failed to create user record:", error);
@@ -322,12 +359,24 @@ export async function syncCreatorProfile(privyId: string, address: string | null
       creator = await storage.updateCreator(creator.id, updates);
       console.log('[syncCreatorProfile] Updated creator with new address');
     }
+    const referralCode = await generateReferralCode({
+      email: creator.email || email,
+      username: creator.name,
+      privyId,
+      address: creator.address || address,
+      existingCode: creator.referralCode,
+      creatorId: creator.id,
+    });
     await ensureUserRecord({
       privyId,
       address: creator.address || address,
       email: creator.email || email,
       fallbackName: creator.name,
+      referralCode,
     });
+    if (!creator.referralCode || isWalletLikeReferralCode(creator.referralCode)) {
+      await storage.updateCreator(creator.id, { referralCode });
+    }
     return creator;
   }
 
@@ -338,12 +387,24 @@ export async function syncCreatorProfile(privyId: string, address: string | null
       console.log('[syncCreatorProfile] Found legacy creator by address, backfilling privyId');
       // Backfill privyId for legacy creator
       creator = await storage.updateCreator(creator.id, { privyId });
+      const referralCode = await generateReferralCode({
+        email: creator.email || email,
+        username: creator.name,
+        privyId,
+        address: creator.address || address,
+        existingCode: creator.referralCode,
+        creatorId: creator.id,
+      });
       await ensureUserRecord({
         privyId,
         address: creator.address || address,
         email: creator.email || email,
         fallbackName: creator.name,
+        referralCode,
       });
+      if (!creator.referralCode || isWalletLikeReferralCode(creator.referralCode)) {
+        await storage.updateCreator(creator.id, { referralCode });
+      }
       return creator;
     }
   }
@@ -353,6 +414,13 @@ export async function syncCreatorProfile(privyId: string, address: string | null
   const defaultUsername = getDefaultUsername(email, privyId);
 
   console.log('[syncCreatorProfile] Creating new creator with username:', defaultUsername);
+
+  const referralCode = await generateReferralCode({
+    email,
+    username: defaultUsername,
+    privyId,
+    address,
+  });
 
   // Create new creator with privyId (address can be null for email users)
   const creatorData = {
@@ -367,7 +435,7 @@ export async function syncCreatorProfile(privyId: string, address: string | null
     totalCoins: "0",
     totalVolume: "0",
     followers: "0",
-    referralCode: defaultUsername, // Use generated username as referral code
+    referralCode: referralCode,
     points: "100", // Welcome bonus
   };
 
@@ -379,6 +447,7 @@ export async function syncCreatorProfile(privyId: string, address: string | null
     address: creator.address || address,
     email: creator.email || email,
     fallbackName: creator.name || defaultUsername,
+    referralCode,
   });
 
   // Send welcome notification and E1XP reward
@@ -821,6 +890,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "User not found" });
       }
 
+      const walletAddress = userRecord.walletAddress || req.user.wallet?.address || req.user.id;
+      const coinRecord = await storage.getCoinByAddress(coinAddress).catch(() => undefined);
+
+      if (walletAddress) {
+        try {
+          await storage.recordTrade({
+            userAddress: walletAddress,
+            coinAddress,
+            coinSymbol: coinRecord?.symbol,
+            tradeType: side,
+            amountEth: amountEth || "0",
+            transactionHash: txHash,
+            metadata: {
+              source: "wallet",
+              side,
+              txHash,
+            },
+          });
+        } catch (tradeRecordError) {
+          console.warn("Failed to persist trade history:", tradeRecordError);
+        }
+      }
+
       const points = side === "buy" ? POINTS_REWARDS.TRADE_BUY : POINTS_REWARDS.TRADE_SELL;
 
       await rewardPoints(
@@ -843,6 +935,145 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Trade record error:", error);
       return res.status(500).json({ error: "Failed to record trade" });
+    }
+  });
+
+  app.get("/api/wallet/transactions", privyAuthMiddleware, async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.authenticated || !req.user?.id) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      const limit = Math.min(parseInt(String(req.query.limit || "20"), 10) || 20, 50);
+      const range = req.query.range === "all" ? "all" : "30d";
+      const startDate =
+        range === "all" ? null : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+      const privyId = req.user.id;
+      let creator = await storage.getCreatorByPrivyId(privyId);
+      if (!creator && privyId?.startsWith("0x")) {
+        creator = await storage.getCreatorByAddress(privyId);
+      }
+
+      const userRecord = await storage.getUserByPrivyId(privyId);
+      const walletAddress =
+        userRecord?.walletAddress || req.user.wallet?.address || (privyId?.startsWith("0x") ? privyId : null);
+      const recipientAddress = creator?.address || walletAddress || privyId;
+
+      if (!walletAddress) {
+        return res.status(400).json({ error: "Wallet address not found" });
+      }
+
+      const [trades, ledgerEntries, fxRates] = await Promise.all([
+        storage.getUserTradeHistory(walletAddress, limit * 3),
+        storage.getNairaLedgerEntriesByAddress(recipientAddress, limit * 3),
+        getFxRates(),
+      ]);
+
+      const tradeAddresses = Array.from(
+        new Set((trades || []).map((trade: any) => trade.coin_address).filter(Boolean)),
+      ) as string[];
+      const ledgerAddresses = Array.from(
+        new Set(
+          (ledgerEntries || [])
+            .map((entry: any) => entry.metadata?.coinAddress || entry.metadata?.coin_address)
+            .filter(Boolean),
+        ),
+      ) as string[];
+      const coinAddresses = Array.from(new Set([...tradeAddresses, ...ledgerAddresses])) as string[];
+      const coinRecords = await Promise.all(
+        coinAddresses.map((address) => storage.getCoinByAddress(address).catch(() => undefined)),
+      );
+      const coinMap = new Map<string, any>();
+      coinAddresses.forEach((address, index) => {
+        const record = coinRecords[index];
+        if (record) {
+          coinMap.set(address.toLowerCase(), record);
+        }
+      });
+
+      const tradeItems = (trades || []).map((trade: any) => {
+        const tradeType = trade.trade_type?.toLowerCase().includes("sell") ? "sell" : "buy";
+        const coinRecord = trade.coin_address
+          ? coinMap.get(trade.coin_address.toLowerCase())
+          : undefined;
+        let amountNgn = 0;
+        if (trade.total_value_usd) {
+          amountNgn = parseFloat(trade.total_value_usd || "0") * fxRates.usd_ngn;
+        } else if (trade.amount_eth) {
+          amountNgn = parseFloat(trade.amount_eth || "0") * fxRates.eth_ngn;
+        }
+        const symbol = trade.coin_symbol || coinRecord?.symbol || "coin";
+        const label = tradeType === "buy" ? `Bought ${symbol}` : `Sold ${symbol}`;
+        return {
+          id: `trade_${trade.id}`,
+          type: tradeType,
+          amountNgn: Number.isFinite(amountNgn) ? Number(amountNgn.toFixed(2)) : 0,
+          status: "completed",
+          label,
+          time: trade.timestamp,
+          coinAddress: trade.coin_address,
+          coinSymbol: symbol,
+          coinImage: coinRecord?.image || null,
+        };
+      });
+
+      const ledgerItems = (ledgerEntries || []).map((entry: any) => {
+        const isCredit = entry.entry_type === "credit";
+        const source = entry.source || "";
+        const statusFlag = entry.metadata?.status || entry.metadata?.state;
+        const status = statusFlag === "pending" ? "pending" : "completed";
+        const coinSymbol = entry.metadata?.coinSymbol || entry.metadata?.coin_symbol;
+        const coinAddress = entry.metadata?.coinAddress || entry.metadata?.coin_address;
+        const coinRecord = coinAddress
+          ? coinMap.get(coinAddress.toLowerCase())
+          : undefined;
+        let type: "deposit" | "withdrawal" | "receive";
+        let label = "Deposit";
+
+        if (!isCredit) {
+          type = "withdrawal";
+          label = "Withdrawal";
+        } else if (source === "creator_reward") {
+          type = "receive";
+          label = coinSymbol ? `Reward from ${coinSymbol}` : "Creator reward";
+        } else if (source === "payout_reversal") {
+          type = "receive";
+          label = "Payout reversed";
+        } else {
+          type = "deposit";
+        }
+
+        return {
+          id: `ledger_${entry.id}`,
+          type,
+          amountNgn: parseFloat(entry.amount_ngn || "0"),
+          status,
+          label,
+          time: entry.created_at,
+          coinAddress: coinAddress || null,
+          coinSymbol: coinSymbol || coinRecord?.symbol || null,
+          coinImage: coinRecord?.image || null,
+        };
+      });
+
+      const combined = [...tradeItems, ...ledgerItems]
+        .filter((item) => {
+          if (!startDate) return true;
+          const timeValue = item.time ? new Date(item.time) : null;
+          return timeValue ? timeValue >= startDate : true;
+        })
+        .sort((a, b) => {
+          const aTime = a.time ? new Date(a.time).getTime() : 0;
+          const bTime = b.time ? new Date(b.time).getTime() : 0;
+          return bTime - aTime;
+        })
+        .slice(0, limit);
+
+      return res.json(combined);
+    } catch (error) {
+      console.error("Wallet transactions error:", error);
+      return res.status(500).json({ error: "Failed to fetch transactions" });
     }
   });
 
@@ -2428,11 +2659,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ error: "Unauthorized" });
       }
 
-      const { amountNgn, bankCode, bankAccount, bankName } = req.body as {
+      const { amountNgn, bankCode, bankAccount, bankName, payoutRecipientCode } = req.body as {
         amountNgn?: string | number;
         bankCode?: string;
         bankAccount?: string;
         bankName?: string;
+        payoutRecipientCode?: string;
       };
 
       const amountValue = typeof amountNgn === "string" ? parseFloat(amountNgn) : Number(amountNgn);
@@ -2467,10 +2699,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const resolvedBankAccount = bankAccount || storedBankAccount;
       const resolvedBankName = bankName || storedBankName;
 
-      if (!resolvedBankCode || !resolvedBankAccount || !resolvedBankName) {
-        return res.status(400).json({ error: "Bank details are required" });
-      }
-
       if (creator && (bankCode || bankAccount || bankName)) {
         await storage.updateCreator(creator.id, {
           bankAccount: resolvedBankAccount,
@@ -2486,9 +2714,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const creatorRecipientCode =
-        (creator as any)?.payoutRecipientCode ?? (creator as any)?.payout_recipient_code;
-      let recipientCode = creatorRecipientCode || null;
+        (creator as any)?.payoutRecipientCode ?? (creator as any)?.payout_recipient_code ?? null;
+      let recipientCode = payoutRecipientCode || creatorRecipientCode || null;
       if (!recipientCode) {
+        if (!resolvedBankCode || !resolvedBankAccount || !resolvedBankName) {
+          return res.status(400).json({
+            error: "Paystack payout setup required. Please provide payout details.",
+          });
+        }
+
         const recipientResponse = await createPaystackTransferRecipient({
           type: "nuban",
           name: resolvedBankName,
@@ -3573,11 +3807,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           creator = await storage.updateCreator(creator.id, updates);
           console.log('[Creator Sync] Updated creator with new address/email');
         }
+        const referralCode = await generateReferralCode({
+          email: creator.email || email,
+          username: creator.name,
+          privyId,
+          address: creator.address || address,
+          existingCode: creator.referralCode,
+          creatorId: creator.id,
+        });
         await ensureUserRecord({
           privyId,
           address: creator.address || address,
           email: creator.email || email,
           fallbackName: creator.name,
+          referralCode,
         });
         return res.json(creator);
       }
@@ -3589,11 +3832,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log('[Creator Sync] Found legacy creator by address, backfilling privyId');
           // Backfill privyId for legacy creator (preserve existing walletAddress!)
           creator = await storage.updateCreator(creator.id, { privyId });
+          const referralCode = await generateReferralCode({
+            email: creator.email || email,
+            username: creator.name,
+            privyId,
+            address: creator.address || address,
+            existingCode: creator.referralCode,
+            creatorId: creator.id,
+          });
           await ensureUserRecord({
             privyId,
             address: creator.address || address,
             email: creator.email || email,
             fallbackName: creator.name,
+            referralCode,
           });
           return res.json(creator);
         }
@@ -3604,6 +3856,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const defaultUsername = getDefaultUsername(email, privyId);
 
       console.log('[Creator Sync] Creating new creator with username:', defaultUsername);
+
+      const referralCode = await generateReferralCode({
+        email,
+        username: defaultUsername,
+        privyId,
+        address,
+      });
 
       // Create new creator with privyId (address can be null for email users)
       const creatorData = {
@@ -3618,7 +3877,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         totalCoins: "0",
         totalVolume: "0",
         followers: "0",
-        referralCode: defaultUsername, // Use generated username as referral code
+        referralCode,
         points: "100", // Welcome bonus
       };
 
@@ -3630,6 +3889,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         address: creator.address || address,
         email: creator.email || email,
         fallbackName: creator.name || defaultUsername,
+        referralCode,
       });
 
       // Broadcast new creator joined (platform-wide)
@@ -3718,10 +3978,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json(existingCreator);
       }
 
-      // Create new creator with username as referral code
-      const referralCode = await generateReferralCode(
-        req.body.address,
-      );
+      const referralCode = await generateReferralCode({
+        email: req.body.email,
+        username: req.body.name,
+        privyId: req.body.privyId,
+        address: req.body.address,
+      });
       const creatorData = {
         address: req.body.address,
         name: req.body.name || null,
@@ -3751,21 +4013,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log('[Update Creator] Updating creator:', { id, updates });
 
-      const creator = await storage.updateCreator(id, updates);
-
-      if (!creator) {
+      const existingCreator = await storage.getCreator(id);
+      if (!existingCreator) {
         console.error('[Update Creator] Creator not found:', id);
         return res.status(404).json({ error: "Creator not found" });
       }
 
-      // Update referral code if name was changed - ONLY for wallet users
-      // Email-only users keep their auto-generated referral code for uniqueness
-      if (updates.name !== undefined && creator && creator.address) {
-        const newReferralCode = await generateReferralCode(creator.address);
-        await storage.updateCreator(id, {
-          referralCode: newReferralCode
-        });
-        console.log('[Update Creator] Updated referral code for creator:', creator.id, 'to', newReferralCode);
+      const creator = await storage.updateCreator(id, updates);
+
+      if (updates.name !== undefined && creator) {
+        const shouldRefresh =
+          !existingCreator.referralCode ||
+          isWalletLikeReferralCode(existingCreator.referralCode);
+
+        if (shouldRefresh) {
+          const newReferralCode = await generateReferralCode({
+            email: creator.email,
+            username: creator.name,
+            privyId: creator.privyId,
+            address: creator.address,
+            existingCode: creator.referralCode,
+            creatorId: creator.id,
+          });
+          await storage.updateCreator(id, {
+            referralCode: newReferralCode,
+          });
+          console.log('[Update Creator] Updated referral code for creator:', creator.id, 'to', newReferralCode);
+        }
       }
 
       console.log('[Update Creator] Successfully updated creator:', creator.id);
@@ -4292,8 +4566,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "User not found. Please create an account first." });
       }
 
-      // Generate or get referral code based on user ID
-      const referralCode = await generateReferralCode(user.id);
+      // Generate or get referral code based on user identity (email-first)
+      const referralCode = await generateReferralCode({
+        email: user.email,
+        username: user.username,
+        privyId: user.privyId,
+        address: user.walletAddress,
+        existingCode: user.referralCode,
+        userId: user.id,
+      });
 
       // Update if referral code changed or is null
       if (!user.referralCode || user.referralCode !== referralCode) {
@@ -4310,6 +4591,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Ensure we have a valid referral code
       const finalReferralCode = user.referralCode || referralCode;
 
+      // Mirror referral code onto creator profile if available
+      try {
+        const creator =
+          (user.privyId ? await storage.getCreatorByPrivyId(user.privyId) : null) ||
+          (user.walletAddress ? await storage.getCreatorByAddress(user.walletAddress) : null);
+        if (creator && creator.referralCode !== finalReferralCode) {
+          await storage.updateCreator(creator.id, { referralCode: finalReferralCode });
+        }
+      } catch (creatorUpdateError) {
+        console.warn("[Referral] Failed to sync creator referral code:", creatorUpdateError);
+      }
+
       // Use the actual host from the request
       const host = req.get("host") || "localhost:5000";
       const protocol = req.get("x-forwarded-proto") || req.protocol || "http";
@@ -4324,6 +4617,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Generate referral error:", error);
       res.status(500).json({ error: "Failed to generate referral link" });
+    }
+  });
+
+  // Update referral code (custom referral name)
+  app.post("/api/referrals/update", async (req, res) => {
+    try {
+      const { referralCode, address, privyId } = req.body;
+
+      if (!referralCode) {
+        return res.status(400).json({ error: "Referral code is required" });
+      }
+
+      if (!address && !privyId) {
+        return res.status(400).json({ error: "Address or Privy ID is required" });
+      }
+
+      const normalized = sanitizeReferralCode(referralCode);
+
+      if (!isValidReferralCode(normalized)) {
+        return res.status(400).json({
+          error: "Referral code must be 3-20 characters and use letters, numbers, or underscores.",
+        });
+      }
+
+      // Get user
+      const user = privyId
+        ? await storage.getUserByPrivyId(privyId)
+        : address
+        ? await storage.getUserByAddress(address)
+        : null;
+
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      // Prevent collisions with existing users/creators
+      const existingUser = await storage.getUserByReferralCode(normalized);
+      if (existingUser && existingUser.id !== user.id) {
+        return res.status(409).json({ error: "Referral code already in use" });
+      }
+
+      const existingCreator = await storage.getCreatorByReferralCode(normalized);
+      if (existingCreator) {
+        const sameOwner =
+          (user.privyId && existingCreator.privyId === user.privyId) ||
+          (user.walletAddress && existingCreator.address === user.walletAddress);
+        if (!sameOwner) {
+          return res.status(409).json({ error: "Referral code already in use" });
+        }
+      }
+
+      const updatedUser = await storage.updateUser(user.id, {
+        referralCode: normalized,
+      });
+
+      // Sync to creator profile if present
+      try {
+        const creator =
+          (user.privyId ? await storage.getCreatorByPrivyId(user.privyId) : null) ||
+          (user.walletAddress ? await storage.getCreatorByAddress(user.walletAddress) : null);
+        if (creator && creator.referralCode !== normalized) {
+          await storage.updateCreator(creator.id, { referralCode: normalized });
+        }
+      } catch (creatorError) {
+        console.warn("[Referral] Failed to sync creator referral code:", creatorError);
+      }
+
+      res.json({
+        referralCode: normalized,
+        user: updatedUser,
+      });
+    } catch (error) {
+      console.error("Update referral error:", error);
+      res.status(500).json({ error: "Failed to update referral code" });
     }
   });
 
@@ -5455,7 +5822,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.createNotification({
             userId: address,
             type: 'reward',
-            title: '🎉 Welcome to Every1Fun!',
+            title: '🎉 Welcome to Every1!',
             message: 'You received 100 E1XP as a welcome bonus! Start creating coins to earn more.',
             amount: '100',
             read: false,

@@ -8,9 +8,8 @@ import { AlertTriangle, ArrowDownUp, ChevronDown, Gift, Settings, Sparkles } fro
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useFxRates, convertUsdToNgn } from "@/lib/fx";
-import { usePrivy, getAccessToken } from "@privy-io/react-auth";
+import { getAccessToken } from "@privy-io/react-auth";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
-import { erc20Abi, parseUnits } from "viem";
 
 type CoinOption = {
   id: string;
@@ -23,7 +22,6 @@ type CoinOption = {
 export default function Swap() {
   const { toast } = useToast();
   const { data: fxRates } = useFxRates();
-  const { user: privyUser, authenticated } = usePrivy();
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
@@ -31,15 +29,9 @@ export default function Swap() {
   const [currentPrice, setCurrentPrice] = useState<string | null>(null);
   const [priceChange24h, setPriceChange24h] = useState<number>(0);
   const [chartData, setChartData] = useState<Array<{ time: string; price: number }>>([]);
-  const [tradeMode, setTradeMode] = useState<"naira" | "wallet">("naira");
   const [tradeSide, setTradeSide] = useState<"buy" | "sell">("buy");
   const [nairaAmount, setNairaAmount] = useState<string>("6000");
   const [walletAmount, setWalletAmount] = useState<string>("0.01");
-  const [bankCode, setBankCode] = useState<string>("");
-  const [bankAccount, setBankAccount] = useState<string>("");
-  const [bankName, setBankName] = useState<string>("");
-  const [isWithdrawing, setIsWithdrawing] = useState(false);
-  const [isPaying, setIsPaying] = useState(false);
   const [isTrading, setIsTrading] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [hasAppliedParams, setHasAppliedParams] = useState(false);
@@ -75,7 +67,6 @@ export default function Swap() {
     const params = new URLSearchParams(window.location.search);
     const coinParam = params.get("coin");
     const sideParam = params.get("side");
-    const modeParam = params.get("mode");
 
     if (coinParam) {
       const match = coinsWithAddress.find(
@@ -94,10 +85,6 @@ export default function Swap() {
 
     if (sideParam === "buy" || sideParam === "sell") {
       setTradeSide(sideParam);
-    }
-
-    if (modeParam === "naira" || modeParam === "wallet") {
-      setTradeMode(modeParam);
     }
 
     setHasAppliedParams(true);
@@ -149,7 +136,7 @@ export default function Swap() {
   }, [selectedCoin?.address, fxRates]);
 
   const currentPriceNgn = convertUsdToNgn(currentPrice, fxRates);
-  const sparkColor = priceChange24h >= 0 ? "#16a34a" : "#ec4899";
+  const sparkColor = priceChange24h >= 0 ? "#1CAC78" : "#ec4899";
   const sparkGradientId = priceChange24h >= 0 ? "sparkGreen" : "sparkPink";
   const mockChartData = useMemo(
     () => [
@@ -179,12 +166,6 @@ export default function Swap() {
     return amountNgnValue / currentPriceNgn;
   }, [amountNgnValue, currentPriceNgn]);
 
-  const nairaSellEstimated = useMemo(() => {
-    if (!currentPriceNgn || currentPriceNgn <= 0) return null;
-    if (tradeSide !== "sell" || tradeMode !== "naira") return null;
-    return amountNgnValue * currentPriceNgn;
-  }, [amountNgnValue, currentPriceNgn, tradeSide, tradeMode]);
-
   const walletAmountValue = useMemo(() => {
     const amount = parseFloat(walletAmount);
     return Number.isFinite(amount) ? amount : 0;
@@ -195,76 +176,12 @@ export default function Swap() {
     return Number.isFinite(price) ? price : 0;
   }, [currentPrice]);
 
-  const walletEstimatedCoins = useMemo(() => {
-    if (!priceUsdValue || !fxRates?.eth_usd) return null;
-    if (tradeSide !== "buy") return null;
-    const usdValue = walletAmountValue * fxRates.eth_usd;
-    return usdValue / priceUsdValue;
-  }, [walletAmountValue, priceUsdValue, fxRates?.eth_usd, tradeSide]);
-
   const walletEstimatedNgn = useMemo(() => {
     if (!priceUsdValue || !fxRates?.usd_ngn) return null;
     if (tradeSide !== "sell") return null;
     const usdValue = walletAmountValue * priceUsdValue;
     return usdValue * fxRates.usd_ngn;
   }, [walletAmountValue, priceUsdValue, fxRates?.usd_ngn, tradeSide]);
-
-  const handlePayWithNaira = async () => {
-    if (!authenticated) {
-      toast({ title: "Sign in required", description: "Please sign in to pay with Naira", variant: "destructive" });
-      return;
-    }
-    if (!selectedCoin?.address) {
-      toast({ title: "Select a coin", description: "Please choose a creator coin", variant: "destructive" });
-      return;
-    }
-    if (!amountNgnValue || amountNgnValue <= 0) {
-      toast({ title: "Invalid amount", description: "Enter a valid amount", variant: "destructive" });
-      return;
-    }
-
-    setIsPaying(true);
-    try {
-      const accessToken = await getAccessToken();
-      if (!accessToken) throw new Error("Missing auth token");
-
-      const response = await fetch("/api/payments/initialize", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({
-          amountNgn: Number(amountNgnValue.toFixed(2)),
-          creatorTokenAddress: selectedCoin.address,
-          recipientAddress: privyUser?.wallet?.address,
-          email: privyUser?.email?.address || undefined,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorBody = await response.json().catch(() => ({}));
-        throw new Error(errorBody.error || "Payment initialization failed");
-      }
-
-      const data = await response.json();
-      if (data?.authorizationUrl) {
-        window.open(data.authorizationUrl, "_blank", "noopener,noreferrer");
-        toast({ title: "Payment started", description: "Complete payment to receive your coins." });
-      } else {
-        throw new Error("Missing payment URL");
-      }
-    } catch (error) {
-      console.error("Swap Naira payment error:", error);
-      toast({
-        title: "Payment error",
-        description: error instanceof Error ? error.message : "Failed to start payment",
-        variant: "destructive",
-      });
-    } finally {
-      setIsPaying(false);
-    }
-  };
 
   const handleWalletTrade = async () => {
     if (!isConnected || !address || !walletClient || !publicClient) {
@@ -275,7 +192,16 @@ export default function Swap() {
       toast({ title: "Select a coin", description: "Please choose a creator coin", variant: "destructive" });
       return;
     }
-    if (!walletAmountValue || walletAmountValue <= 0) {
+    if (tradeSide === "buy") {
+      if (!amountNgnValue || amountNgnValue <= 0) {
+        toast({ title: "Invalid amount", description: "Enter a valid amount", variant: "destructive" });
+        return;
+      }
+      if (!fxRates?.usd_ngn || !fxRates?.eth_usd) {
+        toast({ title: "Rates unavailable", description: "Please try again in a moment.", variant: "destructive" });
+        return;
+      }
+    } else if (!walletAmountValue || walletAmountValue <= 0) {
       toast({ title: "Invalid amount", description: "Enter a valid amount", variant: "destructive" });
       return;
     }
@@ -283,9 +209,13 @@ export default function Swap() {
     setIsTrading(true);
     try {
       const { tradeZoraCoin } = await import("@/lib/zora");
+      const ethAmountForBuy =
+        tradeSide === "buy"
+          ? (amountNgnValue / fxRates!.usd_ngn) / fxRates!.eth_usd
+          : walletAmountValue;
       const result = await tradeZoraCoin({
         coinAddress: selectedCoin.address as `0x${string}`,
-        ethAmount: walletAmountValue.toString(),
+        ethAmount: ethAmountForBuy.toString(),
         walletClient,
         publicClient,
         userAddress: address,
@@ -328,118 +258,10 @@ export default function Swap() {
     }
   };
 
-  const handleNairaWithdraw = async () => {
-    if (!authenticated) {
-      toast({ title: "Sign in required", description: "Please sign in to withdraw", variant: "destructive" });
-      return;
-    }
-    if (!isConnected || !address || !walletClient || !publicClient) {
-      toast({ title: "Wallet required", description: "Connect your wallet to sell coins", variant: "destructive" });
-      return;
-    }
-    if (!selectedCoin?.address) {
-      toast({ title: "Select a coin", description: "Please choose a creator coin", variant: "destructive" });
-      return;
-    }
-    if (!amountNgnValue || amountNgnValue <= 0) {
-      toast({ title: "Invalid amount", description: "Enter a valid amount", variant: "destructive" });
-      return;
-    }
-    if (!bankCode || !bankAccount || !bankName) {
-      toast({ title: "Bank details required", description: "Enter bank code, account number, and name", variant: "destructive" });
-      return;
-    }
 
-    setIsWithdrawing(true);
-    try {
-      const accessToken = await getAccessToken();
-      if (!accessToken) throw new Error("Missing auth token");
-
-      const initResponse = await fetch("/api/withdrawals/initialize", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({
-          tokenAddress: selectedCoin.address,
-          tokenAmount: amountNgnValue.toString(),
-          bankCode,
-          accountNumber: bankAccount,
-          accountName: bankName,
-          walletAddress: address,
-        }),
-      });
-
-      if (!initResponse.ok) {
-        const errorBody = await initResponse.json().catch(() => ({}));
-        throw new Error(errorBody.error || "Withdrawal initialization failed");
-      }
-
-      const initData = await initResponse.json();
-      const treasuryAddress = initData?.treasuryAddress as `0x${string}` | undefined;
-      if (!treasuryAddress) {
-        throw new Error("Missing treasury address");
-      }
-
-      let decimals = 18;
-      try {
-        const onchainDecimals = await publicClient.readContract({
-          address: selectedCoin.address as `0x${string}`,
-          abi: erc20Abi,
-          functionName: "decimals",
-        });
-        decimals = Number(onchainDecimals);
-      } catch (error) {
-        console.warn("Failed to read token decimals, defaulting to 18", error);
-      }
-
-      const amountUnits = parseUnits(amountNgnValue.toString(), decimals);
-      const txHash = await walletClient.writeContract({
-        address: selectedCoin.address as `0x${string}`,
-        abi: erc20Abi,
-        functionName: "transfer",
-        args: [treasuryAddress, amountUnits],
-        account: address,
-      });
-
-      await publicClient.waitForTransactionReceipt({ hash: txHash });
-
-      const confirmResponse = await fetch("/api/withdrawals/confirm", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({
-          withdrawalId: initData?.withdrawalId,
-          txHash,
-        }),
-      });
-
-      if (!confirmResponse.ok) {
-        const errorBody = await confirmResponse.json().catch(() => ({}));
-        throw new Error(errorBody.error || "Withdrawal confirmation failed");
-      }
-
-      setTxHash(txHash);
-      toast({ title: "Withdrawal started", description: "Your payout is being processed." });
-    } catch (error) {
-      console.error("Naira withdrawal error:", error);
-      toast({
-        title: "Withdrawal error",
-        description: error instanceof Error ? error.message : "Failed to withdraw",
-        variant: "destructive",
-      });
-    } finally {
-      setIsWithdrawing(false);
-    }
-  };
-
-  const isNairaSell = tradeMode === "naira" && tradeSide === "sell";
   const outputPreview = tradeSide === "buy"
     ? (estimatedCoins ? `≈ ${estimatedCoins.toFixed(2)} ${selectedCoin?.symbol || ""}` : "≈ --")
-    : (nairaSellEstimated ? `≈ ₦${nairaSellEstimated.toFixed(2)}` : "≈ --");
+    : (walletEstimatedNgn ? `≈ ₦${walletEstimatedNgn.toFixed(2)}` : "≈ --");
   const outputTokenLabel = tradeSide === "buy" ? (selectedCoin?.symbol || "COIN") : "NGN";
 
   return (
@@ -589,8 +411,8 @@ export default function Swap() {
                 <Input
                   type="number"
                   className="border-none px-0 text-2xl font-semibold text-foreground placeholder:text-muted-foreground/50"
-                  value={tradeMode === "naira" ? nairaAmount : walletAmount}
-                  onChange={(e) => (tradeMode === "naira" ? setNairaAmount(e.target.value) : setWalletAmount(e.target.value))}
+                  value={tradeSide === "buy" ? nairaAmount : walletAmount}
+                  onChange={(e) => (tradeSide === "buy" ? setNairaAmount(e.target.value) : setWalletAmount(e.target.value))}
                   placeholder={tradeSide === "buy" ? "0" : selectedCoin?.symbol || "0"}
                 />
               </div>
@@ -636,32 +458,6 @@ export default function Swap() {
             Balance: <span className="font-semibold text-foreground">0 {selectedCoin?.symbol || "COIN"}</span>
           </div>
 
-          {isNairaSell && (
-            <div className="mt-3 grid gap-2">
-              <Input
-                type="text"
-                className="h-10 border border-border/60 text-sm text-foreground/80"
-                placeholder="Bank code (e.g. 058)"
-                value={bankCode}
-                onChange={(e) => setBankCode(e.target.value)}
-              />
-              <Input
-                type="text"
-                className="h-10 border border-border/60 text-sm text-foreground/80"
-                placeholder="Account number"
-                value={bankAccount}
-                onChange={(e) => setBankAccount(e.target.value)}
-              />
-              <Input
-                type="text"
-                className="h-10 border border-border/60 text-sm text-foreground/80"
-                placeholder="Account name"
-                value={bankName}
-                onChange={(e) => setBankName(e.target.value)}
-              />
-            </div>
-          )}
-
           <div className="mt-2 flex items-start gap-2 rounded-2xl border border-amber-200/80 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
             <AlertTriangle className="mt-0.5 h-4 w-4" />
             <span>Note: Price may change by the time the swap completes.</span>
@@ -669,29 +465,17 @@ export default function Swap() {
 
           <Button
             className="mt-3 h-11 w-full rounded-2xl bg-primary text-base font-semibold text-primary-foreground hover:bg-primary/90"
-            onClick={
-              isNairaSell
-                ? handleNairaWithdraw
-                : tradeMode === "naira"
-                  ? handlePayWithNaira
-                  : handleWalletTrade
-            }
+            onClick={handleWalletTrade}
             disabled={
               !selectedCoin ||
-              (tradeMode === "naira" && tradeSide === "buy" ? isPaying : false) ||
-              (tradeMode === "wallet" ? isTrading : false) ||
-              (isNairaSell ? isWithdrawing : false)
+              isTrading
             }
           >
-            {isNairaSell
-              ? (isWithdrawing ? "Processing payout..." : `Sell ${selectedCoin?.name || "Coin"}`)
-              : tradeMode === "naira"
-                ? (isPaying ? "Starting payment..." : `Buy ${selectedCoin?.name || "Coin"}`)
-                : (isTrading ? "Trading..." : tradeSide === "buy" ? "Buy" : "Sell")}
+            {isTrading ? "Trading..." : tradeSide === "buy" ? `Buy ${selectedCoin?.name || "Coin"}` : `Sell ${selectedCoin?.name || "Coin"}`}
           </Button>
 
           <p className="mt-2 text-center text-xs italic text-muted-foreground">
-            Instant transaction. No crypto needed.
+            Trades use your wallet balance.
           </p>
 
           {txHash && (

@@ -221,6 +221,44 @@ export default function Profile() {
   const address = privyUser?.wallet?.address;
   const email = privyUser?.email?.address;
   const { smartAccountAddress } = useSmartAccount();
+  const { data: earningsSummary } = useQuery<EarningsSummary>({
+    queryKey: ["/api/earnings/summary"],
+    enabled: authenticated,
+    queryFn: async () => {
+      const headers: Record<string, string> = {};
+      const accessToken = await getAccessToken();
+      if (accessToken) {
+        headers.Authorization = `Bearer ${accessToken}`;
+      }
+      const response = await fetch("/api/earnings/summary", {
+        credentials: "include",
+        headers,
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch earnings summary");
+      }
+      return response.json();
+    },
+  });
+  const { data: weeklyChallenges } = useQuery<WeeklyChallenges>({
+    queryKey: ["/api/challenges/weekly"],
+    enabled: authenticated,
+    queryFn: async () => {
+      const headers: Record<string, string> = {};
+      const accessToken = await getAccessToken();
+      if (accessToken) {
+        headers.Authorization = `Bearer ${accessToken}`;
+      }
+      const response = await fetch("/api/challenges/weekly", {
+        credentials: "include",
+        headers,
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch weekly challenges");
+      }
+      return response.json();
+    },
+  });
   const totalEarningsNgn = convertUsdToNgn(totalEarningsUsd, fxRates);
   const changePct = earningsSummary?.changePct ?? 0;
   const changeLabel = `${changePct >= 0 ? "+" : ""}${changePct.toFixed(1)}%`;
@@ -300,26 +338,6 @@ export default function Profile() {
     },
   });
 
-  const { data: earningsSummary } = useQuery<EarningsSummary>({
-    queryKey: ["/api/earnings/summary"],
-    enabled: authenticated,
-    queryFn: async () => {
-      const headers: Record<string, string> = {};
-      const accessToken = await getAccessToken();
-      if (accessToken) {
-        headers.Authorization = `Bearer ${accessToken}`;
-      }
-      const response = await fetch("/api/earnings/summary", {
-        credentials: "include",
-        headers,
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch earnings summary");
-      }
-      return response.json();
-    },
-  });
-
   const { data: collabSummary } = useQuery<CollabSummary>({
     queryKey: ["/api/collabs/summary"],
     enabled: authenticated,
@@ -335,26 +353,6 @@ export default function Profile() {
       });
       if (!response.ok) {
         throw new Error("Failed to fetch collab summary");
-      }
-      return response.json();
-    },
-  });
-
-  const { data: weeklyChallenges } = useQuery<WeeklyChallenges>({
-    queryKey: ["/api/challenges/weekly"],
-    enabled: authenticated,
-    queryFn: async () => {
-      const headers: Record<string, string> = {};
-      const accessToken = await getAccessToken();
-      if (accessToken) {
-        headers.Authorization = `Bearer ${accessToken}`;
-      }
-      const response = await fetch("/api/challenges/weekly", {
-        credentials: "include",
-        headers,
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch weekly challenges");
       }
       return response.json();
     },
@@ -597,6 +595,7 @@ export default function Profile() {
   const displayedCoins = createdCoins.filter(
     (coin) => coin.address !== null,
   ) as Array<(typeof createdCoins)[0] & { address: string }>;
+  const hasCreatorCoin = displayedCoins.length > 0;
 
   useEffect(() => {
     if (!address || !authenticated || !createdCoins.length) {
@@ -986,83 +985,147 @@ export default function Profile() {
       </div>
 
       {/* Profile Section */}
-      <div className="flex flex-col items-center text-center py-6 px-4">
-        {/* Avatar */}
-        <img
-          src={avatarUrl}
-          alt="Profile"
-          className="w-24 h-24 rounded-full border-2 border-border object-cover mb-4"
-          data-testid="img-profile-avatar"
-        />
-
-        {/* Username with verification */}
-        <div className="flex items-center gap-1 mb-1">
-          <h2 className="text-base font-semibold">
-            @{getDisplayName()}
-          </h2>
-          {creatorData?.verified === "true" && (
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <circle cx="8" cy="8" r="8" fill="#20D5EC" />
-              <path
-                d="M6.5 8.5L7.5 9.5L10 7"
-                stroke="white"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+      <div className="py-4 md:py-6">
+        <Card className="rounded-3xl border-border/60 bg-card p-3 sm:p-4 md:p-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <img
+                src={avatarUrl}
+                alt="Profile"
+                className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border-2 border-border object-cover"
+                data-testid="img-profile-avatar"
               />
-            </svg>
-          )}
-        </div>
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-lg sm:text-xl font-semibold">
+                    {creatorData?.name ? creatorData.name : `@${getDisplayName()}`}
+                  </h2>
+                  {creatorData?.verified === "true" && (
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <circle cx="8" cy="8" r="8" fill="#20D5EC" />
+                      <path
+                        d="M6.5 8.5L7.5 9.5L10 7"
+                        stroke="white"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  )}
+                </div>
+                {creatorData?.name && (
+                  <p className="text-[11px] text-muted-foreground">@{getDisplayName()}</p>
+                )}
 
-        {/* Stats */}
-        <div className="flex items-center gap-3 mb-4">
-          <div>
-            <div className="text-lg font-bold" data-testid="text-posts">
-              {isLoadingCoins ? "-" : createdCoins.length}
-            </div>
-            <div className="text-xs text-muted-foreground">Posts</div>
-          </div>
-          <div>
-            <div className="text-lg font-bold" data-testid="text-followers">
-              {followersCount}
-            </div>
-            <div className="text-xs text-muted-foreground">Followers</div>
-          </div>
-          <div>
-            <div className="text-lg font-bold" data-testid="text-following">
-              {followingCount}
-            </div>
-            <div className="text-xs text-muted-foreground">Following</div>
-          </div>
-          <div
-            className="cursor-pointer"
-            onClick={() => setShowWithdrawModal(true)}
-          >
-            <div
-              className="text-lg font-bold text-green-500"
-              data-testid="text-earnings"
-            >
-              {isLoadingStats
-                ? "-"
-                : totalEarningsNgn && totalEarningsNgn > 1000
-                  ? `₦${(totalEarningsNgn / 1000).toFixed(1)}k`
-                  : formatSmartCurrency(totalEarningsNgn)}
-            </div>
-            <div className="text-xs text-muted-foreground flex items-center gap-1">
-              Cash out
-              {totalEarningsOnchain > 0 && (
-                <Wallet className="w-3 h-3 text-green-500" />
-              )}
-            </div>
-            {totalEarningsOnchain > 0 && (
-              <div className="text-[10px] text-muted-foreground mt-0.5">
-                Onchain: {totalEarningsOnchain.toFixed(4)} {earningsCurrencyLabel}
+                {creatorData?.bio && (
+                  <p className="text-xs sm:text-sm text-muted-foreground max-w-xl">
+                    {creatorData.bio}
+                  </p>
+                )}
+
+                <div className="flex flex-wrap items-center gap-3 pt-1 text-xs sm:text-sm">
+                  <div>
+                    <div className="text-sm sm:text-base font-semibold" data-testid="text-posts">
+                      {isLoadingCoins ? "-" : createdCoins.length}
+                    </div>
+                    <div className="text-[10px] sm:text-[11px] text-muted-foreground">Posts</div>
+                  </div>
+                  <div>
+                    <div className="text-sm sm:text-base font-semibold" data-testid="text-followers">
+                      {followersCount}
+                    </div>
+                    <div className="text-[10px] sm:text-[11px] text-muted-foreground">Followers</div>
+                  </div>
+                  <div>
+                    <div className="text-sm sm:text-base font-semibold" data-testid="text-following">
+                      {followingCount}
+                    </div>
+                    <div className="text-[10px] sm:text-[11px] text-muted-foreground">Following</div>
+                  </div>
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => setShowWithdrawModal(true)}
+                  >
+                    <div
+                      className="text-sm sm:text-base font-semibold text-primary"
+                      data-testid="text-earnings"
+                    >
+                      {isLoadingStats
+                        ? "-"
+                        : totalEarningsNgn && totalEarningsNgn > 1000
+                          ? `₦${(totalEarningsNgn / 1000).toFixed(1)}k`
+                          : formatSmartCurrency(totalEarningsNgn)}
+                    </div>
+                    <div className="text-[10px] sm:text-[11px] text-muted-foreground flex items-center gap-1">
+                      Earnings
+                      {totalEarningsOnchain > 0 && (
+                        <Wallet className="w-3 h-3 text-primary" />
+                      )}
+                    </div>
+                    {totalEarningsOnchain > 0 && (
+                      <div className="text-[10px] text-muted-foreground mt-0.5">
+                        Onchain: {totalEarningsOnchain.toFixed(4)} {earningsCurrencyLabel}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            )}
-          </div>
-        </div>
+            </div>
 
-        <div className="w-full max-w-sm mx-auto grid gap-3 mb-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <Button
+                onClick={() => setIsEditModalOpen(true)}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-full h-8 text-[11px] px-3"
+                data-testid="button-edit-profile"
+              >
+                Edit Profile
+              </Button>
+              <div className="flex items-center gap-1 px-2 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-full">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                  <path
+                    d="M8 2L9.5 6.5L14 8L9.5 9.5L8 14L6.5 9.5L2 8L6.5 6.5L8 2Z"
+                    fill="#EAB308"
+                  />
+                </svg>
+                <span className="text-[11px] font-bold text-yellow-600 dark:text-yellow-500">
+                  {totalE1XPPoints.toLocaleString()}
+                </span>
+              </div>
+              <Button
+                onClick={handleShare}
+                variant="outline"
+                size="icon"
+                className="rounded-full h-8 w-8"
+                data-testid="button-share-profile"
+              >
+                <Share2 className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+
+          {email && smartAccountAddress && (
+            <div className="mt-3 flex items-center gap-2 px-2.5 py-1.5 bg-muted/30 rounded-lg text-[10px] sm:text-xs font-mono">
+              <Wallet className="w-3 h-3 text-muted-foreground" />
+              <span className="text-muted-foreground truncate">
+                {formatAddress(smartAccountAddress)}
+              </span>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(smartAccountAddress);
+                  toast({
+                    title: "Smart account copied",
+                    description: "Your smart account address has been copied",
+                  });
+                }}
+                className="p-1 hover:bg-muted rounded"
+              >
+                {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+              </button>
+            </div>
+          )}
+        </Card>
+
+        <div className="w-full grid gap-3 mt-6 md:grid-cols-2">
           <Card className="rounded-2xl border-border/60 bg-muted/20">
             <div className="p-3 space-y-1">
               <p className="text-[11px] text-muted-foreground">Today&apos;s earnings</p>
@@ -1151,7 +1214,6 @@ export default function Profile() {
             </div>
           </Card>
         </div>
-
         <div className="w-full max-w-2xl mx-auto mb-6">
           {pendingFulfillments.length > 0 && (
             <Card className="rounded-2xl border-border/60 bg-card p-4 mb-6">
@@ -1209,12 +1271,18 @@ export default function Profile() {
               <p className="text-xs text-muted-foreground">
                 Create missions to reward fans and grow coin demand.
               </p>
+              {!hasCreatorCoin && (
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Create your coin first to unlock missions.
+                </p>
+              )}
             </div>
             <Button
               variant="outline"
               size="sm"
               className="rounded-full text-xs"
-              onClick={() => setIsMissionModalOpen(true)}
+              onClick={() => hasCreatorCoin && setIsMissionModalOpen(true)}
+              disabled={!hasCreatorCoin}
             >
               Create Mission
             </Button>
@@ -1439,72 +1507,6 @@ export default function Profile() {
           </DialogContent>
         </Dialog>
 
-        {/* Action Buttons */}
-        <div className="flex items-center justify-center gap-2 mb-4 w-full max-w-sm mx-auto">
-          <Button
-            onClick={() => setIsEditModalOpen(true)}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg h-9 text-xs px-3"
-            data-testid="button-edit-profile"
-          >
-            Edit Profile
-          </Button>
-          <div className="flex items-center gap-1 px-2.5 py-1 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-              <path
-                d="M8 2L9.5 6.5L14 8L9.5 9.5L8 14L6.5 9.5L2 8L6.5 6.5L8 2Z"
-                fill="#EAB308"
-              />
-            </svg>
-            <span className="text-xs font-bold text-yellow-600 dark:text-yellow-500">
-              {totalE1XPPoints.toLocaleString()}
-            </span>
-          </div>
-          <Button
-            onClick={handleShare}
-            variant="outline"
-            size="icon"
-            className="rounded-lg h-9 w-9"
-            data-testid="button-share-profile"
-          >
-            <Share2 className="w-4 h-4" />
-          </Button>
-        </div>
-
-        {/* Bio */}
-        {creatorData?.bio && (
-          <p
-            className="text-sm text-foreground mb-2 max-w-md"
-            data-testid="text-bio"
-          >
-            {creatorData.bio}
-          </p>
-        )}
-
-        {/* Smart Account Address (for email users) */}
-        {email && smartAccountAddress && (
-          <div className="flex items-center gap-2 px-3 py-2 bg-muted/30 rounded-lg text-xs font-mono max-w-md mx-auto mb-2">
-            <Wallet className="w-3 h-3 text-muted-foreground" />
-            <span className="text-muted-foreground truncate">
-              {formatAddress(smartAccountAddress)}
-            </span>
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(smartAccountAddress);
-                toast({
-                  title: "Smart account copied",
-                  description: "Your smart account address has been copied",
-                });
-              }}
-              className="p-1 hover:bg-muted rounded"
-            >
-              {copied ? (
-                <Check className="w-3 h-3" />
-              ) : (
-                <Copy className="w-3 h-3" />
-              )}
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Tabs */}
@@ -1707,11 +1709,6 @@ export default function Profile() {
       <WithdrawEarningsModal
         open={showWithdrawModal}
         onOpenChange={setShowWithdrawModal}
-        userCoins={
-          createdCoins.filter((coin) => coin.address !== null) as Array<
-            (typeof createdCoins)[0] & { address: string }
-          >
-        }
       />
     </div>
   );

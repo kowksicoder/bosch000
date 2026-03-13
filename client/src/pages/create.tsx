@@ -195,26 +195,46 @@ export default function Create() {
           </p>
         </div>
 
-        <div className="flex items-center justify-center gap-2 mb-4 sm:mb-6">
+        <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 mb-4 sm:mb-6">
           <button
-            onClick={() => setCreateMode("solo")}
-            className={`relative flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
-              createMode === "solo"
-                ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground"
-                : "bg-muted/50 text-muted-foreground hover-elevate active-elevate-2"
-            }`}
-          >
-            Solo Coin
-          </button>
-          <button
-            onClick={() => setCreateMode("collab")}
-            className={`relative flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
+            onClick={() => setCreateMode((prev) => (prev === "collab" ? "solo" : "collab"))}
+            className={`relative flex items-center gap-1 sm:gap-2 px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all ${
               createMode === "collab"
                 ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground"
                 : "bg-muted/50 text-muted-foreground hover-elevate active-elevate-2"
             }`}
           >
             Collab Coin
+          </button>
+          <button
+            onClick={() => setActiveTab("import")}
+            className={`
+              relative flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all
+              ${
+                activeTab === "import"
+                  ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground"
+                  : "bg-muted/50 text-muted-foreground hover-elevate active-elevate-2"
+              }
+            `}
+            data-testid="button-tab-import"
+          >
+            <LinkIcon className="w-3 h-3 sm:w-4 sm:h-4" />
+            Import URL
+          </button>
+          <button
+            onClick={() => setActiveTab("upload")}
+            className={`
+              relative flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all
+              ${
+                activeTab === "upload"
+                  ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground"
+                  : "bg-muted/50 text-muted-foreground hover-elevate active-elevate-2"
+              }
+            `}
+            data-testid="button-tab-upload"
+          >
+            <Upload className="w-3 h-3 sm:w-4 sm:h-4" />
+            Upload File
           </button>
         </div>
 
@@ -255,39 +275,6 @@ export default function Create() {
             </div>
           </div>
         )}
-
-        <div className="flex items-center justify-center gap-1.5 sm:gap-2 mb-4 sm:mb-6">
-          <button
-            onClick={() => setActiveTab("import")}
-            className={`
-              relative flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all
-              ${
-                activeTab === "import"
-                  ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground"
-                  : "bg-muted/50 text-muted-foreground hover-elevate active-elevate-2"
-              }
-            `}
-            data-testid="button-tab-import"
-          >
-            <LinkIcon className="w-3 h-3 sm:w-4 sm:h-4" />
-            Import URL
-          </button>
-          <button
-            onClick={() => setActiveTab("upload")}
-            className={`
-              relative flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all
-              ${
-                activeTab === "upload"
-                  ? "bg-gradient-to-r from-primary to-secondary text-primary-foreground"
-                  : "bg-muted/50 text-muted-foreground hover-elevate active-elevate-2"
-              }
-            `}
-            data-testid="button-tab-upload"
-          >
-            <Upload className="w-3 h-3 sm:w-4 sm:h-4" />
-            Upload File
-          </button>
-        </div>
 
         <div className="mb-6">
           {activeTab === "import" ? (

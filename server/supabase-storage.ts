@@ -458,6 +458,18 @@ export class SupabaseStorage {
     return data || [];
   }
 
+  async getNairaLedgerEntriesByAddress(recipientAddress: string, limit = 50) {
+    const { data, error } = await supabase
+      .from('naira_ledger_entries')
+      .select('*')
+      .eq('recipient_address', recipientAddress)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) throw error;
+    return data || [];
+  }
+
   async getNairaLedgerSummary() {
     const { data, error } = await supabase
       .from('naira_ledger')
@@ -1335,7 +1347,7 @@ export class SupabaseStorage {
         points: amount,
         reason,
         totalPoints: newPoints,
-        shareText: `I just earned ${amount} E1XP points on @Every1Fun for ${reason}! Total: ${newPoints} ⚡\n\nJoin me: ${profileUrl}\n\n#Every1Fun #E1XP #Web3`
+        shareText: `I just earned ${amount} E1XP points on @Every1 for ${reason}! Total: ${newPoints} ⚡\n\nJoin me: ${profileUrl}\n\n#Every1 #E1XP #Web3`
       },
       read: false
     });
@@ -1423,7 +1435,7 @@ export class SupabaseStorage {
           message: `Congratulations! You've maintained a ${streak + 1} day streak! Keep it up for more bonus points!`,
           metadata: {
             streakDays: streak + 1,
-            shareText: `I just hit a ${streak + 1} day streak on @Every1Fun! 🔥 Earning more E1XP points every day!\n\n#Every1Fun #E1XP #Web3`
+            shareText: `I just hit a ${streak + 1} day streak on @Every1! 🔥 Earning more E1XP points every day!\n\n#Every1 #E1XP #Web3`
           },
           read: false
         });

@@ -12,11 +12,11 @@ export default function About() {
     <div className="container max-w-4xl mx-auto px-4 py-8 space-y-8">
       <div className="flex items-center gap-3">
         <BookOpen className="h-8 w-8 text-primary" />
-        <h1 className="text-2xl font-bold">About creat8*</h1>
+        <h1 className="text-2xl font-bold">About Every1</h1>
       </div>
 
       <p className="text-lg text-muted-foreground">
-        creat8* is a Naira‑first creator economy where fans can support and trade creator coins,
+        Every1 is a Naira‑first creator economy where fans can support and trade creator coins,
         and creators earn directly from community activity. Everything feels like a normal local
         experience — no confusing setup, no complicated steps.
       </p>

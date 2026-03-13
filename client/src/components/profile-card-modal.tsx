@@ -257,13 +257,23 @@ export default function ProfileCardModal({ creatorAddress, open, onOpenChange, c
           </button>
         </div>
         <div className="px-3 pb-3 sm:px-5 sm:pb-5">
-          <div className="relative mb-2 sm:mb-3 flex items-start justify-start">
+          <div className="relative mb-2 sm:mb-3 flex items-center gap-3">
             <img
               src={avatarUrl}
               alt="Profile"
               className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 sm:border-4 border-border shadow-lg"
               data-testid="img-profile-card-avatar"
             />
+            <div className="flex flex-col gap-1 text-[10px] sm:text-xs">
+              <div className="flex items-baseline gap-1">
+                <span className="font-semibold text-foreground">{followersCount}</span>
+                <span className="text-muted-foreground">Followers</span>
+              </div>
+              <div className="flex items-baseline gap-1">
+                <span className="font-semibold text-foreground">{followingCount}</span>
+                <span className="text-muted-foreground">Following</span>
+              </div>
+            </div>
           </div>
 
           <div className="mb-2 sm:mb-3">
@@ -327,21 +337,6 @@ export default function ProfileCardModal({ creatorAddress, open, onOpenChange, c
                   ? `₦${(totalEarningsNgn / 1000).toFixed(1)}k`
                   : formatSmartCurrency(totalEarningsNgn)}
               </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2 mb-2">
-            <div className="text-center bg-muted/20 rounded-xl py-2">
-              <div className="text-[10px] sm:text-xs text-muted-foreground">Followers</div>
-              <div className="text-sm sm:text-base font-bold text-foreground">
-                {followersCount}
-              </div>
-            </div>
-            <div className="text-center bg-muted/20 rounded-xl py-2">
-              <div className="text-[10px] sm:text-xs text-muted-foreground">Following</div>
-              <div className="text-sm sm:text-base font-bold text-foreground">
-                {followingCount}
-              </div>
             </div>
           </div>
 

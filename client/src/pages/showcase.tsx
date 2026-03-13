@@ -141,7 +141,7 @@ export default function Showcase() {
         <div className="text-center">
           <h1 className="text-lg font-semibold sm:text-2xl">Showcase</h1>
           <p className="text-[11px] text-muted-foreground sm:text-sm">
-            News, launches, and creator stories from the creat8* ecosystem.
+            News, launches, and creator stories from the Every1 ecosystem.
           </p>
         </div>
       </div>

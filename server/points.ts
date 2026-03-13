@@ -2,6 +2,7 @@ import { db } from "./db";
 import { users, pointsTransactions, referrals } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { storage } from './supabase-storage';
+import { generateUniqueReferralCode } from './referral-utils';
 import { sendTelegramNotification } from './telegram-bot';
 import { notificationService } from './notification-service';
 import type { Reward, Creator, Coin } from '@shared/schema';
@@ -137,21 +138,26 @@ export async function generateReferralCode(userId: string): Promise<string> {
     .where(eq(users.id, userId))
     .limit(1);
 
-  if (user?.username) {
-    // Use username as referral code
-    await db
-      .update(users)
-      .set({ referralCode: user.username })
-      .where(eq(users.id, userId));
-    return user.username;
+  if (!user) {
+    return Math.random().toString(36).slice(2, 10);
   }
 
-  // Fallback to random code if no username
-  const code = Math.random().toString(36).substring(2, 10).toUpperCase();
-  await db
-    .update(users)
-    .set({ referralCode: code })
-    .where(eq(users.id, userId));
+  const code = await generateUniqueReferralCode({
+    email: user.email,
+    username: user.username,
+    privyId: user.privyId,
+    address: user.walletAddress,
+    existingCode: user.referralCode,
+    userId: user.id,
+  });
+
+  if (!user.referralCode || user.referralCode !== code) {
+    await db
+      .update(users)
+      .set({ referralCode: code })
+      .where(eq(users.id, userId));
+  }
+
   return code;
 }
 

@@ -37,6 +37,7 @@ import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 import Notifications from "@/pages/notifications";
 import WalletPage from "@/pages/wallet";
+import TransactionsPage from "@/pages/transactions";
 
 function Router() {
   return (
@@ -67,6 +68,7 @@ function Router() {
         <Route path="/referrals" component={Referrals} />
         <Route path="/notifications" component={Notifications} />
         <Route path="/wallet" component={WalletPage} />
+        <Route path="/transactions" component={TransactionsPage} />
         <Route path="/showcase" component={Showcase} />
         <Route path="/showcase/:slug" component={ShowcaseDetail} />
         <Route path="/fans-missions" component={FansMissions} />

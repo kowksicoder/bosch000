@@ -10,6 +10,19 @@ const userWallets = new Map<number, string>();
 let isPolling = false;
 let initializationPromise: Promise<void> | null = null;
 
+async function sendTelegramChannelMessage(message: string, options?: TelegramBot.SendMessageOptions) {
+  if (!bot || !TELEGRAM_CHANNEL_ID) {
+    console.log('Telegram bot not initialized or channel not configured');
+    return;
+  }
+
+  await bot.sendMessage(TELEGRAM_CHANNEL_ID, message, {
+    parse_mode: 'Markdown',
+    disable_web_page_preview: false,
+    ...(options || {}),
+  });
+}
+
 // Helper function to format wallet address for display
 function formatAddress(address: string): string {
   if (!address) return 'Unknown';
@@ -21,9 +34,9 @@ function formatTimestamp(date: Date | string | null | undefined): string {
   if (!date) return 'N/A';
   const d = typeof date === 'string' ? new Date(date) : date;
   if (!d || isNaN(d.getTime())) return 'N/A';
-  return d.toLocaleString('en-US', { 
+  return d.toLocaleString('en-US', {
     month: '2-digit',
-    day: '2-digit', 
+    day: '2-digit',
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
@@ -51,12 +64,12 @@ function formatNewCoinMessage(coin: any, stats?: any): string {
   message += `📛 ${coin.name} (${coin.symbol})\n`;
   message += `💰 Market Cap: ${marketCap}\n`;
   message += `📊 Total Supply: ${totalSupply}\n`;
-  message += `👤 [${formatAddress(creatorAddress)}](https://zora.co/profile/${creatorAddress})\n`;
+  message += `👤 [${formatAddress(creatorAddress)}](https://Every1.co/profile/${creatorAddress})\n`;
   message += `📅 Created: ${formatTimestamp(coin.createdAt)}\n`;
   message += `📄 Contract: ${formatAddress(contractAddress)}\n\n`;
 
   if (coin.address) {
-    message += `🔗 [View on Zora](https://zora.co/creator-coins/base:${coin.address}) | `;
+    message += `🔗 [View on Every1](https://Every1.co/creator-coins/base:${coin.address}) | `;
     message += `[BaseScan](https://basescan.org/address/${coin.address}) | `;
     message += `[DexScreener](https://dexscreener.com/base/${coin.address})`;
   }
@@ -79,7 +92,7 @@ function formatTradingActivityMessage(coin: any, stats?: any, activityTime?: Dat
   message += `📊 24h Volume: ${volume24h}\n`;
   message += `📊 Total Supply: ${totalSupply}\n`;
   message += `👥 Holders: ${holders}\n`;
-  message += `👤 [${formatAddress(creatorAddress)}](https://zora.co/profile/${creatorAddress})\n`;
+  message += `👤 [${formatAddress(creatorAddress)}](https://Every1.co/profile/${creatorAddress})\n`;
   message += `📄 Contract: ${formatAddress(contractAddress)}\n`;
   message += `📅 Created: ${formatTimestamp(coin.createdAt)}\n`;
   if (activityTime) {
@@ -88,7 +101,7 @@ function formatTradingActivityMessage(coin: any, stats?: any, activityTime?: Dat
   message += `\n`;
 
   if (coin.address) {
-    message += `🔗 [View on Zora](https://zora.co/creator-coins/base:${coin.address}) | `;
+    message += `🔗 [View on Every1](https://Every1.co/creator-coins/base:${coin.address}) | `;
     message += `[BaseScan](https://basescan.org/address/${coin.address}) | `;
     message += `[DexScreener](https://dexscreener.com/base/${coin.address})`;
   }
@@ -109,7 +122,7 @@ function formatBuyActivityMessage(coin: any, stats?: any, activityTime?: Date): 
   message += `💰 Market Cap: ${marketCap}\n`;
   message += `📊 Total Supply: ${totalSupply}\n`;
   message += `👥 Holders: ${holders}\n`;
-  message += `👤 [${formatAddress(creatorAddress)}](https://zora.co/profile/${creatorAddress})\n`;
+  message += `👤 [${formatAddress(creatorAddress)}](https://Every1.co/profile/${creatorAddress})\n`;
   message += `📄 Contract: ${formatAddress(contractAddress)}\n`;
   message += `📅 Created: ${formatTimestamp(coin.createdAt)}\n`;
   if (activityTime) {
@@ -118,7 +131,7 @@ function formatBuyActivityMessage(coin: any, stats?: any, activityTime?: Date): 
   message += `\n`;
 
   if (coin.address) {
-    message += `🔗 [View on Zora](https://zora.co/creator-coins/base:${coin.address}) | `;
+    message += `🔗 [View on Every1](https://Every1.co/creator-coins/base:${coin.address}) | `;
     message += `[BaseScan](https://basescan.org/address/${coin.address}) | `;
     message += `[DexScreener](https://dexscreener.com/base/${coin.address})`;
   }
@@ -139,7 +152,7 @@ function formatSellActivityMessage(coin: any, stats?: any, activityTime?: Date):
   message += `💰 Market Cap: ${marketCap}\n`;
   message += `📊 Total Supply: ${totalSupply}\n`;
   message += `👥 Holders: ${holders}\n`;
-  message += `👤 [${formatAddress(creatorAddress)}](https://zora.co/profile/${creatorAddress})\n`;
+  message += `👤 [${formatAddress(creatorAddress)}](https://Every1.co/profile/${creatorAddress})\n`;
   message += `📄 Contract: ${formatAddress(contractAddress)}\n`;
   message += `📅 Created: ${formatTimestamp(coin.createdAt)}\n`;
   if (activityTime) {
@@ -148,7 +161,7 @@ function formatSellActivityMessage(coin: any, stats?: any, activityTime?: Date):
   message += `\n`;
 
   if (coin.address) {
-    message += `🔗 [View on Zora](https://zora.co/creator-coins/base:${coin.address}) | `;
+    message += `🔗 [View on Every1](https://Every1.co/creator-coins/base:${coin.address}) | `;
     message += `[BaseScan](https://basescan.org/address/${coin.address}) | `;
     message += `[DexScreener](https://dexscreener.com/base/${coin.address})`;
   }
@@ -225,7 +238,7 @@ function formatDailyVolumeUpdate(coins: any[]): string {
 // Format creator earnings update
 function formatCreatorEarningsUpdate(walletAddress: string, totalEarnings: number, coins: any[]): string {
   let message = `💎💰 YOUR CREATOR EARNINGS\n\n`;
-  message += `👤 Wallet: [${formatAddress(walletAddress)}](https://zora.co/profile/${walletAddress})\n`;
+  message += `👤 Wallet: [${formatAddress(walletAddress)}](https://Every1.co/profile/${walletAddress})\n`;
   message += `💵 Total Earnings: $${formatNumber(totalEarnings)}\n`;
   message += `🪙 Total Coins Created: ${coins.length}\n\n`;
 
@@ -293,7 +306,7 @@ export async function initTelegramBot() {
         }
       }
 
-      bot = new TelegramBot(TELEGRAM_BOT_TOKEN, { 
+      bot = new TelegramBot(TELEGRAM_BOT_TOKEN, {
         polling: {
           interval: 500,
           autoStart: false,
@@ -311,7 +324,7 @@ export async function initTelegramBot() {
             console.log('⚠️ Detected multiple bot instances, stopping this one...');
             isPolling = false;
             if (bot) {
-              bot.stopPolling({ cancel: true }).catch(() => {});
+              bot.stopPolling({ cancel: true }).catch(() => { });
               bot.removeAllListeners();
               bot = null;
               botInstance = null;
@@ -499,9 +512,9 @@ export async function sendTelegramNotification(
         await bot.sendMessage(
           TELEGRAM_CHANNEL_ID,
           formattedMessage,
-          { 
+          {
             parse_mode: 'Markdown',
-            disable_web_page_preview: false 
+            disable_web_page_preview: false
           }
         );
       }
@@ -593,7 +606,7 @@ export async function broadcastExistingCoins(coins: any[]) {
     for (const coin of latestCoins) {
       message += `• *${coin.name}* (${coin.symbol})\n`;
       if (coin.address) {
-        message += `  [View on Zora](https://zora.co/creator-coins/base:${coin.address})\n`;
+        message += `  [View on Every1.fun](https://Every1.co/creator-coins/base:${coin.address})\n`;
       }
     }
 
@@ -603,9 +616,9 @@ export async function broadcastExistingCoins(coins: any[]) {
 
     message += `\n🚀 *Join the trading action!*`;
 
-    await bot.sendMessage(TELEGRAM_CHANNEL_ID, message, { 
+    await bot.sendMessage(TELEGRAM_CHANNEL_ID, message, {
       parse_mode: 'Markdown',
-      disable_web_page_preview: true 
+      disable_web_page_preview: true
     });
     console.log('Successfully broadcast to channel');
   } catch (error) {
@@ -616,7 +629,7 @@ export async function broadcastExistingCoins(coins: any[]) {
 export async function stopTelegramBot() {
   // Wait for any ongoing initialization
   if (initializationPromise) {
-    await initializationPromise.catch(() => {});
+    await initializationPromise.catch(() => { });
   }
 
   if (bot && isPolling) {
@@ -655,11 +668,12 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-export { 
-  bot, 
-  formatNewCoinMessage, 
-  formatTradingActivityMessage, 
-  formatBuyActivityMessage, 
+export {
+  bot,
+  sendTelegramChannelMessage,
+  formatNewCoinMessage,
+  formatTradingActivityMessage,
+  formatBuyActivityMessage,
   formatSellActivityMessage,
   formatDailyMarketCapUpdate,
   formatDailyVolumeUpdate,
