@@ -30,7 +30,11 @@ class SocketClient {
     }
 
     this.userId = userId;
-    this.socket = io(window.location.origin, {
+    const socketUrl =
+      import.meta.env.VITE_SOCKET_URL ||
+      import.meta.env.VITE_API_BASE ||
+      (typeof window !== "undefined" ? window.location.origin : "");
+    this.socket = io(socketUrl, {
       transports: ['websocket', 'polling']
     });
 
