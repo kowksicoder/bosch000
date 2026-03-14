@@ -1,6 +1,6 @@
 import { createPublicClient, createWalletClient, http, parseEther, parseUnits, type Address, type Hex } from "viem";
 import { base, baseSepolia } from "viem/chains";
-import { privateKeyToAccount } from "viem/accounts";
+import { getAccountFromPrivateKey, isValidPrivateKey } from "./utils/private-key";
 import { setApiKey, tradeCoin } from "@zoralabs/coins-sdk";
 
 type TreasuryTradeConfig = {
@@ -17,6 +17,9 @@ function resolveTreasuryConfig(): TreasuryTradeConfig {
   const privateKey = process.env.TREASURY_PRIVATE_KEY;
   if (!privateKey) {
     throw new Error("Missing TREASURY_PRIVATE_KEY");
+  }
+  if (!isValidPrivateKey(privateKey)) {
+    throw new Error("Invalid TREASURY_PRIVATE_KEY. Expected a 0x-prefixed 32-byte hex string.");
   }
 
   const zoraApiKey = process.env.ZORA_API_KEY || process.env.VITE_NEXT_PUBLIC_ZORA_API_KEY || "";
@@ -40,7 +43,10 @@ function resolveTreasuryConfig(): TreasuryTradeConfig {
     throw new Error("Missing RPC URL for treasury trades");
   }
 
-  const account = privateKeyToAccount(privateKey as `0x${string}`);
+  const account = getAccountFromPrivateKey(privateKey);
+  if (!account) {
+    throw new Error("Invalid TREASURY_PRIVATE_KEY. Expected a 0x-prefixed 32-byte hex string.");
+  }
 
   cachedConfig = {
     chainId: chain.id,
@@ -56,7 +62,13 @@ export function getTreasuryAddress(): Address {
   if (!privateKey) {
     throw new Error("Missing TREASURY_PRIVATE_KEY");
   }
-  const account = privateKeyToAccount(privateKey as `0x${string}`);
+  if (!isValidPrivateKey(privateKey)) {
+    throw new Error("Invalid TREASURY_PRIVATE_KEY. Expected a 0x-prefixed 32-byte hex string.");
+  }
+  const account = getAccountFromPrivateKey(privateKey);
+  if (!account) {
+    throw new Error("Invalid TREASURY_PRIVATE_KEY. Expected a 0x-prefixed 32-byte hex string.");
+  }
   return account.address;
 }
 
@@ -73,7 +85,10 @@ export async function executeTreasuryBuy({
 }) {
   const config = resolveTreasuryConfig();
   const chain = config.chainId === baseSepolia.id ? baseSepolia : base;
-  const account = privateKeyToAccount(process.env.TREASURY_PRIVATE_KEY as `0x${string}`);
+  const account = getAccountFromPrivateKey(process.env.TREASURY_PRIVATE_KEY);
+  if (!account) {
+    throw new Error("Invalid TREASURY_PRIVATE_KEY. Expected a 0x-prefixed 32-byte hex string.");
+  }
 
   const publicClient = createPublicClient({
     chain,
@@ -130,7 +145,10 @@ export async function executeTreasurySell({
 }) {
   const config = resolveTreasuryConfig();
   const chain = config.chainId === baseSepolia.id ? baseSepolia : base;
-  const account = privateKeyToAccount(process.env.TREASURY_PRIVATE_KEY as `0x${string}`);
+  const account = getAccountFromPrivateKey(process.env.TREASURY_PRIVATE_KEY);
+  if (!account) {
+    throw new Error("Invalid TREASURY_PRIVATE_KEY. Expected a 0x-prefixed 32-byte hex string.");
+  }
 
   const publicClient = createPublicClient({
     chain,

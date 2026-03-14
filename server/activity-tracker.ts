@@ -1,6 +1,6 @@
 import { createPublicClient, createWalletClient, http, parseEther, type Address } from "viem";
 import { base } from "viem/chains";
-import { privateKeyToAccount } from "viem/accounts";
+import { getAccountFromPrivateKey, isValidPrivateKey } from "./utils/private-key";
 
 // Activity Tracker Contract ABI
 const ACTIVITY_TRACKER_ABI = [
@@ -141,16 +141,21 @@ export class ActivityTrackerService {
     });
 
     // Setup wallet client if private key is available
-    const privateKey = process.env.DEPLOYER_PRIVATE_KEY || process.env.PLATFORM_PRIVATE_KEY;
-    if (privateKey) {
-      this.account = privateKeyToAccount(privateKey as `0x${string}`);
+    const rawPrivateKey = process.env.DEPLOYER_PRIVATE_KEY || process.env.PLATFORM_PRIVATE_KEY;
+    if (rawPrivateKey && !isValidPrivateKey(rawPrivateKey)) {
+      console.warn("Invalid DEPLOYER_PRIVATE_KEY or PLATFORM_PRIVATE_KEY. Expected a 0x-prefixed 32-byte hex string. On-chain recording will be disabled.");
+    }
+
+    const account = getAccountFromPrivateKey(rawPrivateKey);
+    if (account) {
+      this.account = account;
       this.walletClient = createWalletClient({
         account: this.account,
         chain: base,
         transport: http(rpcUrl),
       });
       console.log("✅ Activity Tracker service initialized with wallet:", this.account.address);
-    } else {
+    } else if (!rawPrivateKey) {
       console.warn("⚠️ No private key configured - on-chain recording will be disabled");
     }
   }

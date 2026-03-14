@@ -1,6 +1,6 @@
 import { createPublicClient, createWalletClient, http, Hash } from "viem";
 import { base, baseSepolia } from "viem/chains";
-import { privateKeyToAccount } from "viem/accounts";
+import { getAccountFromPrivateKey, isValidPrivateKey } from "./utils/private-key";
 import type { Coin } from "@shared/schema";
 
 const ACTIVITY_TRACKER_ADDRESS = process.env.VITE_ACTIVITY_TRACKER_ADDRESS || "0x0000000000000000000000000000000000000000";
@@ -46,9 +46,13 @@ export class ActivityTrackerService {
       transport: http(rpcUrl),
     });
 
-    const privateKey = process.env.PLATFORM_PRIVATE_KEY;
-    if (privateKey) {
-      const account = privateKeyToAccount(privateKey as `0x${string}`);
+    const rawPrivateKey = process.env.PLATFORM_PRIVATE_KEY;
+    if (rawPrivateKey && !isValidPrivateKey(rawPrivateKey)) {
+      console.warn("Invalid PLATFORM_PRIVATE_KEY. Expected a 0x-prefixed 32-byte hex string. Activity tracker writes will be disabled.");
+    }
+
+    const account = getAccountFromPrivateKey(rawPrivateKey);
+    if (account) {
       this.walletClient = createWalletClient({
         account,
         chain,

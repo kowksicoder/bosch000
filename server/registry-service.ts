@@ -1,6 +1,6 @@
 import { createPublicClient, createWalletClient, http, Hash, keccak256, toBytes } from "viem";
 import { base, baseSepolia } from "viem/chains";
-import { privateKeyToAccount } from "viem/accounts";
+import { getAccountFromPrivateKey, isValidPrivateKey } from "./utils/private-key";
 import type { Coin } from "@shared/schema";
 
 const REGISTRY_CONTRACT_ADDRESS = process.env.REGISTRY_CONTRACT_ADDRESS || "0x0000000000000000000000000000000000000000";
@@ -58,9 +58,13 @@ export class RegistryService {
       transport: http(rpcUrl),
     });
 
-    const privateKey = process.env.PLATFORM_PRIVATE_KEY;
-    if (privateKey) {
-      const account = privateKeyToAccount(privateKey as `0x${string}`);
+    const rawPrivateKey = process.env.PLATFORM_PRIVATE_KEY;
+    if (rawPrivateKey && !isValidPrivateKey(rawPrivateKey)) {
+      console.warn("Invalid PLATFORM_PRIVATE_KEY. Expected a 0x-prefixed 32-byte hex string. On-chain registry writes will be disabled.");
+    }
+
+    const account = getAccountFromPrivateKey(rawPrivateKey);
+    if (account) {
       this.walletClient = createWalletClient({
         account,
         chain,
