@@ -512,6 +512,14 @@ export async function syncCreatorProfile(privyId: string, address: string | null
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  app.get("/health", (_req, res) => {
+    res.status(200).json({ ok: true });
+  });
+
+  app.get("/api/health", (_req, res) => {
+    res.status(200).json({ ok: true });
+  });
+
   // GeckoTerminal API endpoints
   app.get(
     "/api/geckoterminal/pools/:network/:tokenAddress",
