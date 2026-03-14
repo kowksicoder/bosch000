@@ -8,3 +8,5 @@ vite.config.ts.*
 !.env.example
 .local/
 *.log
+
+.vercel
