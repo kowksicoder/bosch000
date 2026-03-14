@@ -48,12 +48,23 @@ export default function ContentPreview({ scrapedData, collaboration, onCoinCreat
   // Use smart wallet address if available, otherwise use regular wallet address
   const effectiveWalletAddress = smartAccountAddress || walletAddress;
 
+  const safeScraped = {
+    title: typeof scrapedData?.title === "string" ? scrapedData.title : "",
+    description: typeof scrapedData?.description === "string" ? scrapedData.description : "",
+    author: typeof scrapedData?.author === "string" ? scrapedData.author : "",
+    platform: typeof scrapedData?.platform === "string" ? scrapedData.platform : "",
+    url: typeof scrapedData?.url === "string" ? scrapedData.url : "",
+    image: typeof scrapedData?.image === "string" ? scrapedData.image : "",
+    publishDate: typeof scrapedData?.publishDate === "string" ? scrapedData.publishDate : "",
+    type: typeof scrapedData?.type === "string" ? scrapedData.type : "",
+  };
+
   // Auto-generate symbol from platform/channel/content - NON-EDITABLE
   const coinSymbol = generateCoinSymbol({
-    platform: scrapedData.platform,
-    author: scrapedData.author,
-    title: scrapedData.title,
-    url: scrapedData.url,
+    platform: safeScraped.platform,
+    author: safeScraped.author,
+    title: safeScraped.title,
+    url: safeScraped.url,
   });
 
   const createCoinMutation = useMutation({
@@ -69,17 +80,27 @@ export default function ContentPreview({ scrapedData, collaboration, onCoinCreat
       console.log('🚀 Creating coin on chain:', chainId === base.id ? 'Base Mainnet' : 'Base Sepolia');
 
       // 1. Upload metadata to IPFS
+      const safeTitle = safeScraped.title.trim();
+      if (!safeTitle) {
+        throw new Error("Title is required to create a coin.");
+      }
+
+      const safeDescription = safeScraped.description.trim() || `A coin representing ${safeTitle}`;
+      const safeAuthor = safeScraped.author.trim();
+      const safeImage = safeScraped.image.trim();
+      const safeUrl = safeScraped.url.trim();
+
       const metadata = {
-        name: scrapedData.title,
+        name: safeTitle,
         symbol: coinSymbol,
-        description: scrapedData.description || `A coin representing ${scrapedData.title}`,
-        image: scrapedData.image || "",
-        external_url: scrapedData.url || "",
+        description: safeDescription,
+        image: safeImage,
+        external_url: safeUrl,
         attributes: {
-          platform: scrapedData.platform,
-          author: scrapedData.author,
-          publishDate: scrapedData.publishDate,
-          contentType: scrapedData.type,
+          platform: safeScraped.platform,
+          author: safeAuthor,
+          publishDate: safeScraped.publishDate,
+          contentType: safeScraped.type,
           collaboration: collaboration
             ? {
                 mode: collaboration.mode,
@@ -121,10 +142,10 @@ export default function ContentPreview({ scrapedData, collaboration, onCoinCreat
       }
 
       const coinData = {
-        name: scrapedData.title,
+        name: safeTitle,
         symbol: coinSymbol,
-        description: scrapedData.description || `A coin representing ${scrapedData.title}`,
-        image: scrapedData.image || "",
+        description: safeDescription,
+        image: safeImage,
         creatorWallet: creatorWalletAddress,
         status: 'pending' as const,
         ipfsUri,

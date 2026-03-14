@@ -71,6 +71,9 @@ export default function WalletPage() {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [depositOpen, setDepositOpen] = useState(false);
+  const [depositAmount, setDepositAmount] = useState("");
+  const [isDepositing, setIsDepositing] = useState(false);
   const [activityRange, setActivityRange] = useState<"30d" | "all">("30d");
   const queryClient = useQueryClient();
 
@@ -291,15 +294,78 @@ export default function WalletPage() {
     }
   };
 
+  const handleDepositNaira = async () => {
+    if (!authenticated) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to add money to your wallet.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const amountValue = parseFloat(depositAmount);
+    if (!Number.isFinite(amountValue) || amountValue <= 0) {
+      toast({
+        title: "Enter a valid amount",
+        description: "Deposit amount must be greater than zero.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsDepositing(true);
+
+    try {
+      const accessToken = await getAccessToken();
+      const response = await fetch("/api/ledger/deposit/initialize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+        body: JSON.stringify({
+          amountNgn: amountValue,
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to initialize deposit");
+      }
+
+      setDepositAmount("");
+      setDepositOpen(false);
+
+      if (data.authorizationUrl) {
+        window.location.href = data.authorizationUrl;
+        return;
+      }
+
+      toast({
+        title: "Deposit initialized",
+        description: "Follow the Paystack checkout to complete your deposit.",
+      });
+    } catch (error) {
+      toast({
+        title: "Deposit failed",
+        description: error instanceof Error ? error.message : "Unable to start deposit.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDepositing(false);
+    }
+  };
+
 
   const fallbackAvatar = "https://i.ibb.co/JRQCPsZK/ev122logo-1-1.png";
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-4 py-6 md:py-10 space-y-6">
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <div className="space-y-1">
+          <div className="hidden md:block space-y-1">
             <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Wallet</p>
-            <h1 className="text-2xl md:text-3xl font-semibold">Balance Details</h1>
+            <h1 className="text-2xl md:text-3xl font-semibold">Wallet</h1>
             <p className="text-sm text-muted-foreground">
               Track your creator coin balances and Naira holdings in one place.
             </p>
@@ -350,16 +416,14 @@ export default function WalletPage() {
                     Buy
                   </Button>
                 </Link>
+                <Button variant="outline" onClick={() => setDepositOpen(true)} disabled={!authenticated}>
+                  <Wallet className="h-4 w-4 mr-2" />
+                  Deposit
+                </Button>
                 <Button variant="outline" onClick={() => setWithdrawOpen(true)} disabled={!authenticated}>
                   <ArrowUpRight className="h-4 w-4 mr-2" />
                   Withdraw
                 </Button>
-                <Link href="/swap">
-                  <Button variant="outline">
-                    <Wallet className="h-4 w-4 mr-2" />
-                    Trade
-                  </Button>
-                </Link>
               </div>
 
               <Separator className="bg-border/60" />
@@ -567,6 +631,45 @@ export default function WalletPage() {
                 </Button>
                 <Button onClick={handleWithdrawNaira} disabled={isWithdrawing}>
                   {isWithdrawing ? "Processing..." : "Withdraw with Paystack"}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={depositOpen} onOpenChange={setDepositOpen}>
+          <DialogContent className="sm:max-w-md rounded-2xl">
+            <DialogHeader>
+              <DialogTitle>Deposit with Paystack</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="rounded-xl bg-muted/30 p-3 text-xs text-muted-foreground">
+                Add money to your Every1 wallet to trade on the swap page.
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="deposit-amount">Amount (NGN)</Label>
+                <Input
+                  id="deposit-amount"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="e.g. 10000"
+                  value={depositAmount}
+                  onChange={(event) => setDepositAmount(event.target.value)}
+                />
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                You&apos;ll be redirected to Paystack to complete the deposit.
+              </p>
+
+              <div className="flex gap-2 justify-end">
+                <Button variant="ghost" onClick={() => setDepositOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleDepositNaira} disabled={isDepositing}>
+                  {isDepositing ? "Processing..." : "Continue to Paystack"}
                 </Button>
               </div>
             </div>

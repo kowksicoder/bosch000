@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import Joyride, { CallBackProps, STATUS, Step } from "react-joyride";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
+import { usePrivy } from "@privy-io/react-auth";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
-  Sparkles,
   Search,
   TrendingUp,
   Coins,
@@ -11,7 +12,6 @@ import {
   Gift,
   User,
   Rocket,
-  Eye,
 } from "lucide-react";
 
 interface ProductTourProps {
@@ -93,6 +93,8 @@ export function ProductTour({ onComplete }: ProductTourProps) {
   const [location] = useLocation();
   const [run, setRun] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
+  const { authenticated } = usePrivy();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const hasSeenTour = localStorage.getItem("hasSeenProductTour");
@@ -145,7 +147,8 @@ export function ProductTour({ onComplete }: ProductTourProps) {
       placement: "bottom",
     },
     {
-      target: "[data-testid='header-search']",
+      target:
+        "[data-testid='button-desktop-searchbar'], [data-testid='button-desktop-search'], [data-testid='button-mobile-search'], [data-testid='button-mobile-search-guest']",
       content: (
         <TourContent
           icon={Search}
@@ -168,7 +171,7 @@ export function ProductTour({ onComplete }: ProductTourProps) {
       disableBeacon: true,
     },
     {
-      target: "[data-testid='link-create']",
+      target: "[data-tour='nav-create'], [data-testid='link-create-mobile']",
       content: (
         <TourContent
           icon={Plus}
@@ -179,39 +182,48 @@ export function ProductTour({ onComplete }: ProductTourProps) {
       placement: "bottom",
     },
     {
-      target: "[data-testid='link-points']",
+      target: "[data-tour='nav-swap']",
       content: (
         <TourContent
-          icon={Gift}
-          title="E1XP Rewards"
-          description="Earn points for daily logins, trading, creating coins, and more! Redeem points for exclusive rewards."
+          icon={Coins}
+          title="Swap & Trade"
+          description="Support creators by swapping into their coins. Buy or sell anytime."
         />
       ),
       placement: "bottom",
     },
     {
-      target: "[data-testid='link-profile']",
+      target: authenticated
+        ? "[data-testid='button-user-menu']"
+        : "[data-testid='button-login'], [data-testid='button-mobile-login']",
       content: (
         <TourContent
-          icon={User}
-          title="Your Profile"
-          description="Manage your profile, view your coins, track earnings, and showcase your achievements to the community!"
-        />
-      ),
-      placement: "bottom",
-    },
-    {
-      target: "[data-testid='button-login']",
-      content: (
-        <TourContent
-          icon={Rocket}
-          title="Ready to Start?"
-          description="Login to unlock all features including creating coins, trading, earning E1XP points, and building your portfolio!"
+          icon={authenticated ? User : Rocket}
+          title={authenticated ? "Your Account" : "Ready to Start?"}
+          description={
+            authenticated
+              ? "Open your menu for profile, points, referrals, and settings."
+              : "Login to unlock creating coins, trading, earning E1XP points, and more."
+          }
         />
       ),
       placement: "bottom-end",
     },
   ];
+
+  if (!isMobile) {
+    steps.splice(6, 0, {
+      target: "[data-tour='nav-missions']",
+      content: (
+        <TourContent
+          icon={Gift}
+          title="Fan Missions"
+          description="Join missions to unlock rewards, community access, and special drops from your favorite creators."
+        />
+      ),
+      placement: "bottom",
+    });
+  }
 
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status, action, index, type } = data;

@@ -102,21 +102,50 @@ export function createE1XPRouter(storage: Storage) {
       // Get login streak using the consistent userId
       const loginStreak = await storage.getLoginStreak(userId);
 
-      const points = parseInt(creator.points || '0');
+      // Pull points from users table when available (source of truth)
+      let userRecord = null;
+      if (creator.privyId) userRecord = await storage.getUserByPrivyId(creator.privyId);
+      if (!userRecord && creator.address) userRecord = await storage.getUserByAddress(creator.address);
+      if (!userRecord && creator.email) userRecord = await storage.getUserByEmail(creator.email);
+
+      const points =
+        typeof userRecord?.e1xpPoints === 'number'
+          ? userRecord.e1xpPoints
+          : parseInt(creator.points || '0');
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().split('T')[0];
+
+      const lastLoginDay = loginStreak?.lastLoginDate
+        ? new Date(loginStreak.lastLoginDate).toISOString().split('T')[0]
+        : null;
 
       // User can claim if:
       // 1. No login streak exists (first time)
       // 2. Last login date is NOT today (haven't claimed today yet)
-      const canClaimDaily = !loginStreak || loginStreak.lastLoginDate !== today;
+      let canClaimDaily = !loginStreak || lastLoginDay !== today;
+
+      // Guard against auto-created streaks that never actually claimed today.
+      if (!canClaimDaily && lastLoginDay === today) {
+        try {
+          const notifications = await storage.getUserNotifications(userId);
+          const claimedToday = notifications.some((n: any) => {
+            const createdAt = (n.createdAt || (n as any).created_at || "") as string;
+            return n.type === "daily_login" && createdAt.startsWith(today);
+          });
+          if (!claimedToday) {
+            canClaimDaily = true;
+          }
+        } catch (claimCheckError) {
+          console.warn("[E1XP Status] Failed to verify daily claim:", claimCheckError);
+        }
+      }
 
       let currentStreak = 0;
       if (loginStreak) {
         currentStreak = parseInt(loginStreak.currentStreak || "0");
 
         // If last login was not today, check if streak should reset
-        if (loginStreak.lastLoginDate && loginStreak.lastLoginDate !== today) {
+        if (loginStreak.lastLoginDate && lastLoginDay !== today) {
           const lastLoginDate = new Date(loginStreak.lastLoginDate);
           const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
           const daysDiff = Math.floor((todayDate.getTime() - lastLoginDate.getTime()) / (1000 * 60 * 60 * 24));
@@ -193,8 +222,12 @@ export function createE1XPRouter(storage: Storage) {
         currentStreak: result.currentStreak
       });
 
-      // Refresh creator data to get updated points
+      // Refresh creator/user data to get updated points
       const updatedCreator = await storage.getCreator(creator.id);
+      let updatedUser = null;
+      if (creator.privyId) updatedUser = await storage.getUserByPrivyId(creator.privyId);
+      if (!updatedUser && creator.address) updatedUser = await storage.getUserByAddress(creator.address);
+      if (!updatedUser && creator.email) updatedUser = await storage.getUserByEmail(creator.email);
 
       // Send notification
       try {
@@ -213,7 +246,10 @@ export function createE1XPRouter(storage: Storage) {
       res.json({ 
         pointsEarned: result.pointsEarned,
         streak: result.currentStreak,
-        totalPoints: parseInt(updatedCreator?.points || creator.points || '0'),
+        totalPoints:
+          typeof updatedUser?.e1xpPoints === 'number'
+            ? updatedUser.e1xpPoints
+            : parseInt(updatedCreator?.points || creator.points || '0'),
         message: 'Daily points claimed successfully!'
       });
     } catch (error: any) {
@@ -222,6 +258,38 @@ export function createE1XPRouter(storage: Storage) {
         return res.status(400).json({ error: 'Daily points already claimed today' });
       }
       res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // Sync creator points from users table (one-time per login)
+  router.post('/sync-points', async (req, res) => {
+    try {
+      const creator = await getAuthenticatedCreator(req, res);
+      if (!creator) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      let userRecord = null;
+      if (creator.privyId) userRecord = await storage.getUserByPrivyId(creator.privyId);
+      if (!userRecord && creator.address) userRecord = await storage.getUserByAddress(creator.address);
+      if (!userRecord && creator.email) userRecord = await storage.getUserByEmail(creator.email);
+
+      if (!userRecord) {
+        return res.json({ updated: false, reason: 'user_not_found' });
+      }
+
+      const userPoints = typeof userRecord.e1xpPoints === 'number' ? userRecord.e1xpPoints : 0;
+      const creatorPoints = parseInt(creator.points || '0');
+
+      if (creatorPoints === userPoints) {
+        return res.json({ updated: false, points: userPoints });
+      }
+
+      await storage.updateCreator(creator.id, { points: userPoints.toString() } as any);
+      return res.json({ updated: true, points: userPoints });
+    } catch (error) {
+      console.error('[E1XP Sync] Failed to sync points:', error);
+      res.status(500).json({ error: 'Failed to sync points' });
     }
   });
 
@@ -330,14 +398,27 @@ export function createE1XPRouter(storage: Storage) {
         return res.status(404).json({ error: 'Reward not found' });
       }
 
-      // Add points to user
-      await storage.addPoints(reward.userId, parseInt(reward.amount), `Claimed reward: ${reward.title}`);
+      // Add points to user (syncs both users + creators)
+      await storage.awardPoints(
+        reward.userId,
+        parseInt(reward.amount),
+        `Claimed reward: ${reward.title}`,
+        'reward',
+      );
 
-      // Get updated creator info
+      // Get updated creator/user info
       const updatedCreator =
         (await storage.getCreatorByAddress(reward.userId)) ||
         (await storage.getCreatorByPrivyId(reward.userId));
-      const totalPoints = updatedCreator ? parseInt(updatedCreator.points || '0') : 0;
+      let updatedUser = null;
+      if (updatedCreator?.privyId) updatedUser = await storage.getUserByPrivyId(updatedCreator.privyId);
+      if (!updatedUser && updatedCreator?.address) updatedUser = await storage.getUserByAddress(updatedCreator.address);
+      const totalPoints =
+        typeof updatedUser?.e1xpPoints === 'number'
+          ? updatedUser.e1xpPoints
+          : updatedCreator
+            ? parseInt(updatedCreator.points || '0')
+            : 0;
 
       res.json({
         reward,

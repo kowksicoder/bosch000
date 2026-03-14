@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import { sql } from 'drizzle-orm';
+import { db } from '../db';
 import { getPaystackBalance } from '../paystack';
 import { Server as SocketIOServer } from 'socket.io';
 
@@ -144,6 +146,33 @@ export function createAdminRouter(storage: any) {
       });
     } else {
       res.json({ authenticated: false });
+    }
+  });
+
+  // One-time sync: copy users.e1xp_points into creators.points
+  router.post('/points/sync', requireAdmin, async (_req, res) => {
+    try {
+      const result = await db.execute(sql`
+        UPDATE creators c
+        SET points = u.e1xp_points::text
+        FROM users u
+        WHERE (c.privy_id IS NOT NULL AND u.privy_id = c.privy_id)
+           OR (c.address IS NOT NULL AND u.wallet_address = c.address)
+      `);
+
+      const updated =
+        (result as any)?.rowCount ??
+        (result as any)?.rows?.length ??
+        0;
+
+      res.json({ success: true, updated });
+    } catch (error) {
+      console.error('[ADMIN] Points sync failed:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to sync points',
+        details: error instanceof Error ? error.message : String(error),
+      });
     }
   });
 

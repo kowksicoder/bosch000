@@ -100,8 +100,9 @@ export default function MobileTradeModal({ coin, open, onOpenChange }: MobileTra
   });
 
   const createCommentMutation = useMutation({
-    mutationFn: async (commentData: { coinAddress: string; userAddress: string; comment: string; transactionHash?: string }) => {
-      return await apiRequest('POST', '/api/comments', commentData);
+    mutationFn: async (commentData: { coinAddress: string; comment: string; transactionHash?: string }) => {
+      const accessToken = await getAccessToken();
+      return await apiRequest('POST', '/api/comments', commentData, accessToken);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/comments/coin', coin.address] });
@@ -109,12 +110,15 @@ export default function MobileTradeModal({ coin, open, onOpenChange }: MobileTra
   });
 
   const handleStandaloneComment = async () => {
-    if (!isConnected || !address || !coin.address || !standaloneComment.trim()) return;
+    if (!authenticated) {
+      toast({ title: "Sign in required", description: "Please sign in to comment.", variant: "destructive" });
+      return;
+    }
+    if (!coin.address || !standaloneComment.trim()) return;
 
     try {
       await createCommentMutation.mutateAsync({
         coinAddress: coin.address,
-        userAddress: address,
         comment: standaloneComment.trim(),
       });
       setStandaloneComment("");

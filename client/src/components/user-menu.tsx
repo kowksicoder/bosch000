@@ -76,12 +76,7 @@ export function UserMenu() {
 
   const address = user?.wallet?.address || "";
   const email = user?.email?.address || "";
-  
-  // Better fallback for email users
-  const emailUsername = email ? email.split('@')[0] : null;
-  const displayName = address
-    ? `${address.slice(0, 6)}...${address.slice(-4)}`
-    : emailUsername || "Creator";
+  const emailUsername = email ? email.split("@")[0] : null;
 
   const privyId = user?.id;
   
@@ -91,9 +86,11 @@ export function UserMenu() {
   });
 
   const avatarUrl = (creatorData as any)?.avatar || "https://i.ibb.co/JRQCPsZK/ev122logo-1-1.png";
-
-  const userName = (creatorData as any)?.name || displayName;
-  const userEmail = `${address.slice(0, 6)}...${address.slice(-4)}`;
+  const creatorName = (creatorData as any)?.name || (creatorData as any)?.username;
+  const displayName = creatorName || emailUsername || "Creator";
+  const displayHandle = creatorName || emailUsername || (address ? address.slice(2, 8) : "");
+  const userName = displayName;
+  const userEmail = email ? email : displayHandle ? `@${displayHandle}` : "";
 
   return (
     <DropdownMenu>
@@ -176,15 +173,7 @@ export function UserMenu() {
           </DropdownMenuItem>
           
           <DropdownMenuItem 
-            onClick={() => setLocation("/creators")}
-            className="cursor-pointer py-2 px-2 rounded-md"
-            data-testid="menu-item-community"
-          >
-            <UsersIcon className="mr-2 h-4 w-4" />
-            <span className="text-sm">Community</span>
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem 
+            onClick={() => setLocation("/settings")}
             className="cursor-pointer py-2 px-2 rounded-md"
             data-testid="menu-item-settings"
           >

@@ -7,8 +7,6 @@ import { CoinCard } from "@/components/coin-card";
 import {
   User as UserIcon,
   Share2,
-  Copy,
-  Check,
   Edit2,
   Settings,
   Bell,
@@ -168,7 +166,6 @@ export default function Profile() {
   const [selectedTab, setSelectedTab] = useState<"coins" | "liked" | "saved">(
     "coins",
   );
-  const [copied, setCopied] = useState(false);
   const [totalEarningsUsd, setTotalEarningsUsd] = useState<number>(0);
   const [totalEarningsOnchain, setTotalEarningsOnchain] = useState<number>(0);
   const [earningsCurrencyLabel, setEarningsCurrencyLabel] = useState<string>("Token");
@@ -714,36 +711,23 @@ export default function Profile() {
       return creatorData.name;
     }
 
-    // For wallet users, show formatted address
+    const creatorEmail = creatorData?.email;
+    const emailToUse = creatorEmail || email;
+    if (emailToUse) {
+      return emailToUse.split("@")[0];
+    }
+
+    const creatorUsername = (creatorData as any)?.username;
+    if (creatorUsername) {
+      return creatorUsername;
+    }
+
+    // Wallet users fallback (only if no email/username)
     if (address) {
       return formatAddress(address);
     }
 
-    // For email-only users, use email prefix
-    if (email) {
-      return email.split("@")[0];
-    }
-
     return "Creator";
-  };
-
-  const handleCopyAddress = async () => {
-    if (!address) return;
-    try {
-      await navigator.clipboard.writeText(address);
-      setCopied(true);
-      toast({
-        title: "Address copied",
-        description: "Wallet address copied to clipboard",
-      });
-      setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
-      toast({
-        title: "Failed to copy",
-        description: "Could not copy address to clipboard",
-        variant: "destructive",
-      });
-    }
   };
 
   const handleShare = async () => {
@@ -1103,26 +1087,7 @@ export default function Profile() {
             </div>
           </div>
 
-          {email && smartAccountAddress && (
-            <div className="mt-3 flex items-center gap-2 px-2.5 py-1.5 bg-muted/30 rounded-lg text-[10px] sm:text-xs font-mono">
-              <Wallet className="w-3 h-3 text-muted-foreground" />
-              <span className="text-muted-foreground truncate">
-                {formatAddress(smartAccountAddress)}
-              </span>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(smartAccountAddress);
-                  toast({
-                    title: "Smart account copied",
-                    description: "Your smart account address has been copied",
-                  });
-                }}
-                className="p-1 hover:bg-muted rounded"
-              >
-                {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-              </button>
-            </div>
-          )}
+          {/** Wallet address hidden for web2-first experience */}
         </Card>
 
         <div className="w-full grid gap-3 mt-6 md:grid-cols-2">
@@ -1703,7 +1668,7 @@ export default function Profile() {
         onOpenChange={setIsShareModalOpen}
         type="profile"
         resourceId={creatorData?.id || ""}
-        title={`${creatorData?.name || formatAddress(address || "")} - CoinIT Profile`}
+        title={`${creatorData?.name || getDisplayName()} - CoinIT Profile`}
       />
 
       <WithdrawEarningsModal

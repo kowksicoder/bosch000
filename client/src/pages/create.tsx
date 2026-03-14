@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import URLInputForm from "@/components/url-input-form";
 import ContentPreview from "@/components/content-preview";
 import { Label } from "@/components/ui/label";
@@ -25,6 +25,14 @@ import { useToast } from "@/hooks/use-toast";
 
 type TabType = "import" | "upload";
 type CreateMode = "solo" | "collab";
+type CollaboratorResult = {
+  id: string;
+  name?: string | null;
+  username?: string | null;
+  address?: string | null;
+  avatar?: string | null;
+  source?: string;
+};
 
 export default function Create() {
   const [showPreview, setShowPreview] = useState(false);
@@ -38,6 +46,11 @@ export default function Create() {
   const [activeTab, setActiveTab] = useState<TabType>("import");
   const [createMode, setCreateMode] = useState<CreateMode>("solo");
   const [collaborators, setCollaborators] = useState<string[]>([""]);
+  const [collabSearchIndex, setCollabSearchIndex] = useState<number | null>(null);
+  const [collabSearchQuery, setCollabSearchQuery] = useState("");
+  const [collabSearchResults, setCollabSearchResults] = useState<CollaboratorResult[]>([]);
+  const [collabSearchLoading, setCollabSearchLoading] = useState(false);
+  const collabSearchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { toast } = useToast();
   const collabList = collaborators.map((c) => c.trim()).filter(Boolean);
 
@@ -62,6 +75,16 @@ export default function Create() {
 
   const updateCollaborator = (index: number, value: string) => {
     setCollaborators((prev) => prev.map((item, i) => (i === index ? value : item)));
+    setCollabSearchIndex(index);
+    setCollabSearchQuery(value);
+  };
+
+  const selectCollaborator = (index: number, collaborator: CollaboratorResult) => {
+    const handle = collaborator.username ? `@${collaborator.username}` : null;
+    const value = handle || collaborator.address || collaborator.name || "";
+    setCollaborators((prev) => prev.map((item, i) => (i === index ? value : item)));
+    setCollabSearchResults([]);
+    setCollabSearchIndex(null);
   };
 
   const addCollaborator = () => {
@@ -71,6 +94,50 @@ export default function Create() {
   const removeCollaborator = (index: number) => {
     setCollaborators((prev) => prev.filter((_, i) => i !== index));
   };
+
+  useEffect(() => {
+    if (collabSearchTimer.current) {
+      clearTimeout(collabSearchTimer.current);
+    }
+
+    if (collabSearchIndex === null) {
+      setCollabSearchResults([]);
+      setCollabSearchLoading(false);
+      return;
+    }
+
+    const query = collabSearchQuery.trim();
+    const normalized = query.replace(/^@/, "");
+
+    if (!normalized || (normalized.length < 2 && !normalized.startsWith("0x"))) {
+      setCollabSearchResults([]);
+      setCollabSearchLoading(false);
+      return;
+    }
+
+    setCollabSearchLoading(true);
+    collabSearchTimer.current = setTimeout(async () => {
+      try {
+        const response = await fetch(
+          `/api/creators/search?q=${encodeURIComponent(normalized)}`,
+        );
+        if (!response.ok) throw new Error("Failed to search creators");
+        const results = await response.json();
+        setCollabSearchResults(Array.isArray(results) ? results : []);
+      } catch (error) {
+        console.error("Collaborator search error:", error);
+        setCollabSearchResults([]);
+      } finally {
+        setCollabSearchLoading(false);
+      }
+    }, 250);
+
+    return () => {
+      if (collabSearchTimer.current) {
+        clearTimeout(collabSearchTimer.current);
+      }
+    };
+  }, [collabSearchIndex, collabSearchQuery]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -250,12 +317,80 @@ export default function Create() {
               <div className="space-y-2">
                 {collaborators.map((value, index) => (
                   <div key={`collab-${index}`} className="flex items-center gap-2">
-                    <Input
-                      value={value}
-                      onChange={(e) => updateCollaborator(index, e.target.value)}
-                      placeholder="0x... or @username"
-                      className="h-9 text-sm"
-                    />
+                    <div className="relative flex-1">
+                      <Input
+                        value={value}
+                        onChange={(e) => updateCollaborator(index, e.target.value)}
+                        onFocus={() => setCollabSearchIndex(index)}
+                        onBlur={() => {
+                          setTimeout(() => {
+                            setCollabSearchIndex((current) =>
+                              current === index ? null : current,
+                            );
+                          }, 150);
+                        }}
+                        placeholder="0x... or @username"
+                        className="h-9 text-sm"
+                      />
+                      {collabSearchIndex === index &&
+                        collabSearchQuery.trim() && (
+                          <div className="absolute z-20 mt-1 w-full rounded-xl border border-border/60 bg-card shadow-lg">
+                            {collabSearchLoading ? (
+                              <div className="flex items-center gap-2 px-3 py-2 text-xs text-muted-foreground">
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                                Searching creators...
+                              </div>
+                            ) : (
+                              <div className="max-h-56 overflow-y-auto py-1">
+                                {collabSearchResults.map((result) => {
+                                  const title =
+                                    result.name || result.username || "Creator";
+                                  const subtitle = result.username
+                                    ? `@${result.username}`
+                                    : result.address
+                                      ? `${result.address.slice(0, 6)}...${result.address.slice(-4)}`
+                                      : "";
+                                  return (
+                                    <button
+                                      key={`${result.id}-${result.address || result.username}`}
+                                      type="button"
+                                      onClick={() => selectCollaborator(index, result)}
+                                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-muted/50"
+                                    >
+                                      <div className="h-8 w-8 shrink-0 rounded-full bg-muted/60 overflow-hidden flex items-center justify-center text-xs font-semibold">
+                                        {result.avatar ? (
+                                          <img
+                                            src={result.avatar}
+                                            alt={title}
+                                            className="h-full w-full object-cover"
+                                          />
+                                        ) : (
+                                          title?.slice(0, 1)?.toUpperCase()
+                                        )}
+                                      </div>
+                                      <div className="flex flex-col">
+                                        <span className="font-medium text-foreground">
+                                          {title}
+                                        </span>
+                                        {subtitle && (
+                                          <span className="text-xs text-muted-foreground">
+                                            {subtitle}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </button>
+                                  );
+                                })}
+                                {collabSearchResults.length === 0 && (
+                                  <div className="px-3 py-2 text-xs text-muted-foreground">
+                                    No creators found.
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                    </div>
                     {collaborators.length > 1 && (
                       <Button
                         variant="ghost"

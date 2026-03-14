@@ -20,7 +20,7 @@ import {
 import { db } from "./db";
 import { eq, and, gte, lt } from "drizzle-orm";
 import { z } from "zod";
-import { awardPoints as rewardPoints, POINTS_REWARDS, trackReferralActivity } from "./points";
+import { awardPoints as rewardPoints, POINTS_REWARDS, trackReferralActivity, checkAndAwardSpecialBadges } from "./points";
 import axios from "axios";
 import { detectPlatform } from "./platform-detector";
 import { scrapeByPlatform } from "./platform-scrapers";
@@ -38,6 +38,7 @@ import { base, baseSepolia } from "viem/chains";
 import { createPublicClient, decodeEventLog, erc20Abi, http, parseUnits, formatUnits } from "viem";
 import { handleFileUpload } from "./upload-handler"; // Import the upload handler
 import { walletAuthMiddleware, privyAuthMiddleware, type AuthenticatedRequest } from "./privy-middleware";
+import { getSocketIOInstance } from "./socket-server";
 import { getFxRates } from "./fx-service";
 import { initializePaystackPayment, verifyPaystackSignature, createPaystackTransferRecipient, initiatePaystackTransfer, getPaystackBalance } from "./paystack";
 import { executeTreasuryBuy, executeTreasurySell, getTreasuryAddress } from "./treasury-trade";
@@ -690,6 +691,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       if (eventType === "charge.success") {
+        const depositEntry = await storage.getNairaLedgerEntryByReference(
+          data.reference,
+        );
+
+        if (depositEntry && depositEntry.source === "deposit") {
+          const currentStatus = (depositEntry.metadata as any)?.status;
+          if (currentStatus !== "success") {
+            const recipientAddress = depositEntry.recipient_address;
+            const amountValue = parseFloat(depositEntry.amount_ngn || "0");
+            const ledger = await storage.getNairaLedgerByAddress(recipientAddress);
+            const available = ledger ? Number(ledger.available_ngn || 0) : 0;
+            const pending = ledger ? Number(ledger.pending_ngn || 0) : 0;
+
+            const newAvailable = (available + amountValue).toFixed(2);
+            const newPending = Math.max(0, pending - amountValue).toFixed(2);
+
+            await storage.upsertNairaLedger(recipientAddress, newAvailable, newPending);
+            await storage.updateNairaLedgerEntryById(depositEntry.id, {
+              metadata: {
+                ...(depositEntry.metadata || {}),
+                status: "success",
+                paystackEvent: event,
+              },
+            });
+
+            try {
+              await storage.createNotification({
+                userId: recipientAddress,
+                type: "deposit",
+                title: "✅ Deposit confirmed",
+                message: `₦${amountValue.toLocaleString("en-US")} has been added to your wallet.`,
+                read: false,
+              });
+            } catch (notifError) {
+              console.warn("Failed to create deposit notification:", notifError);
+            }
+          }
+
+          return res.status(200).send("ok");
+        }
+
         const fiatTx = await storage.getFiatTransactionByReference(data.reference);
 
         if (!fiatTx) {
@@ -794,6 +836,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
       } else if (eventType === "charge.failed") {
+        const depositEntry = await storage.getNairaLedgerEntryByReference(
+          data.reference,
+        );
+
+        if (depositEntry && depositEntry.source === "deposit") {
+          const currentStatus = (depositEntry.metadata as any)?.status;
+          if (currentStatus !== "success" && currentStatus !== "failed") {
+            const recipientAddress = depositEntry.recipient_address;
+            const amountValue = parseFloat(depositEntry.amount_ngn || "0");
+            const ledger = await storage.getNairaLedgerByAddress(recipientAddress);
+            const available = ledger ? Number(ledger.available_ngn || 0) : 0;
+            const pending = ledger ? Number(ledger.pending_ngn || 0) : 0;
+
+            const newPending = Math.max(0, pending - amountValue).toFixed(2);
+            await storage.upsertNairaLedger(recipientAddress, available.toFixed(2), newPending);
+            await storage.updateNairaLedgerEntryById(depositEntry.id, {
+              metadata: {
+                ...(depositEntry.metadata || {}),
+                status: "failed",
+                paystackEvent: event,
+              },
+            });
+          }
+
+          return res.status(200).send("ok");
+        }
+
         await storage.updateFiatTransactionByReference(data.reference, {
           status: "failed",
           providerStatus: data.status || "failed",
@@ -1420,6 +1489,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Naira ledger error:", error);
       res.status(500).json({ error: "Failed to fetch Naira ledger" });
+    }
+  });
+
+  app.post("/api/ledger/deposit/initialize", privyAuthMiddleware, async (req: AuthenticatedRequest, res) => {
+    try {
+      if (!req.authenticated || !req.user?.id) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      const { amountNgn, email } = req.body as {
+        amountNgn?: string | number;
+        email?: string;
+      };
+
+      const amountValue = typeof amountNgn === "string" ? parseFloat(amountNgn) : Number(amountNgn);
+      if (!Number.isFinite(amountValue) || amountValue <= 0) {
+        return res.status(400).json({ error: "Invalid deposit amount" });
+      }
+
+      const privyId = req.user.id;
+      const userRecord = await storage.getUserByPrivyId(privyId);
+      if (!userRecord) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const recipientAddress =
+        userRecord.walletAddress || req.user.wallet?.address || privyId;
+      const customerEmail = userRecord.email || email;
+      if (!customerEmail) {
+        return res.status(400).json({ error: "Email required for deposit" });
+      }
+
+      const reference = `dep_${Date.now()}_${Math.random().toString(16).slice(2, 8)}`;
+
+      const paystackResponse = await initializePaystackPayment({
+        email: customerEmail,
+        amount: Math.round(amountValue * 100),
+        reference,
+        callback_url: process.env.PAYSTACK_CALLBACK_URL,
+        metadata: {
+          type: "wallet_deposit",
+          recipientAddress,
+          userId: userRecord.id,
+          privyId,
+        },
+      });
+
+      const ledger = await storage.getNairaLedgerByAddress(recipientAddress);
+      const available = ledger ? parseFloat(ledger.available_ngn || "0") : 0;
+      const pending = ledger ? parseFloat(ledger.pending_ngn || "0") : 0;
+      const newPending = (pending + amountValue).toFixed(2);
+
+      await storage.upsertNairaLedger(recipientAddress, available.toFixed(2), newPending);
+      await storage.createNairaLedgerEntry({
+        recipientAddress,
+        entryType: "credit",
+        amountNgn: amountValue.toFixed(2),
+        source: "deposit",
+        reference,
+        metadata: {
+          status: "pending",
+          paystack: paystackResponse?.data || null,
+        },
+      });
+
+      return res.json({
+        reference,
+        authorizationUrl: paystackResponse?.data?.authorization_url,
+        accessCode: paystackResponse?.data?.access_code,
+      });
+    } catch (error) {
+      console.error("Ledger deposit initialize error:", error);
+      return res.status(500).json({
+        error: "Failed to initialize deposit",
+        details: error instanceof Error ? error.message : String(error),
+      });
     }
   });
 
@@ -3083,6 +3228,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.warn("Failed to create E1XP reward (table may not exist):", error);
       }
 
+      // Unlock "First Coin" badge on the creator's first coin
+      try {
+        if (creatorAddress) {
+          const creatorCoins = await storage.getCoinsByCreator(creatorAddress);
+          if (creatorCoins.length === 1) {
+            const userRecord =
+              (creator.privyId ? await storage.getUserByPrivyId(creator.privyId) : null) ||
+              (creator.address ? await storage.getUserByAddress(creator.address) : null) ||
+              (creator.email ? await storage.getUserByEmail(creator.email) : null);
+            if (userRecord) {
+              await checkAndAwardSpecialBadges(userRecord.id, "first_coin");
+            }
+          }
+        }
+      } catch (badgeError) {
+        console.warn("Failed to award first coin badge:", badgeError);
+      }
+
       // Record on-chain if coin has been deployed (has address)
       if (coin.address && coin.status === "active") {
         try {
@@ -3133,12 +3296,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
           details: zodError.issues,
         });
       }
-      
+
+      const errorObject = typeof error === "object" && error ? (error as any) : null;
+      const messageFromObject =
+        errorObject && typeof errorObject.message === "string"
+          ? errorObject.message
+          : null;
+      const detailsFromObject =
+        errorObject && typeof errorObject.details === "string"
+          ? errorObject.details
+          : null;
+
       const errorMessage =
-        error instanceof Error ? error.message : String(error);
+        messageFromObject || (error instanceof Error ? error.message : String(error));
+
       return res.status(400).json({
         error: "Invalid coin data",
-        details: errorMessage,
+        details: detailsFromObject || errorMessage,
       });
     }
   });
@@ -3625,6 +3799,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Live creator search (name, username, email, or wallet)
+  app.get("/api/creators/search", async (req, res) => {
+    try {
+      const rawQuery = (req.query.q || req.query.query || "").toString().trim();
+      if (!rawQuery) return res.json([]);
+
+      const query = rawQuery.replace(/^@/, "").toLowerCase();
+
+      const [creators, users] = await Promise.all([
+        storage.getAllCreators(),
+        storage.getAllUsers(),
+      ]);
+
+      const results: any[] = [];
+      const seen = new Set<string>();
+
+      const addResult = (item: any) => {
+        const key = (
+          item.address ||
+          item.username ||
+          item.email ||
+          item.id
+        )?.toString().toLowerCase();
+        if (!key || seen.has(key)) return;
+        seen.add(key);
+        results.push(item);
+      };
+
+      creators
+        .filter((creator) => {
+          const name = creator.name?.toLowerCase();
+          const address = creator.address?.toLowerCase();
+          const email = creator.email?.toLowerCase();
+          return (
+            (name && name.includes(query)) ||
+            (address && address.includes(query)) ||
+            (email && email.includes(query))
+          );
+        })
+        .forEach((creator) => {
+          addResult({
+            id: creator.id,
+            name: creator.name || null,
+            username: creator.name || null,
+            address: creator.address || null,
+            avatar: creator.avatar || null,
+            email: creator.email || null,
+            source: "creator",
+          });
+        });
+
+      users
+        .filter((user) => {
+          const username = user.username?.toLowerCase();
+          const displayName = user.displayName?.toLowerCase();
+          const wallet = user.walletAddress?.toLowerCase();
+          const email = user.email?.toLowerCase();
+          return (
+            (username && username.includes(query)) ||
+            (displayName && displayName.includes(query)) ||
+            (wallet && wallet.includes(query)) ||
+            (email && email.includes(query))
+          );
+        })
+        .forEach((user) => {
+          addResult({
+            id: user.id,
+            name: user.displayName || user.username || null,
+            username: user.username || null,
+            address: user.walletAddress || null,
+            avatar: user.avatarUrl || null,
+            email: user.email || null,
+            source: "user",
+          });
+        });
+
+      res.json(results.slice(0, 8));
+    } catch (error) {
+      console.error("Creator search error:", error);
+      res.status(500).json({ error: "Failed to search creators" });
+    }
+  });
+
   // Get top creators
   app.get("/api/creators/top", async (req, res) => {
     try {
@@ -4076,11 +4333,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create a comment
-  app.post("/api/comments", async (req, res) => {
+  // Create a comment (authenticated)
+  app.post("/api/comments", privyAuthMiddleware, async (req: AuthenticatedRequest, res) => {
     try {
-      const validatedData = insertCommentSchema.parse(req.body);
-      const comment = await storage.createComment(validatedData);
+      if (!req.authenticated || !req.user?.id) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      const schema = z.object({
+        coinAddress: z.string().min(1),
+        comment: z.string().min(1),
+        transactionHash: z.string().optional(),
+      });
+      const payload = schema.parse(req.body);
+
+      // Resolve user identity: prefer wallet address, fall back to email-based id
+      const privyId = req.user.id;
+      const userRecord = await storage.getUserByPrivyId(privyId);
+      const walletAddress = userRecord?.walletAddress;
+      const userAddress = walletAddress
+        ? walletAddress.toLowerCase()
+        : `email_${privyId}`.toLowerCase();
+
+      const comment = await storage.createComment({
+        coinAddress: payload.coinAddress,
+        userAddress,
+        comment: payload.comment,
+        transactionHash: payload.transactionHash,
+      });
       res.json(comment);
     } catch (error) {
       console.error("Create comment error:", error);
@@ -5135,21 +5415,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Check for unclaimed daily points and send reminder
   app.post("/api/login-streak/check-unclaimed", async (req, res) => {
     try {
-      const { address } = req.body;
+      const { address, privyId } = req.body;
 
-      if (!address) {
-        return res.status(400).json({ error: "Address is required" });
+      if (!address && !privyId) {
+        return res.status(400).json({ error: "Address or privyId is required" });
       }
 
+      let creator = null;
+      if (privyId) {
+        creator = await storage.getCreatorByPrivyId(privyId);
+      }
+      if (!creator && address) {
+        creator = await storage.getCreatorByAddress(address);
+      }
+
+      const userId =
+        creator?.address ||
+        creator?.privyId ||
+        address ||
+        privyId;
+
       const today = new Date().toISOString().split("T")[0];
-      const loginStreak = await storage.getLoginStreak(address);
+      const loginStreak = await storage.getLoginStreak(userId);
+      const lastLoginDay = loginStreak?.lastLoginDate
+        ? new Date(loginStreak.lastLoginDate).toISOString().split("T")[0]
+        : null;
 
       // If no streak exists, user hasn't claimed their first points
       if (!loginStreak) {
         await storage.createNotification({
-          userId: address,
+          userId,
           type: "reward",
-          title: "🎁 Claim Your Welcome Bonus!",
+          title: "???? Claim Your Welcome Bonus!",
           message:
             "You have 10 points waiting for you! Visit the app to claim your first daily login bonus and start your streak.",
           amount: "10",
@@ -5157,9 +5454,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
 
         await sendTelegramNotification(
-          address,
-          "🎁 Claim Your Welcome Bonus!",
-          "You have 10 points waiting! Visit the app to claim your first daily login bonus and start your streak 🔥",
+          userId,
+          "???? Claim Your Welcome Bonus!",
+          "You have 10 points waiting! Visit the app to claim your first daily login bonus and start your streak ????",
           "reward",
         );
 
@@ -5171,7 +5468,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // If last login was not today, user has unclaimed points
-      if (loginStreak.lastLoginDate !== today) {
+      if (lastLoginDay !== today) {
         const lastLogin = new Date(loginStreak.lastLoginDate || today);
         const todayDate = new Date(today);
         const daysDiff = Math.floor(
@@ -5194,18 +5491,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
 
         await storage.createNotification({
-          userId: address,
+          userId,
           type: "reward",
-          title: "🔥 Daily Points Available!",
+          title: "???? Daily Points Available!",
           message: `${streakStatus}! Claim ${pointsAvailable} points now by visiting the app. Don't miss out!`,
           amount: pointsAvailable.toString(),
           read: false,
         });
 
         await sendTelegramNotification(
-          address,
-          "🔥 Daily Points Available!",
-          `${streakStatus}! Claim ${pointsAvailable} points now 🎁`,
+          userId,
+          "???? Daily Points Available!",
+          `${streakStatus}! Claim ${pointsAvailable} points now ????`,
           "reward",
         );
 
@@ -5627,8 +5924,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       for (const creator of creators) {
         const loginStreak = await storage.getLoginStreak(creator.address);
+        const lastLoginDay = loginStreak?.lastLoginDate
+          ? new Date(loginStreak.lastLoginDate).toISOString().split("T")[0]
+          : null;
 
-        if (!loginStreak || loginStreak.lastLoginDate !== today) {
+        if (!loginStreak || lastLoginDay !== today) {
           const pointsAvailable = loginStreak
             ? 10 +
               Math.min(
@@ -5672,8 +5972,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       for (const creator of creators) {
         const loginStreak = await storage.getLoginStreak(creator.address);
+        const lastLoginDay = loginStreak?.lastLoginDate
+          ? new Date(loginStreak.lastLoginDate).toISOString().split("T")[0]
+          : null;
 
-        if (loginStreak && loginStreak.lastLoginDate !== today) {
+        if (loginStreak && lastLoginDay !== today) {
           const lastLogin = new Date(loginStreak.lastLoginDate);
           const todayDate = new Date(today);
           const daysDiff = Math.floor(
@@ -5831,16 +6134,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.error(`[AUTH] Failed to send welcome notification:`, notifError);
         }
 
-        // Create initial login streak
+        // Create initial login streak (without auto-claim)
         try {
-          const today = new Date().toISOString().split('T')[0];
           await storage.createLoginStreak({
             userId: address,
-            currentStreak: "1",
-            longestStreak: "1",
-            lastLoginDate: today,
-            totalPoints: "10",
-            loginDates: [today],
+            currentStreak: 0,
+            longestStreak: 0,
+            lastLoginDate: null,
+            totalPoints: 0,
+            loginDates: [],
+            weeklyCalendar: [false, false, false, false, false, false, false],
           } as any);
         } catch (streakError) {
           console.error(`[AUTH] Failed to create login streak:`, streakError);
@@ -6220,6 +6523,157 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error fetching unread message count:", error);
       res.status(500).json({ error: error.message, count: 0 });
+    }
+  });
+
+  const resolveMessagingUserId = async (req: AuthenticatedRequest) => {
+    if (!req.authenticated || !req.user?.id) return null;
+    const privyId = req.user.id;
+    const userRecord = await storage.getUserByPrivyId(privyId);
+    const walletAddress = userRecord?.walletAddress;
+    if (walletAddress) return walletAddress.toLowerCase();
+    return `email_${privyId}`.toLowerCase();
+  };
+
+  // REST fallback: list conversations
+  app.get("/api/messages/conversations", privyAuthMiddleware, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userId = await resolveMessagingUserId(req);
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      const conversationsData = await storage.getConversationsForUser(userId);
+      const conversations = await Promise.all(
+        conversationsData.map(async ({ otherUserId, lastMessage }: any) => {
+          const conversationId = `conv_${[userId, otherUserId].sort().join("_")}`;
+          const unreadCount = await storage.getUnreadMessageCount(userId, otherUserId);
+          return {
+            id: conversationId,
+            participants: [userId, otherUserId].sort(),
+            lastMessage: {
+              id: lastMessage.id,
+              conversationId,
+              senderId: lastMessage.senderId,
+              recipientId: lastMessage.recipientId,
+              content: lastMessage.content,
+              createdAt:
+                lastMessage.createdAt instanceof Date
+                  ? lastMessage.createdAt.toISOString()
+                  : lastMessage.createdAt,
+              read: lastMessage.isRead || false,
+            },
+            updatedAt:
+              lastMessage.createdAt instanceof Date
+                ? lastMessage.createdAt.toISOString()
+                : lastMessage.createdAt,
+            unreadCount,
+          };
+        }),
+      );
+
+      res.json(conversations);
+    } catch (error: any) {
+      console.error("Error fetching conversations:", error);
+      res.status(500).json({ error: "Failed to fetch conversations" });
+    }
+  });
+
+  // REST fallback: fetch messages in a thread
+  app.get("/api/messages/thread/:otherId", privyAuthMiddleware, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userId = await resolveMessagingUserId(req);
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      const otherId = String(req.params.otherId || "").toLowerCase();
+      const messages = await storage.getMessagesBetweenUsers(userId, otherId);
+      res.json(messages);
+    } catch (error: any) {
+      console.error("Error fetching thread messages:", error);
+      res.status(500).json({ error: "Failed to fetch messages" });
+    }
+  });
+
+  // REST fallback: send message
+  app.post("/api/messages/send", privyAuthMiddleware, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userId = await resolveMessagingUserId(req);
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      const schema = z.object({
+        recipientId: z.string().min(1),
+        content: z.string().min(1),
+      });
+      const { recipientId, content } = schema.parse(req.body);
+      const normalizedRecipient = recipientId.toLowerCase();
+
+      const dbMessage = await storage.createMessage({
+        senderId: userId,
+        recipientId: normalizedRecipient,
+        content,
+        messageType: "text",
+      });
+
+      const conversationId = `conv_${[userId, normalizedRecipient].sort().join("_")}`;
+      const message = {
+        id: dbMessage.id,
+        conversationId,
+        senderId: dbMessage.senderId,
+        recipientId: dbMessage.recipientId,
+        content: dbMessage.content,
+        createdAt: dbMessage.createdAt?.toISOString() || new Date().toISOString(),
+        read: dbMessage.isRead || false,
+      };
+
+      const conversation = {
+        id: conversationId,
+        participants: [userId, normalizedRecipient].sort(),
+        lastMessage: message,
+        updatedAt: message.createdAt,
+        unreadCount: 1,
+      };
+
+      const io = getSocketIOInstance();
+      if (io) {
+        // Sender update
+        io.to(userId).emit("message_sent", message);
+        io.to(userId).emit("conversation_updated", { ...conversation, unreadCount: 0 });
+
+        // Recipient update across identifiers
+        const recipientRooms = new Set<string>([normalizedRecipient]);
+        try {
+          let recipientCreator = await storage.getCreatorByAddress(normalizedRecipient);
+          if (!recipientCreator) {
+            recipientCreator = await storage.getCreatorByPrivyId(normalizedRecipient);
+          }
+          if (recipientCreator) {
+            const identifiers = [
+              recipientCreator.address,
+              recipientCreator.privyId,
+              recipientCreator.id,
+              recipientCreator.email,
+              recipientCreator.privyId ? `email_${recipientCreator.privyId}` : null,
+            ].filter(Boolean) as string[];
+            identifiers.forEach((id) => recipientRooms.add(id.toLowerCase()));
+          }
+        } catch (error) {
+          console.warn("Could not fetch recipient identifiers:", error);
+        }
+
+        recipientRooms.forEach((room) => {
+          io.to(room).emit("new_message", message);
+          io.to(room).emit("conversation_updated", conversation);
+        });
+      }
+
+      res.json({ message, conversationId });
+    } catch (error: any) {
+      console.error("Error sending message:", error);
+      res.status(500).json({ error: "Failed to send message" });
     }
   });
 

@@ -11,7 +11,8 @@ export function startStreakReminderCron() {
       console.log('🔔 Running streak reminder check...');
 
       const creators = await storage.getAllCreators();
-      const today = new Date().toISOString().split('T')[0];
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
       let remindersCount = 0;
 
       for (const creator of creators) {
@@ -29,9 +30,22 @@ export function startStreakReminderCron() {
             continue;
           }
 
+          const lastLoginDay = loginStreak.lastLoginDate
+            ? new Date(loginStreak.lastLoginDate).toISOString().split('T')[0]
+            : null;
+
           // User hasn't claimed today's points
-          if (loginStreak.lastLoginDate !== today) {
-            const lastLogin = new Date(loginStreak.lastLoginDate || today);
+          if (lastLoginDay !== today) {
+            const lastLogin = loginStreak.lastLoginDate ? new Date(loginStreak.lastLoginDate) : null;
+            if (!lastLogin || Number.isNaN(lastLogin.getTime())) {
+              continue;
+            }
+
+            const hoursDiff = (now.getTime() - lastLogin.getTime()) / (1000 * 60 * 60);
+            if (hoursDiff < 24) {
+              continue;
+            }
+
             const todayDate = new Date(today);
             const daysDiff = Math.floor((todayDate.getTime() - lastLogin.getTime()) / (1000 * 60 * 60 * 24));
 

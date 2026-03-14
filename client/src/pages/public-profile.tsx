@@ -222,6 +222,18 @@ export default function PublicProfile() {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
 
+  const emailHandle = creatorData?.email ? String(creatorData.email).split("@")[0] : null;
+  const displayName =
+    creatorData?.name ||
+    (creatorData as any)?.username ||
+    emailHandle ||
+    (address ? formatAddress(address) : "User");
+  const displayHandle =
+    (creatorData as any)?.username ||
+    creatorData?.name ||
+    emailHandle ||
+    null;
+
   const handleShare = async () => {
     const profileIdentifier = creatorData?.name
       ? `@${encodeURIComponent(creatorData.name)}`
@@ -231,7 +243,7 @@ export default function PublicProfile() {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: `${creatorData?.name || (address ? formatAddress(address) : "User")} - CoinIT Profile`,
+          title: `${displayName} - CoinIT Profile`,
           text: `Check out this profile on CoinIT!`,
           url: url,
         });
@@ -302,12 +314,14 @@ export default function PublicProfile() {
           </div>
 
           <h1 className="text-2xl font-bold text-foreground mb-1">
-            {creatorData?.name || (address ? formatAddress(address) : "User")}
+            {displayName}
           </h1>
 
-          <p className="text-sm text-muted-foreground mb-4">
-            @{address ? `${address.slice(2, 8)}` : ''}
-          </p>
+          {displayHandle && (
+            <p className="text-sm text-muted-foreground mb-4">
+              @{displayHandle}
+            </p>
+          )}
 
           {creatorData?.bio && (
             <p className="text-muted-foreground text-sm mb-4 max-w-md px-4">

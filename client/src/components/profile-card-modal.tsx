@@ -30,7 +30,7 @@ export default function ProfileCardModal({ creatorAddress, open, onOpenChange, c
   const { toast } = useToast();
   const { data: fxRates } = useFxRates();
 
-  // Helper function to format wallet address
+  // Helper function to format wallet address (fallback only)
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
@@ -112,12 +112,20 @@ export default function ProfileCardModal({ creatorAddress, open, onOpenChange, c
                     localCreatorProfile?.avatar ||
                     "https://i.ibb.co/JRQCPsZK/ev122logo-1-1.png";
 
-  // Get display name from Zora profile, local profile, or creatorData prop
-  const displayName = zoraProfile?.displayName ||
-                      zoraProfile?.handle ||
-                      localCreatorProfile?.name ||
+  const emailHandle = localCreatorProfile?.email
+    ? String(localCreatorProfile.email).split("@")[0]
+    : null;
+  const displayName = localCreatorProfile?.name ||
                       creatorData?.name ||
+                      zoraProfile?.displayName ||
+                      zoraProfile?.handle ||
+                      emailHandle ||
                       formatAddress(creatorAddress);
+  const displayHandle =
+    localCreatorProfile?.name ||
+    zoraProfile?.handle ||
+    emailHandle ||
+    null;
 
   // Get verified status
   const isVerified = creatorData?.verified || localCreatorProfile?.verified === "true";
@@ -181,7 +189,7 @@ export default function ProfileCardModal({ creatorAddress, open, onOpenChange, c
       queryClient.invalidateQueries({ queryKey: ['/api/follows/check'] });
       queryClient.invalidateQueries({ queryKey: ['/api/follows/followers', creatorAddress] });
       queryClient.invalidateQueries({ queryKey: ['/api/follows/following', currentUserAddress] });
-      toast({ title: "Following!", description: `You are now following ${creatorData?.name || formatAddress(creatorAddress)}` });
+      toast({ title: "Following!", description: `You are now following ${displayName}` });
     },
     onError: () => {
       toast({ title: "Error", description: "Failed to follow user", variant: "destructive" });
@@ -202,7 +210,7 @@ export default function ProfileCardModal({ creatorAddress, open, onOpenChange, c
       queryClient.invalidateQueries({ queryKey: ['/api/follows/check'] });
       queryClient.invalidateQueries({ queryKey: ['/api/follows/followers', creatorAddress] });
       queryClient.invalidateQueries({ queryKey: ['/api/follows/following', currentUserAddress] });
-      toast({ title: "Unfollowed", description: `You unfollowed ${creatorData?.name || formatAddress(creatorAddress)}` });
+      toast({ title: "Unfollowed", description: `You unfollowed ${displayName}` });
     },
     onError: () => {
       toast({ title: "Error", description: "Failed to unfollow user", variant: "destructive" });
@@ -283,14 +291,11 @@ export default function ProfileCardModal({ creatorAddress, open, onOpenChange, c
                 <Award className="w-5 h-5 text-yellow-500" />
               )}
             </h3>
-            {zoraProfile?.handle && (
+            {displayHandle && (
               <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">
-                @{zoraProfile.handle}
+                @{displayHandle}
               </p>
             )}
-            <p className="text-[10px] sm:text-xs text-muted-foreground font-mono truncate" data-testid="text-profile-card-address">
-              {creatorAddress}
-            </p>
             {zoraProfile?.bio && (
               <p className="text-xs text-muted-foreground mt-1">
                 {zoraProfile.bio}

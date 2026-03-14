@@ -10,6 +10,7 @@ import { Send, Loader2, MessageSquare, ArrowLeft, Search, X, Edit } from "lucide
 import { socketClient, type Message, type Conversation } from "@/lib/socket-client";
 import { useQuery } from "@tanstack/react-query";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { apiRequest } from "@/lib/queryClient";
 import {
   Dialog,
   DialogContent,
@@ -19,7 +20,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function Inbox() {
-  const { user, authenticated } = usePrivy();
+  const { user, authenticated, getAccessToken } = usePrivy();
   const isMobile = useIsMobile();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
@@ -36,7 +37,65 @@ export default function Inbox() {
     queryKey: ["/api/creators"],
   });
 
-  const creatorMap = new Map(creators?.map(c => [c.address?.toLowerCase(), c]) || []);
+  const creatorMap = new Map(
+    creators?.flatMap((creator) => {
+      const entries: [string, any][] = [];
+      if (creator.address) entries.push([creator.address.toLowerCase(), creator]);
+      if (creator.privyId) {
+        entries.push([creator.privyId.toLowerCase(), creator]);
+        entries.push([`email_${creator.privyId}`.toLowerCase(), creator]);
+      }
+      return entries;
+    }) || []
+  );
+
+  const getCurrentUserId = () => {
+    const wallet = user?.wallet?.address?.toLowerCase();
+    if (wallet) return wallet;
+    if (user?.email) return `email_${user.id}`.toLowerCase();
+    return user?.id?.toLowerCase();
+  };
+
+  const resolveRecipientId = (creator: any) => {
+    if (creator?.address) return creator.address.toLowerCase();
+    if (creator?.privyId) return `email_${creator.privyId}`.toLowerCase();
+    return null;
+  };
+
+  const fetchConversationsFallback = async () => {
+    if (!authenticated || !user?.id) return;
+    try {
+      const accessToken = await getAccessToken();
+      if (!accessToken) return;
+      const response = await apiRequest("GET", "/api/messages/conversations", undefined, accessToken);
+      const data = await response.json();
+      setConversations(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.warn("[Inbox] REST fallback failed:", error);
+    } finally {
+      setIsLoadingConversations(false);
+    }
+  };
+
+  const fetchThreadFallback = async (otherId: string) => {
+    if (!authenticated || !user?.id) return;
+    try {
+      const accessToken = await getAccessToken();
+      if (!accessToken) return;
+      const response = await apiRequest("GET", `/api/messages/thread/${otherId}`, undefined, accessToken);
+      const data = await response.json();
+      setMessages(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.warn("[Inbox] Thread fallback failed:", error);
+    }
+  };
+
+  const sendMessageFallback = async (recipientId: string, content: string) => {
+    const accessToken = await getAccessToken();
+    if (!accessToken) throw new Error("Not authenticated");
+    const response = await apiRequest("POST", "/api/messages/send", { recipientId, content }, accessToken);
+    return response.json();
+  };
 
   const filteredCreators = creators?.filter(creator => {
     if (!searchQuery.trim()) return true;
@@ -60,9 +119,10 @@ export default function Inbox() {
 
     // Use wallet address if available, otherwise use Privy ID
     // For email users, prefix with 'email_' to match server-side ID format
-    let userId = user.wallet?.address?.toLowerCase();
+    let userId = getCurrentUserId();
     if (!userId) {
-      userId = user.email ? `email_${user.id}` : user.id;
+      setIsLoadingConversations(false);
+      return;
     }
 
     console.log('[Inbox] Connecting socket with userId:', userId);
@@ -133,10 +193,18 @@ export default function Inbox() {
     // Request conversations
     socketClient.getConversations();
 
+    // REST fallback if socket isn't connected shortly after mount
+    const fallbackTimer = setTimeout(() => {
+      if (!socketClient.isConnected()) {
+        fetchConversationsFallback();
+      }
+    }, 1500);
+
     return () => {
+      clearTimeout(fallbackTimer);
       socketClient.disconnect();
     };
-  }, [authenticated, user?.wallet?.address, selectedConversation]); // Added selectedConversation to dependency array
+  }, [authenticated, user?.wallet?.address, user?.email, selectedConversation]); // Added selectedConversation to dependency array
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -148,17 +216,19 @@ export default function Inbox() {
     setSelectedConversation(conversation);
 
     // Use wallet address if available, otherwise use Privy ID with email prefix
-    let currentUserId = user.wallet?.address?.toLowerCase();
-    if (!currentUserId) {
-      currentUserId = user.email ? `email_${user.id}` : user.id;
-    }
+    let currentUserId = getCurrentUserId();
+    if (!currentUserId) return;
 
     const otherParticipantAddress = conversation.participants.find(p => p !== currentUserId);
 
     if (otherParticipantAddress) {
       console.log('[Inbox] Loading conversation with:', otherParticipantAddress);
-      socketClient.getConversation(otherParticipantAddress);
-      socketClient.markAsRead(conversation.id);
+      if (socketClient.isConnected()) {
+        socketClient.getConversation(otherParticipantAddress);
+        socketClient.markAsRead(conversation.id);
+      } else {
+        fetchThreadFallback(otherParticipantAddress);
+      }
     }
   };
 
@@ -166,10 +236,8 @@ export default function Inbox() {
     if (!messageInput.trim() || !selectedConversation || !user) return;
 
     // Use wallet address if available, otherwise use Privy ID with email prefix
-    let currentUserId = user.wallet?.address?.toLowerCase();
-    if (!currentUserId) {
-      currentUserId = user.email ? `email_${user.id}` : user.id;
-    }
+    let currentUserId = getCurrentUserId();
+    if (!currentUserId) return;
 
     const recipientId = selectedConversation.participants.find(
       p => p !== currentUserId
@@ -179,14 +247,28 @@ export default function Inbox() {
 
     console.log('[Inbox] Sending message to:', recipientId);
     setIsSending(true);
-    socketClient.sendMessage(recipientId, messageInput.trim());
+    if (socketClient.isConnected()) {
+      socketClient.sendMessage(recipientId, messageInput.trim());
+    } else {
+      sendMessageFallback(recipientId, messageInput.trim())
+        .then((data) => {
+          if (data?.message) {
+            setMessages((prev) => [...prev, data.message]);
+          }
+        })
+        .finally(() => {
+          setIsSending(false);
+          setMessageInput("");
+          fetchConversationsFallback();
+        });
+    }
   };
 
-  const handleStartConversation = (recipientAddress: string) => {
+  const handleStartConversation = (recipientAddress: string | null) => {
     if (!recipientAddress || !user) return;
 
     // Use wallet address if available, otherwise use Privy ID
-    const currentUserId = user.wallet?.address?.toLowerCase() || user.id;
+    const currentUserId = getCurrentUserId() || user.id;
 
     // Check if conversation already exists
     const existingConversation = conversations.find(conv =>
@@ -199,7 +281,11 @@ export default function Inbox() {
       setSearchQuery("");
     } else {
       // Create new conversation by requesting it
-      socketClient.getConversation(recipientAddress.toLowerCase());
+      if (socketClient.isConnected()) {
+        socketClient.getConversation(recipientAddress.toLowerCase());
+      } else {
+        fetchThreadFallback(recipientAddress.toLowerCase());
+      }
 
       // Create temporary conversation to show in UI immediately
       const tempConversation: Conversation = {
@@ -222,7 +308,7 @@ export default function Inbox() {
     if (!user) return { address: "Unknown", username: null, avatar: null };
 
     // Use wallet address if available, otherwise use Privy ID
-    const currentUserId = user.wallet?.address?.toLowerCase() || user.id;
+    const currentUserId = getCurrentUserId() || user.id;
     const otherAddress = conversation.participants.find(p => p !== currentUserId);
 
     // Provide a fallback with at least an address if creator data is missing
@@ -468,7 +554,7 @@ export default function Inbox() {
                 filteredCreators.map((creator) => (
                   <div
                     key={creator.id}
-                    onClick={() => handleStartConversation(creator.address)}
+                    onClick={() => handleStartConversation(resolveRecipientId(creator))}
                     className="p-3 border rounded-lg cursor-pointer hover:bg-accent/50 transition-colors"
                   >
                     <div className="flex items-center gap-3">

@@ -62,9 +62,6 @@ import { Button } from "./ui/button";
 import { Separator } from "./ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { Badge } from "./ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -292,11 +289,6 @@ const authenticatedNavigationItems = [
     showBadge: true, // Enable badge for inbox
   },
   {
-    icon: FlameIcon,
-    label: "Streaks",
-    path: "/streaks",
-  },
-  {
     icon: CreateIcon,
     label: "Create",
     path: "/create",
@@ -310,16 +302,6 @@ const authenticatedNavigationItems = [
     icon: ArrowDownUp,
     label: "Swap",
     path: "/swap",
-  },
-  {
-    icon: Wallet,
-    label: "Wallet",
-    path: "/wallet",
-  },
-  {
-    icon: User, // Added Profile icon
-    label: "Profile",
-    path: "/profile",
   },
 ];
 
@@ -336,14 +318,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const referralStorageKey = "every1_referral_code";
   const appliedReferralPrefix = "every1_referral_applied_";
-  const referralPromptDismissPrefix = "every1_referral_prompt_dismissed_";
-  const referralPromptSnoozePrefix = "every1_referral_prompt_snooze_";
-  const referralReminderPrefix = "every1_referral_reminder_";
-  const [referralPromptOpen, setReferralPromptOpen] = useState(false);
-  const [referralInput, setReferralInput] = useState("");
-  const [referralError, setReferralError] = useState<string | null>(null);
-  const [isApplyingReferral, setIsApplyingReferral] = useState(false);
   const [hasSyncedUser, setHasSyncedUser] = useState(false);
+  const getNavTourTag = (path: string) => {
+    if (path === "/create") return "nav-create";
+    if (path === "/swap") return "nav-swap";
+    if (path === "/fans-missions") return "nav-missions";
+    if (path === "/leaderboard") return "nav-leaderboard";
+    return undefined;
+  };
   const { data: walletLedger } = useQuery({
     queryKey: ["/api/ledger/naira", user?.id],
     enabled: authenticated,
@@ -423,7 +405,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       if (!authenticated || !user?.id) return false;
       const trimmed = code.trim();
       if (!trimmed) {
-        setReferralError("Enter a valid referral code.");
         return false;
       }
 
@@ -435,12 +416,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             description: "Your account already has a referral linked.",
           });
         }
-        setReferralPromptOpen(false);
         return true;
       }
 
-      setIsApplyingReferral(true);
-      setReferralError(null);
       try {
         const accessToken = await getAccessToken();
         const headers: Record<string, string> = {
@@ -473,7 +451,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         const data = await response.json().catch(() => ({}));
         if (!response.ok) {
           const errorMessage = data?.error || "Failed to apply referral";
-          setReferralError(errorMessage);
           if (
             options?.source === "auto" &&
             (errorMessage.includes("already exists") ||
@@ -495,11 +472,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
         localStorage.setItem(appliedKey, "true");
         localStorage.removeItem(referralStorageKey);
-        localStorage.removeItem(`${referralPromptDismissPrefix}${user.id}`);
-        localStorage.removeItem(`${referralPromptSnoozePrefix}${user.id}`);
-
-        setReferralPromptOpen(false);
-        setReferralInput("");
         if (options?.showToast !== false) {
           toast({
             title: "Referral applied",
@@ -510,7 +482,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       } catch (error) {
         const message =
           error instanceof Error ? error.message : "Unable to apply referral code.";
-        setReferralError(message);
         if (options?.showToast !== false) {
           toast({
             title: "Referral not applied",
@@ -519,8 +490,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           });
         }
         return false;
-      } finally {
-        setIsApplyingReferral(false);
       }
     },
     [authenticated, user, getAccessToken, toast],
@@ -620,39 +589,47 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     applyReferralCode(pendingRef, { source: "auto" });
   }, [authenticated, user, applyReferralCode]);
 
-  // Referral prompt on first login (if no referral applied)
+  // Trigger daily E1XP reminder notification once per day on login
   useEffect(() => {
     if (!authenticated || !user?.id) return;
-    const appliedKey = `${appliedReferralPrefix}${user.id}`;
-    if (localStorage.getItem(appliedKey)) return;
-    if (localStorage.getItem(referralStorageKey)) return;
 
-    const snoozeKey = `${referralPromptSnoozePrefix}${user.id}`;
-    const snoozeUntil = Number(localStorage.getItem(snoozeKey) || 0);
-    if (snoozeUntil && Date.now() < snoozeUntil) return;
+    const todayKey = new Date().toISOString().split("T")[0];
+    const reminderKey = `every1_streak_reminder_${user.id}_${todayKey}`;
+    if (localStorage.getItem(reminderKey)) return;
 
-    const dismissedKey = `${referralPromptDismissPrefix}${user.id}`;
-    if (localStorage.getItem(dismissedKey)) return;
-
-    setReferralInput("");
-    setReferralError(null);
-    setReferralPromptOpen(true);
-
-  }, [authenticated, user, getAccessToken]);
-
-  // Allow other screens to open the referral prompt
-  useEffect(() => {
-    const handler = () => {
-      if (!authenticated || !user?.id) return;
-      const appliedKey = `${appliedReferralPrefix}${user.id}`;
-      if (localStorage.getItem(appliedKey)) return;
-      setReferralInput("");
-      setReferralError(null);
-      setReferralPromptOpen(true);
+    const checkUnclaimed = async () => {
+      try {
+        const response = await fetch("/api/login-streak/check-unclaimed", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            address: user.wallet?.address || null,
+            privyId: user.id,
+          }),
+        });
+        if (response.ok) {
+          const data = await response.json().catch(() => null);
+          if (data?.hasUnclaimed) {
+            toast({
+              title: "Daily points ready",
+              description:
+                data.isFirstTime
+                  ? "You’ve got a welcome bonus waiting. Tap E1XP to claim."
+                  : `Claim ${data.pointsAvailable || 10} E1XP to keep your streak alive.`,
+              duration: 3500,
+            });
+          }
+        }
+      } catch (error) {
+        console.warn("[Streak Reminder] Failed to check unclaimed points:", error);
+      } finally {
+        localStorage.setItem(reminderKey, "true");
+      }
     };
-    window.addEventListener("open-referral-modal", handler);
-    return () => window.removeEventListener("open-referral-modal", handler);
+
+    checkUnclaimed();
   }, [authenticated, user]);
+
 
   // Always sync creator profile after login to ensure user records exist
   useEffect(() => {
@@ -687,27 +664,32 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     syncProfile();
   }, [authenticated, user, getAccessToken]);
 
-  const handleReferralPromptClose = useCallback(
-    (mode: "snooze" | "dismiss" = "snooze") => {
-      if (!user?.id) {
-        setReferralPromptOpen(false);
-        return;
+  // One-time E1XP points sync on login (per session)
+  useEffect(() => {
+    if (!authenticated || !user?.id) return;
+    const syncKey = `every1_points_sync_${user.id}`;
+    if (sessionStorage.getItem(syncKey)) return;
+
+    const syncPoints = async () => {
+      try {
+        const accessToken = await getAccessToken();
+        if (!accessToken) return;
+        await fetch("/api/e1xp/sync-points", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+      } catch (error) {
+        console.warn("[E1XP Sync] Failed to sync points on login:", error);
+      } finally {
+        sessionStorage.setItem(syncKey, "true");
       }
-      const appliedKey = `${appliedReferralPrefix}${user.id}`;
-      if (localStorage.getItem(appliedKey)) {
-        setReferralPromptOpen(false);
-        return;
-      }
-      if (mode === "dismiss") {
-        localStorage.setItem(`${referralPromptDismissPrefix}${user.id}`, "true");
-      } else {
-        const snoozeUntil = Date.now() + 24 * 60 * 60 * 1000; // 24h
-        localStorage.setItem(`${referralPromptSnoozePrefix}${user.id}`, snoozeUntil.toString());
-      }
-      setReferralPromptOpen(false);
-    },
-    [user?.id],
-  );
+    };
+
+    syncPoints();
+  }, [authenticated, user, getAccessToken]);
+
 
   const handleLogin = () => {
     try {
@@ -735,13 +717,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             className="border-r border-transparent hidden md:flex"
           >
             <SidebarHeader className="border-b border-border p-4">
-              <Link href="/" className="flex items-center gap-3">
-                <img 
-                  src="https://i.ibb.co/JRQCPsZK/ev122logo-1-1.png" 
-                  alt="E1" 
-                  className="h-8 w-auto group-data-[collapsible=icon]:h-6"
-                />
-              </Link>
+              <div className="flex items-center justify-between gap-3 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:gap-2">
+                <Link href="/" className="flex items-center gap-3 group-data-[collapsible=icon]:gap-0">
+                  <img
+                    src="https://i.ibb.co/JRQCPsZK/ev122logo-1-1.png"
+                    alt="Every1"
+                    className="h-8 w-8 object-contain shrink-0 group-data-[collapsible=icon]:h-7 group-data-[collapsible=icon]:w-7"
+                  />
+                </Link>
+                <SidebarTrigger className="h-8 w-8 group-data-[collapsible=icon]:h-7 group-data-[collapsible=icon]:w-7" />
+              </div>
             </SidebarHeader>
 
             <SidebarContent className="p-2">
@@ -762,7 +747,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                               tooltip={item.label}
                               className="h-10 relative"
                             >
-                              <Link href={item.path}>
+                              <Link href={item.path} data-tour={getNavTourTag(item.path)}>
                                 <item.icon className="h-4 w-4 shrink-0" />
                                 <span className="group-data-[collapsible=icon]:hidden">
                                   {item.label}
@@ -788,49 +773,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   </SidebarGroupContent>
                 </SidebarGroup>
               </div>
-
-              {/* Profile Section - Only for authenticated users */}
-              {authenticated && (
-                <div className="mb-6">
-                  <SidebarGroup>
-                    <SidebarGroupLabel>Profile</SidebarGroupLabel>
-                    <SidebarGroupContent>
-                      <SidebarMenu>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton
-                            asChild
-                            isActive={location === "/points"}
-                            tooltip="E1XP Points"
-                            className="h-10"
-                          >
-                            <Link href="/points" data-testid="link-points">
-                              <Zap className="h-4 w-4 shrink-0" />
-                              <span className="group-data-[collapsible=icon]:hidden">
-                                E1XP Points
-                              </span>
-                            </Link>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                        <SidebarMenuItem>
-                          <SidebarMenuButton
-                            asChild
-                            isActive={location === "/referrals"}
-                            tooltip="Referrals"
-                            className="h-10"
-                          >
-                            <Link href="/referrals" data-testid="link-referrals">
-                              <Users className="h-4 w-4 shrink-0" />
-                              <span className="group-data-[collapsible=icon]:hidden">
-                                Referrals
-                              </span>
-                            </Link>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      </SidebarMenu>
-                    </SidebarGroupContent>
-                  </SidebarGroup>
-                </div>
-              )}
 
               {/* Resources Section */}
               <SidebarGroup>
@@ -886,11 +828,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           {!isAdminRoute && (
             <header className="sticky top-0 z-50 border-b border-transparent bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
               <div className="flex h-16 items-center justify-between px-4 w-full gap-4">
-                {/* Desktop Sidebar Trigger - Positioned at left edge */}
-                <div className="hidden md:flex">
-                  <SidebarTrigger />
-                </div>
-
                 {/* Mobile Logo */}
                 <Link href="/" className="flex md:hidden items-center gap-2">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
@@ -904,7 +841,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 </Link>
 
                 {/* Stats Buttons - Centered */}
-                <div className="hidden lg:flex items-center gap-1 flex-1 justify-center max-w-5xl mx-auto">
+                <div className="hidden lg:flex items-center gap-2 flex-1 justify-center max-w-5xl mx-auto">
+                  <Link href="/search" className="hidden lg:flex" data-testid="button-desktop-searchbar">
+                    <div className="flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 h-9 min-w-[240px]">
+                      <SearchIcon className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-xs text-muted-foreground">Search creators or coins</span>
+                    </div>
+                  </Link>
                   <Button variant="outline" size="sm" className="h-9">
                     <TrendingUp className="h-4 w-4 mr-1.5 text-green-500" />
                     <span className="text-xs font-semibold">MC: ₦2.5M</span>
@@ -918,7 +861,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 {/* Right Section */}
                 <div className="flex items-center gap-3">
                   {/* Search icon - desktop only */}
-                  <Link href="/search" className="hidden md:flex" data-testid="button-desktop-search">
+                  <Link href="/search" className="hidden md:flex lg:hidden" data-testid="button-desktop-search">
                     <Button variant="ghost" size="icon">
                       <SearchIcon className="h-5 w-5" />
                     </Button>
@@ -939,17 +882,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                   <NotificationBell />
                   {authenticated ? (
                     <>
-                      <Link href="/create">
-                        <Button
-                          variant="default"
-                          size="sm"
-                          className="hidden md:flex bg-gradient-to-r from-purple-400 via-pink-400 to-blue-300 hover:from-purple-500 hover:via-pink-500 hover:to-blue-400 text-black font-semibold border-0 transition-all"
-                          data-testid="link-create"
-                        >
-                          <PlusCircle className="mr-2 h-4 w-4" />
-                          Create
-                        </Button>
-                      </Link>
                       <UserMenu />
                     </>
                   ) : (
@@ -1031,70 +963,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         {/* Page Content */}
           <main className="flex-1 overflow-auto">{children}</main>
 
-          <Dialog
-            open={referralPromptOpen}
-            onOpenChange={(open) => {
-              if (!open) {
-                handleReferralPromptClose("snooze");
-              } else {
-                setReferralPromptOpen(true);
-              }
-            }}
-          >
-            <DialogContent className="sm:max-w-md rounded-3xl bg-card border-border/60">
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2 text-lg font-semibold">
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                    <Gift className="h-4 w-4 text-primary" />
-                  </span>
-                  Have an invite code?
-                </DialogTitle>
-                <DialogDescription>
-                  Enter a referral code to unlock bonus E1XP rewards. It only takes a second.
-                </DialogDescription>
-              </DialogHeader>
-
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <Label htmlFor="referral-code-input">Referral code</Label>
-                  <Input
-                    id="referral-code-input"
-                    placeholder="Enter code (e.g. TEMS123)"
-                    value={referralInput}
-                    onChange={(event) => {
-                      setReferralInput(event.target.value);
-                      if (referralError) setReferralError(null);
-                    }}
-                  />
-                  {referralError && (
-                    <p className="text-xs text-destructive">{referralError}</p>
-                  )}
-                </div>
-
-                <div className="flex flex-col gap-2 sm:flex-row">
-                  <Button
-                    className="flex-1"
-                    disabled={isApplyingReferral}
-                    onClick={() =>
-                      applyReferralCode(referralInput, { source: "manual" })
-                    }
-                  >
-                    {isApplyingReferral ? "Applying..." : "Apply code"}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    className="flex-1"
-                    onClick={() => handleReferralPromptClose("snooze")}
-                  >
-                    Remind me later
-                  </Button>
-                </div>
-                <p className="text-[11px] text-muted-foreground">
-                  No code? You can skip for now and add one later from your Wallet page.
-                </p>
-              </div>
-            </DialogContent>
-          </Dialog>
         </SidebarInset>
 
         {/* Mobile Bottom Navigation - Compact design */}
@@ -1124,6 +992,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
                 <Link href="/swap">
                   <div
+                    data-tour="nav-swap"
                     className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
                       location === "/swap"
                         ? "text-primary"
@@ -1137,6 +1006,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
                 <Link href="/create" data-testid="link-create-mobile">
                   <div
+                    data-tour="nav-create"
                     className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all ${
                       location === "/create"
                         ? "text-primary"

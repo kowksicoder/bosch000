@@ -237,6 +237,26 @@ export default function Admin() {
     },
   });
 
+  const syncPointsMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", "/api/admin/points/sync", {});
+      return response.json();
+    },
+    onSuccess: (data: any) => {
+      toast({
+        title: "Points synced",
+        description: `Updated ${data?.updated ?? 0} creator records.`,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Sync failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleSendNotification = () => {
     if (!notifTitle || !notifMessage) {
       toast({
@@ -1847,6 +1867,37 @@ export default function Admin() {
                 </CardHeader>
                 <CardContent>
                   <NotificationTestingPanel />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Maintenance</CardTitle>
+                  <CardDescription>One-time sync tools for data consistency</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col gap-3">
+                    <Button
+                      onClick={() => syncPointsMutation.mutate()}
+                      disabled={syncPointsMutation.isPending}
+                      className="w-full sm:w-auto gap-2"
+                    >
+                      {syncPointsMutation.isPending ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Syncing...
+                        </>
+                      ) : (
+                        <>
+                          <Gift className="w-4 h-4" />
+                          Sync E1XP Points
+                        </>
+                      )}
+                    </Button>
+                    <p className="text-xs text-muted-foreground">
+                      Updates <code>creators.points</code> from <code>users.e1xp_points</code>.
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

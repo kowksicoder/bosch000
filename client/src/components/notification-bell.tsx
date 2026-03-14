@@ -94,6 +94,9 @@ export function NotificationBell() {
     refetchInterval: 10000,
     queryFn: async () => {
       const accessToken = await getAccessToken();
+      if (!accessToken) {
+        return [];
+      }
       const headers: Record<string, string> = {};
       if (accessToken) {
         headers.Authorization = `Bearer ${accessToken}`;

@@ -51,6 +51,9 @@ export default function Points() {
     enabled: authenticated,
     queryFn: async () => {
       const accessToken = await getAccessToken();
+      if (!accessToken) {
+        return [];
+      }
       const headers: Record<string, string> = {};
       if (accessToken) {
         headers.Authorization = `Bearer ${accessToken}`;
@@ -73,6 +76,9 @@ export default function Points() {
     enabled: authenticated,
     queryFn: async () => {
       const accessToken = await getAccessToken();
+      if (!accessToken) {
+        return [];
+      }
       const headers: Record<string, string> = {};
       if (accessToken) {
         headers.Authorization = `Bearer ${accessToken}`;

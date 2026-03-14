@@ -13,7 +13,7 @@ interface CreatorCardProps {
 
 export function CreatorCard({ creator, onConnect, isConnected }: CreatorCardProps) {
   const avatarUrl = creator.avatarUrl || "https://i.ibb.co/JRQCPsZK/ev122logo-1-1.png";
-  const profileIdentifier = creator.walletAddress || creator.username || creator.id;
+  const profileIdentifier = creator.username || creator.walletAddress || creator.id;
   const profileHref = `/profile/${encodeURIComponent(profileIdentifier)}`;
 
   return (

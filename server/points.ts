@@ -96,6 +96,26 @@ export async function awardPoints(
     .where(eq(users.id, userId))
     .returning();
 
+  // Keep creators.points in sync for UI that still reads from creators table
+  try {
+    if (updatedUser) {
+      let creator = null;
+      if (updatedUser.privyId) {
+        creator = await storage.getCreatorByPrivyId(updatedUser.privyId);
+      }
+      if (!creator && updatedUser.walletAddress) {
+        creator = await storage.getCreatorByAddress(updatedUser.walletAddress);
+      }
+      if (creator) {
+        await storage.updateCreator(creator.id, {
+          points: (updatedUser.e1xpPoints || 0).toString(),
+        } as any);
+      }
+    }
+  } catch (syncError) {
+    console.warn("Failed to sync creator points:", syncError);
+  }
+
   return updatedUser;
 }
 

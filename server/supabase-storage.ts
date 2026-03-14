@@ -64,6 +64,13 @@ const supabaseOptions: SupabaseClientOptions<'public'> = {
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey, supabaseOptions);
 
+const toDateKey = (value?: string | null): string | null => {
+  if (!value) return null;
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return parsed.toISOString().split('T')[0];
+};
+
 // Type definitions for notifications
 export interface UserNotification {
   id: string;
@@ -1311,18 +1318,50 @@ export class SupabaseStorage {
 
     await this.updateCreator(creator.id, { points: newPoints.toString() });
   }
-
   async awardPoints(creatorId: string, amount: number, reason: string, type: NotificationType): Promise<void> {
-    // Add points (supports wallet address, creator id, or Privy ID)
-    await this.addPoints(creatorId, amount, reason);
-
-    // Resolve creator record (after points update)
+    // Resolve creator record
     let creator = await this.getCreator(creatorId);
     if (!creator) creator = await this.getCreatorByAddress(creatorId);
     if (!creator) creator = await this.getCreatorByPrivyId(creatorId);
     if (!creator) return;
 
-    const newPoints = parseInt(creator.points || '0');
+    let updatedPoints = parseInt(creator.points || '0');
+
+    try {
+      let userRecord = null;
+      if (creator.privyId) userRecord = await this.getUserByPrivyId(creator.privyId);
+      if (!userRecord && creator.address) userRecord = await this.getUserByAddress(creator.address);
+      if (!userRecord && creator.email) userRecord = await this.getUserByEmail(creator.email);
+
+      if (userRecord) {
+        const { awardPoints: awardUserPoints } = await import('./points');
+        const updatedUser = await awardUserPoints(
+          userRecord.id,
+          amount,
+          String(type || 'reward'),
+          reason,
+          { source: 'system', creatorId: creator.id },
+        );
+        if (updatedUser?.e1xpPoints !== undefined) {
+          updatedPoints = updatedUser.e1xpPoints;
+        }
+
+        try {
+          await this.updateCreator(creator.id, { points: updatedPoints.toString() } as any);
+        } catch (syncError) {
+          console.warn('[awardPoints] Failed to sync creator points:', syncError);
+        }
+      } else {
+        await this.addPoints(creatorId, amount, reason);
+        const refreshed = await this.getCreator(creator.id);
+        if (refreshed?.points) updatedPoints = parseInt(refreshed.points || '0');
+      }
+    } catch (error) {
+      console.warn('[awardPoints] Failed to sync user points, falling back to creator points:', error);
+      await this.addPoints(creatorId, amount, reason);
+      const refreshed = await this.getCreator(creator.id);
+      if (refreshed?.points) updatedPoints = parseInt(refreshed.points || '0');
+    }
 
     // Use address for wallet users, privyId for email-only users
     const userId = creator.address || creator.privyId || creator.id;
@@ -1341,20 +1380,25 @@ export class SupabaseStorage {
     await this.createNotification({
       userId,
       type,
-      title: '⚡ E1XP Points Earned!',
+      title: '??? E1XP Points Earned!',
       message: `You earned ${amount} E1XP points for ${reason}`,
       metadata: {
         points: amount,
         reason,
-        totalPoints: newPoints,
-        shareText: `I just earned ${amount} E1XP points on @Every1 for ${reason}! Total: ${newPoints} ⚡\n\nJoin me: ${profileUrl}\n\n#Every1 #E1XP #Web3`
+        totalPoints: updatedPoints,
+        shareText: `I just earned ${amount} E1XP points on @Every1 for ${reason}! Total: ${updatedPoints} ???
+
+Join me: ${profileUrl}
+
+#Every1 #E1XP #Web3`
       },
       read: false
     });
   }
 
   async getDailyPointsStatus(creatorId: string): Promise<{ claimed: boolean; streak: number; nextClaimAmount: number }> {
-    const today = new Date().toISOString().split('T')[0];
+    const nowIso = new Date().toISOString();
+    const today = nowIso.split('T')[0];
 
     const { data: claimData, error: claimError } = await supabase
       .from('daily_points')
@@ -1927,6 +1971,7 @@ export class SupabaseStorage {
 
     const now = new Date();
     const lastLoginDate = data.last_login_date;
+    const lastLoginDay = toDateKey(data.last_login_date);
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().split('T')[0];
 
     // Build weekly calendar showing which days this week were checked in
@@ -1935,7 +1980,7 @@ export class SupabaseStorage {
     const mondayIndex = currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1; // Convert to Monday-first (0 = Monday)
 
     // Mark today as checked in if user has checked in today
-    if (lastLoginDate === today) {
+    if (lastLoginDay === today) {
       weeklyCalendar[mondayIndex] = true;
     }
 
@@ -1945,7 +1990,7 @@ export class SupabaseStorage {
       userId: data.user_id,
       currentStreak: data.current_streak,
       longestStreak: data.longest_streak,
-      lastLoginDate: data.last_login_date,
+      lastLoginDate,
       totalPoints: data.total_points,
       loginDates: data.login_dates,
       weeklyCalendar: weeklyCalendar,
@@ -2004,7 +2049,8 @@ export class SupabaseStorage {
   }
 
   async checkInStreak(userId: string): Promise<{ currentStreak: number; pointsEarned: number; isFirstLogin: boolean }> {
-    const today = new Date().toISOString().split('T')[0];
+    const nowIso = new Date().toISOString();
+    const today = nowIso.split('T')[0];
 
     // Get existing streak data
     const { data: existingStreak, error: fetchError } = await supabase
@@ -2017,9 +2063,37 @@ export class SupabaseStorage {
       throw fetchError;
     }
 
+    const existingLastLogin = toDateKey(existingStreak?.last_login_date);
+
     // Check if already checked in today
-    if (existingStreak?.last_login_date === today) {
-      throw new Error('You have already checked in today. Come back tomorrow!');
+    if (existingLastLogin === today) {
+      // Guard against auto-created streaks that never actually claimed daily points.
+      try {
+        const startOfDay = new Date(`${today}T00:00:00.000Z`);
+        const endOfDay = new Date(startOfDay);
+        endOfDay.setUTCDate(endOfDay.getUTCDate() + 1);
+
+        const { data: dailyClaimNotifications, error: claimNotifError } = await supabase
+          .from('notifications')
+          .select('id, created_at')
+          .eq('user_id', userId)
+          .eq('type', 'daily_login')
+          .gte('created_at', startOfDay.toISOString())
+          .lt('created_at', endOfDay.toISOString());
+
+        if (claimNotifError) {
+          console.warn('[Streak Check-In] Failed to verify claim notifications:', claimNotifError);
+        }
+
+        if (dailyClaimNotifications && dailyClaimNotifications.length > 0) {
+          throw new Error('You have already checked in today. Come back tomorrow!');
+        }
+      } catch (claimCheckError) {
+        if (claimCheckError instanceof Error && claimCheckError.message.includes('already checked in')) {
+          throw claimCheckError;
+        }
+        console.warn('[Streak Check-In] Proceeding without claim verification:', claimCheckError);
+      }
     }
 
     // Check if this is the user's first login
@@ -2030,7 +2104,7 @@ export class SupabaseStorage {
     let pointsEarned = 10;
 
     if (existingStreak) {
-      if (existingStreak.last_login_date === yesterday) {
+      if (existingLastLogin === yesterday) {
         currentStreak = (existingStreak.current_streak || 0) + 1;
       }
     }
@@ -2048,7 +2122,7 @@ export class SupabaseStorage {
         .update({
           current_streak: currentStreak,
           longest_streak: longestStreak,
-          last_login_date: today,
+          last_login_date: nowIso,
           total_points: (existingStreak.total_points || 0) + pointsEarned,
         })
         .eq('user_id', userId);
@@ -2061,7 +2135,7 @@ export class SupabaseStorage {
           user_id: userId,
           current_streak: currentStreak,
           longest_streak: longestStreak,
-          last_login_date: today,
+          last_login_date: nowIso,
           total_points: pointsEarned,
         }, {
           onConflict: 'user_id'
@@ -2072,6 +2146,21 @@ export class SupabaseStorage {
 
     // Award points to creator
     await this.awardPoints(userId, pointsEarned, `Daily login streak (Day ${currentStreak})`, 'daily_login');
+
+    // Unlock special streak badge at 7 days (if applicable)
+    if (currentStreak === 7) {
+      try {
+        let userRecord = await this.getUserByAddress(userId);
+        if (!userRecord) userRecord = await this.getUserByPrivyId(userId);
+        if (!userRecord) userRecord = await this.getUserByEmail(userId);
+        if (userRecord) {
+          const { checkAndAwardSpecialBadges } = await import('./points');
+          await checkAndAwardSpecialBadges(userRecord.id, "7_day_streak");
+        }
+      } catch (badgeError) {
+        console.warn("[Streak Check-In] Failed to award streak badge:", badgeError);
+      }
+    }
 
     return { currentStreak, pointsEarned, isFirstLogin };
   }
