@@ -1861,6 +1861,54 @@ Join me: ${profileUrl}
     return this.getFollowing(userAddress);
   }
 
+  // ===== COIN LIKES (BOOKMARKS) =====
+  async addCoinLike(userId: string, coinId: string): Promise<{ id: string }> {
+    const { data, error } = await supabase
+      .from('bookmarks')
+      .insert({
+        user_id: userId,
+        coin_id: coinId,
+        created_at: new Date().toISOString(),
+      })
+      .select('id')
+      .single();
+
+    if (error) throw error;
+    return data as { id: string };
+  }
+
+  async removeCoinLike(userId: string, coinId: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('bookmarks')
+      .delete()
+      .eq('user_id', userId)
+      .eq('coin_id', coinId);
+
+    if (error) throw error;
+    return true;
+  }
+
+  async isCoinLiked(userId: string, coinId: string): Promise<boolean> {
+    const { data, error } = await supabase
+      .from('bookmarks')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('coin_id', coinId)
+      .single();
+
+    return data !== null && !error;
+  }
+
+  async getCoinLikesCount(coinId: string): Promise<number> {
+    const { count, error } = await supabase
+      .from('bookmarks')
+      .select('id', { count: 'exact', head: true })
+      .eq('coin_id', coinId);
+
+    if (error) throw error;
+    return count || 0;
+  }
+
   // ===== REFERRALS =====
   async createReferral(insertReferral: InsertReferral): Promise<Referral> {
     const { data, error } = await supabase

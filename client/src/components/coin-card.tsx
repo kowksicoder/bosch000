@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { TrendingUp, User, Coins, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { User, Coins } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn, formatSmartCurrency } from "@/lib/utils";
 import { useFxRates, convertUsdToNgn } from "@/lib/fx";
@@ -19,17 +18,21 @@ interface CoinCardProps {
     volume24h?: string;
     holders?: number;
     creator?: string;
+    creator_wallet?: string;
+    creatorWallet?: string;
     createdAt?: string;
     category?: string;
     platform?: string;
     chain?: string; // Added for platform coin check
     __typename?: string; // Added for platform coin check
+    metadata?: any;
   };
   className?: string;
   onClick?: () => void;
+  onTrade?: () => void;
 }
 
-export function CoinCard({ coin, className, onClick }: CoinCardProps) {
+export function CoinCard({ coin, className, onClick, onTrade }: CoinCardProps) {
   const [imageError, setImageError] = useState(false);
   const [liveMarketCap, setLiveMarketCap] = useState<string | null>(null);
   const [liveVolume, setLiveVolume] = useState<string | null>(null);
@@ -41,6 +44,13 @@ export function CoinCard({ coin, className, onClick }: CoinCardProps) {
 
   // Use platform logo as fallback avatar
   const fallbackAvatar = "https://i.ibb.co/JRQCPsZK/ev122logo-1-1.png";
+  const creatorAddress =
+    coin.creator ||
+    coin.creator_wallet ||
+    coin.creatorWallet ||
+    coin.metadata?.creator_wallet ||
+    coin.metadata?.creatorAddress ||
+    "";
 
   // Format holders count
   const formatHolders = (count: number): string => {
@@ -97,12 +107,21 @@ export function CoinCard({ coin, className, onClick }: CoinCardProps) {
             setCoinImage(previewImage.medium || previewImage.small || null);
           }
 
-          // Creator avatar from Zora
           if (coinDataAny.creatorProfile?.avatar) {
-            setCreatorAvatar(coinDataAny.creatorProfile.avatar);
+            const previewImage = coinDataAny.creatorProfile.avatar?.previewImage;
+            const avatarUrl =
+              previewImage?.medium ||
+              previewImage?.small ||
+              coinDataAny.creatorProfile.avatar?.medium ||
+              coinDataAny.creatorProfile.avatar?.small ||
+              null;
+            if (avatarUrl) {
+              setCreatorAvatar(avatarUrl);
+            }
           }
 
-          // Creator earnings from Zora
+          // Creator earnings from Zora (fallback to 0.5% of volume if missing)
+          let earningsUsd: number | null = null;
           if (
             coinDataAny.creatorEarnings &&
             coinDataAny.creatorEarnings.length > 0
@@ -114,7 +133,22 @@ export function CoinCard({ coin, className, onClick }: CoinCardProps) {
                   "0",
               ),
             );
-            setCreatorEarnings(earningAmount);
+            if (Number.isFinite(earningAmount) && earningAmount > 0) {
+              earningsUsd = earningAmount;
+            }
+          }
+
+          if (earningsUsd === null) {
+            const volumeValue = typeof coinData.volume24h === "string"
+              ? parseFloat(coinData.volume24h)
+              : Number(coinData.volume24h);
+            if (Number.isFinite(volumeValue) && volumeValue > 0) {
+              earningsUsd = volumeValue * 0.005;
+            }
+          }
+
+          if (earningsUsd !== null) {
+            setCreatorEarnings(earningsUsd);
           }
         }
       } catch (error) {
@@ -125,13 +159,42 @@ export function CoinCard({ coin, className, onClick }: CoinCardProps) {
     fetchCoinData();
   }, [coin.address]);
 
+  useEffect(() => {
+    let cancelled = false;
+    const loadCreatorAvatar = async () => {
+      if (!creatorAddress || !creatorAddress.startsWith("0x")) return;
+      if (creatorAvatar) return;
+      try {
+        const response = await fetch(
+          `/api/creators/address/${encodeURIComponent(creatorAddress)}`,
+        );
+        if (!response.ok) return;
+        const data = await response.json();
+        const avatar =
+          data?.avatar ||
+          data?.avatarUrl ||
+          data?.creator?.avatar ||
+          data?.creator?.avatarUrl ||
+          null;
+        if (!cancelled && avatar) {
+          setCreatorAvatar(avatar);
+        }
+      } catch (error) {
+        console.error("Error fetching creator avatar:", error);
+      }
+    };
+
+    loadCreatorAvatar();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [creatorAddress, creatorAvatar]);
+
   const marketCapNgn = convertUsdToNgn(liveMarketCap || coin.marketCap, fxRates);
   const volumeNgn = convertUsdToNgn(liveVolume || coin.volume24h, fxRates);
   const creatorEarningsNgn = convertUsdToNgn(creatorEarnings, fxRates);
   const formattedMarketCap = formatSmartCurrency(marketCapNgn);
-
-  // Check if this is a platform coin (not from Zora SDK)
-  const isPlatformCoin = !coin.chain && !coin.__typename;
 
   return (
     <Card
@@ -157,24 +220,18 @@ export function CoinCard({ coin, className, onClick }: CoinCardProps) {
           </span>
         </div>
 
-        {(coin.category?.toLowerCase() === "zora" ||
-          coin.platform?.toLowerCase() === "zora") && (
-          <div className="absolute top-1.5 right-1.5 z-10">
-            <div className="w-5 h-5 rounded-full overflow-hidden backdrop-blur-sm flex items-center justify-center">
-              <img src="" alt="Zora" className="w-full h-full object-contain" />
-            </div>
-          </div>
-        )}
-
-        {isPlatformCoin && (
-          <div className="absolute top-1.5 right-1.5 z-10">
+        <div className="absolute top-1.5 right-1.5 z-10">
+          <div className="w-5 h-5 rounded-full overflow-hidden bg-black/40 ring-1 ring-white/30 flex items-center justify-center">
             <img
-              src="https://i.ibb.co/rK4mPf4Q/e1-logo.png"
-              alt="Platform"
-              className="w-4 h-4 object-contain"
+              src={creatorAvatar || fallbackAvatar}
+              alt="Creator"
+              className="w-full h-full object-cover"
+              onError={(event) => {
+                (event.currentTarget as HTMLImageElement).src = fallbackAvatar;
+              }}
             />
           </div>
-        )}
+        </div>
 
         {(coinImage || coin.image) && !imageError ? (
           <img
@@ -191,40 +248,40 @@ export function CoinCard({ coin, className, onClick }: CoinCardProps) {
       </div>
 
       {/* Coin Info */}
-      <div className="p-2 space-y-1.5 flex-1 flex flex-col">
+      <div className="p-2 space-y-0.5 flex-1 flex flex-col">
         <div className="flex-1 flex items-start justify-between">
-          <div className="flex items-start justify-between gap-2 mb-1">
-            <div className="flex items-center gap-1.5 flex-1 min-w-0">
-              <h3 className="font-semibold text-sm md:text-base truncate">
+          <div className="flex items-start justify-between gap-2 mb-1 w-full">
+            <div className="min-w-0 flex-1">
+              <h3 className="font-semibold text-[11px] md:text-sm truncate max-w-[120px] md:max-w-[160px]">
                 {coin.name}
               </h3>
+              <span className="block text-[9px] md:text-xs text-muted-foreground font-mono truncate max-w-[80px] md:max-w-[110px]">
+                ₦{coin.symbol}
+              </span>
             </div>
-            <span className="text-xs md:text-sm text-muted-foreground font-mono shrink-0">
-              {coin.symbol}
-            </span>
+            <Button
+              size="sm"
+              className="min-h-0 h-4 md:h-4.5 px-1.5 md:px-2 text-[8px] md:text-[9px] leading-none rounded-[4px] bg-emerald-500/90 text-white hover:bg-emerald-500 border-0"
+              onClick={(event) => {
+                event.stopPropagation();
+                onTrade?.();
+              }}
+            >
+              Trade
+            </Button>
           </div>
-          {(creatorAvatar || fallbackAvatar) && (
-            <Avatar className="w-4 h-4 ring-1 ring-primary/20">
-              <AvatarImage src={creatorAvatar || fallbackAvatar || undefined} />
-              <AvatarFallback className="bg-primary/10 text-primary text-[6px]">
-                {coin.creator?.slice(0, 2).toUpperCase() || "??"}
-              </AvatarFallback>
-            </Avatar>
-          )}
         </div>
 
         {/* Stats */}
-        <div className="space-y-1 pt-1.5 border-t border-border/50">
+        <div className="space-y-0.5 pt-1 border-t border-border/50">
           <div className="flex items-center justify-between text-[10px]">
             <div className="flex items-center gap-0.5">
-              <TrendingUp className="h-2.5 w-2.5 text-green-500" />
               <span className="text-muted-foreground">MC:</span>
               <span className="font-semibold text-foreground">
                 {formattedMarketCap}
               </span>
             </div>
             <div className="flex items-center gap-0.5">
-              <TrendingUp className="h-2.5 w-2.5 text-purple-500" />
               <span className="text-muted-foreground">Vol:</span>
               <span className="font-semibold text-foreground">
                 {formatSmartCurrency(volumeNgn)}

@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Reorder } from "framer-motion";
 import {
   Dialog,
   DialogContent,
@@ -19,19 +20,26 @@ import {
   Film,
   Music,
   FileText,
+  GripVertical,
+  X,
   Loader2,
   Sparkles,
   Shield,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { nanoid } from "nanoid";
 
 type TabType = "import" | "upload";
+type UploadItem = {
+  id: string;
+  file: File;
+  previewUrl: string;
+};
 
 export default function AdminCreate() {
   const [showPreview, setShowPreview] = useState(false);
   const [scrapedData, setScrapedData] = useState<any>(null);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [uploadPreviewUrl, setUploadPreviewUrl] = useState<string>("");
+  const [uploadedItems, setUploadedItems] = useState<UploadItem[]>([]);
   const [uploadTitle, setUploadTitle] = useState("");
   const [uploadDescription, setUploadDescription] = useState("");
   const [uploadAuthor, setUploadAuthor] = useState("");
@@ -51,57 +59,68 @@ export default function AdminCreate() {
   };
 
   const resetUploadForm = () => {
-    setUploadedFile(null);
-    setUploadPreviewUrl("");
+    uploadedItems.forEach((item) => URL.revokeObjectURL(item.previewUrl));
+    setUploadedItems([]);
     setUploadTitle("");
     setUploadDescription("");
     setUploadAuthor("");
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    uploadedItems.forEach((item) => URL.revokeObjectURL(item.previewUrl));
 
     const maxSize = 100 * 1024 * 1024;
+    const nextItems: UploadItem[] = [];
 
-    // Accept all image, video, and audio files (matches backend handling)
-    const isValidType = file.type.startsWith('image/') || 
-                        file.type.startsWith('video/') || 
-                        file.type.startsWith('audio/');
+    files.forEach((file) => {
+      const isValidType =
+        file.type.startsWith("image/") ||
+        file.type.startsWith("video/") ||
+        file.type.startsWith("audio/");
 
-    if (!isValidType) {
-      toast({
-        title: "Invalid file type",
-        description: "Please upload an image, video, or audio file",
-        variant: "destructive",
+      if (!isValidType) {
+        toast({
+          title: "Invalid file type",
+          description: "Please upload an image, video, or audio file",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (file.size > maxSize) {
+        toast({
+          title: "File too large",
+          description: "Maximum file size is 100MB per file",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      nextItems.push({
+        id: nanoid(),
+        file,
+        previewUrl: URL.createObjectURL(file),
       });
-      return;
-    }
+    });
 
-    if (file.size > maxSize) {
-      toast({
-        title: "File too large",
-        description: "Maximum file size is 100MB",
-        variant: "destructive",
-      });
-      return;
-    }
+    if (!nextItems.length) return;
 
-    setUploadedFile(file);
-    const previewUrl = URL.createObjectURL(file);
-    setUploadPreviewUrl(previewUrl);
+    setUploadedItems(nextItems);
 
     if (!uploadTitle) {
-      const nameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+      const nameWithoutExt = nextItems[0].file.name.replace(/\.[^/.]+$/, "");
       setUploadTitle(nameWithoutExt);
     }
   };
 
   const handleUploadPreview = async () => {
-    if (!uploadedFile || !uploadTitle) {
+    if (!uploadedItems.length || !uploadTitle) {
       toast({
         title: "Missing information",
-        description: "Please upload a file and provide a title",
+        description: "Please upload your media and provide a title",
         variant: "destructive",
       });
       return;
@@ -111,7 +130,9 @@ export default function AdminCreate() {
 
     try {
       const formData = new FormData();
-      formData.append("file", uploadedFile);
+      uploadedItems.forEach((item) => {
+        formData.append("files", item.file);
+      });
       formData.append("title", uploadTitle);
       formData.append("description", uploadDescription);
       formData.append("author", uploadAuthor);
@@ -146,9 +167,9 @@ export default function AdminCreate() {
     }
   };
 
-  const getFileIcon = () => {
-    if (!uploadedFile) return <FileText className="w-6 h-6" />;
-    const type = uploadedFile.type.split("/")[0];
+  const getFileIcon = (file?: File) => {
+    if (!file) return <FileText className="w-6 h-6" />;
+    const type = file.type.split("/")[0];
     switch (type) {
       case "image":
         return <Image className="w-6 h-6" />;
@@ -159,6 +180,14 @@ export default function AdminCreate() {
       default:
         return <FileText className="w-6 h-6" />;
     }
+  };
+
+  const removeUpload = (index: number) => {
+    setUploadedItems((prev) => {
+      const target = prev[index];
+      if (target?.previewUrl) URL.revokeObjectURL(target.previewUrl);
+      return prev.filter((_, i) => i !== index);
+    });
   };
 
   return (
@@ -205,7 +234,7 @@ export default function AdminCreate() {
             data-testid="button-tab-upload"
           >
             <Upload className="w-3 h-3 sm:w-4 sm:h-4" />
-            Upload File
+            Upload Files
           </button>
         </div>
 
@@ -222,37 +251,61 @@ export default function AdminCreate() {
                       id="file-upload"
                       className="hidden"
                       accept="image/*,video/*,audio/*,.svg,.gif,.mp3,.mp4,.mov,.webm,.avi,.mkv,.flv,.wmv,.m4v,.3gp,.ogg,.wav,.aac,.flac,.m4a,.wma,.apng"
+                      multiple
                       onChange={handleFileUpload}
                       data-testid="input-file-upload"
                     />
                     <label htmlFor="file-upload" className="cursor-pointer">
                       <div className="flex flex-col items-center gap-4">
-                        {uploadedFile ? (
+                        {uploadedItems.length ? (
                           <>
                             <div className="p-4 rounded-2xl bg-primary/10">
-                              {getFileIcon()}
+                              {getFileIcon(uploadedItems[0]?.file)}
                             </div>
                             <div className="space-y-1">
                               <p className="text-sm font-semibold text-foreground">
-                                {uploadedFile.name}
+                                {uploadedItems.length === 1
+                                  ? uploadedItems[0].file.name
+                                  : `${uploadedItems.length} files selected`}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                {(uploadedFile.size / (1024 * 1024)).toFixed(2)} MB
+                                {(uploadedItems.reduce((sum, item) => sum + item.file.size, 0) / (1024 * 1024)).toFixed(2)} MB
                               </p>
                             </div>
-                            {uploadPreviewUrl && uploadedFile.type.startsWith("image/") && (
-                              <img
-                                src={uploadPreviewUrl}
-                                alt="Preview"
-                                className="mt-2 max-h-48 rounded-2xl shadow-xl"
-                              />
-                            )}
-                            {uploadPreviewUrl && uploadedFile.type.startsWith("video/") && (
-                              <video
-                                src={uploadPreviewUrl}
-                                controls
-                                className="mt-2 max-h-48 rounded-2xl shadow-xl"
-                              />
+                            {uploadedItems.length > 0 && (
+                              <div className="mt-2 grid w-full grid-cols-2 gap-2">
+                                {uploadedItems.slice(0, 4).map((item, index) => {
+                                  if (!item) return null;
+                                  if (item.file.type.startsWith("image/")) {
+                                    return (
+                                      <img
+                                        key={`${item.file.name}-${index}`}
+                                        src={item.previewUrl}
+                                        alt={`Preview ${index + 1}`}
+                                        className="h-24 w-full rounded-xl object-cover shadow"
+                                      />
+                                    );
+                                  }
+                                  if (item.file.type.startsWith("video/")) {
+                                    return (
+                                      <video
+                                        key={`${item.file.name}-${index}`}
+                                        src={item.previewUrl}
+                                        controls
+                                        className="h-24 w-full rounded-xl object-cover shadow"
+                                      />
+                                    );
+                                  }
+                                  return (
+                                    <div
+                                      key={`${item.file.name}-${index}`}
+                                      className="flex h-24 w-full items-center justify-center rounded-xl bg-muted/40 text-xs text-muted-foreground"
+                                    >
+                                      Audio file
+                                    </div>
+                                  );
+                                })}
+                              </div>
                             )}
                           </>
                         ) : (
@@ -265,7 +318,7 @@ export default function AdminCreate() {
                                 Drag & drop or click to upload
                               </p>
                               <p className="text-[10px] sm:text-xs text-muted-foreground">
-                                Images, Videos, or Audio • Max 100MB
+                                Images, Videos, or Audio - Max 100MB
                               </p>
                             </div>
                           </>
@@ -274,8 +327,69 @@ export default function AdminCreate() {
                     </label>
                   </div>
 
-                  {uploadedFile && (
+                  {uploadedItems.length > 0 && (
                     <div className="space-y-3 sm:space-y-5 pt-2 border-t border-border/30">
+                      {uploadedItems.length > 1 && (
+                        <div className="space-y-2">
+                          <Label className="text-xs sm:text-sm font-medium text-foreground">
+                            Reorder media
+                          </Label>
+                          <Reorder.Group
+                            axis="y"
+                            values={uploadedItems}
+                            onReorder={setUploadedItems}
+                            className="space-y-2"
+                          >
+                            {uploadedItems.map((item, index) => (
+                              <Reorder.Item
+                                key={item.id}
+                                value={item}
+                                className="flex items-center gap-2 rounded-2xl border border-border/30 bg-muted/20 px-2 py-2"
+                              >
+                                <button
+                                  type="button"
+                                  className="flex h-7 w-7 items-center justify-center rounded-full border border-border/40 text-muted-foreground hover:text-foreground hover:bg-muted/50 cursor-grab active:cursor-grabbing"
+                                  aria-label="Drag to reorder"
+                                >
+                                  <GripVertical className="h-3.5 w-3.5" />
+                                </button>
+                                <div className="h-10 w-10 shrink-0 overflow-hidden rounded-xl bg-muted/40 flex items-center justify-center">
+                                  {item.previewUrl && item.file.type.startsWith("image/") ? (
+                                    <img
+                                      src={item.previewUrl}
+                                      alt={item.file.name}
+                                      className="h-full w-full object-cover"
+                                    />
+                                  ) : item.previewUrl && item.file.type.startsWith("video/") ? (
+                                    <video
+                                      src={item.previewUrl}
+                                      className="h-full w-full object-cover"
+                                    />
+                                  ) : (
+                                    getFileIcon(item.file)
+                                  )}
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-xs font-semibold text-foreground truncate">
+                                    {item.file.name}
+                                  </p>
+                                  <p className="text-[10px] text-muted-foreground">
+                                    {(item.file.size / (1024 * 1024)).toFixed(2)} MB
+                                  </p>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => removeUpload(index)}
+                                  className="h-7 w-7 rounded-full border border-border/40 text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                                  aria-label="Remove file"
+                                >
+                                  <X className="h-3.5 w-3.5 mx-auto" />
+                                </button>
+                              </Reorder.Item>
+                            ))}
+                          </Reorder.Group>
+                        </div>
+                      )}
                       <div className="space-y-1.5 sm:space-y-2">
                         <Label htmlFor="upload-title" className="text-xs sm:text-sm font-medium text-foreground">
                           Title <span className="text-red-500">*</span>

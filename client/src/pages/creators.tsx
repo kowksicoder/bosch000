@@ -1,18 +1,24 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { User } from "@shared/schema";
-import { Users, TrendingUp, Award, Star, Flame } from "lucide-react";
+import { Users, Music, Palette, Sparkles, Film, Trophy, Star as StarIcon, SlidersHorizontal, Award } from "lucide-react";
 import { createAvatar } from "@dicebear/core";
 import { avataaars } from "@dicebear/collection";
 import { usePrivy } from "@privy-io/react-auth";
-import {
-  getMostValuableCreatorCoins,
-  getCreatorCoins,
-} from "@zoralabs/coins-sdk";
+import { getMostValuableCreatorCoins } from "@zoralabs/coins-sdk";
 import ProfileCardModal from "@/components/profile-card-modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatSmartCurrency } from "@/lib/utils";
 import { useFxRates, convertUsdToNgn } from "@/lib/fx";
+import { Button } from "@/components/ui/button";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from "@/components/ui/drawer";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Creator type from Zora data
 type Creator = {
@@ -32,9 +38,16 @@ type Creator = {
 
 export default function Creators() {
   const { user: privyUser, login } = usePrivy();
-  const [selectedTab, setSelectedTab] = useState<"top" | "rising" | "new">(
-    "top",
-  );
+  const [selectedTab, setSelectedTab] = useState<
+    "music" | "art" | "lifestyle" | "movies" | "sports" | "pop"
+  >("music");
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [sortBy, setSortBy] = useState<
+    "holders" | "marketcap" | "volume" | "newest"
+  >("holders");
+  const [minHolders, setMinHolders] = useState("0");
+  const [minMarketCap, setMinMarketCap] = useState("0");
+  const [minVolume, setMinVolume] = useState("0");
   const [selectedCreator, setSelectedCreator] = useState<string | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { data: fxRates } = useFxRates();
@@ -45,14 +58,7 @@ export default function Creators() {
     queryFn: async () => {
       let response;
 
-      if (selectedTab === "top") {
-        response = await getMostValuableCreatorCoins({ count: 50 });
-      } else if (selectedTab === "new") {
-        response = await getCreatorCoins({ count: 50 });
-      } else {
-        // Rising stars - use regular creator coins
-        response = await getCreatorCoins({ count: 50 });
-      }
+      response = await getMostValuableCreatorCoins({ count: 50 });
 
       const creators =
         response.data?.exploreList?.edges?.map((edge: any) => {
@@ -86,18 +92,32 @@ export default function Creators() {
 
   const creators = zoraCreatorsData || [];
 
+  const categoryKeywords: Record<typeof selectedTab, string[]> = {
+    music: ["music", "song", "album", "artist", "singer", "rapper", "dj", "beats"],
+    art: ["art", "artist", "gallery", "painting", "illustration", "design", "visual"],
+    lifestyle: ["lifestyle", "fashion", "beauty", "food", "travel", "wellness", "fitness"],
+    movies: ["movie", "film", "cinema", "series", "tv", "director", "trailer"],
+    sports: ["sport", "sports", "football", "soccer", "basketball", "nba", "nfl", "ufc", "boxing"],
+    pop: ["pop", "celebrity", "gossip", "culture", "entertainment", "viral"],
+  };
+
+  const hasCategoryMatches = creators.some((creator: any) => {
+    const haystack = `${creator.bio || ""} ${creator.displayName || ""} ${creator.username || ""}`.toLowerCase();
+    return categoryKeywords[selectedTab].some((kw) => haystack.includes(kw));
+  });
+
   const filteredCreators = creators
     .filter(
       (creator: any) =>
         creator.totalConnections && creator.totalConnections > 0,
     )
     .sort((a: any, b: any) => {
-      switch (selectedTab) {
-        case "top":
-          return (b.totalConnections || 0) - (a.totalConnections || 0);
-        case "rising":
-          return (b.totalProfileViews || 0) - (a.totalProfileViews || 0);
-        case "new":
+      switch (sortBy) {
+        case "marketcap":
+          return parseFloat(b.marketCap || "0") - parseFloat(a.marketCap || "0");
+        case "volume":
+          return parseFloat(b.volume24h || "0") - parseFloat(a.volume24h || "0");
+        case "newest":
           return (
             new Date(b.createdAt || "").getTime() -
             new Date(a.createdAt || "").getTime()
@@ -105,6 +125,27 @@ export default function Creators() {
         default:
           return (b.totalConnections || 0) - (a.totalConnections || 0);
       }
+    })
+    .filter((creator: any) => {
+      if (!hasCategoryMatches) return true;
+      const haystack = `${creator.bio || ""} ${creator.displayName || ""} ${creator.username || ""}`.toLowerCase();
+      return categoryKeywords[selectedTab].some((kw) => haystack.includes(kw));
+    })
+    .filter((creator: any) => {
+      const min = parseInt(minHolders, 10) || 0;
+      return (creator.totalConnections || 0) >= min;
+    })
+    .filter((creator: any) => {
+      const minMc = parseFloat(minMarketCap) || 0;
+      if (!minMc) return true;
+      const mc = parseFloat(creator.marketCap || "0") || 0;
+      return mc >= minMc;
+    })
+    .filter((creator: any) => {
+      const minVol = parseFloat(minVolume) || 0;
+      if (!minVol) return true;
+      const vol = parseFloat(creator.volume24h || "0") || 0;
+      return vol >= minVol;
     });
 
   const formatAddress = (address: string) => {
@@ -174,11 +215,11 @@ export default function Creators() {
       : 0;
 
   return (
-    <div className="container max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-8">
-      <div className="mb-4 sm:mb-6">
+    <div className="container max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-2 sm:space-y-8">
+      <div className="mb-2 sm:mb-6">
         <div className="flex flex-col items-center gap-1 sm:gap-2">
           {/* Stats - Compact single line on mobile */}
-          <div className="grid grid-cols-4 gap-2 mb-6">
+          <div className="grid grid-cols-4 gap-2 mb-2">
             <div className="text-center bg-muted/20 rounded-lg p-1.5">
               <div className="text-sm font-bold text-primary">
                 {creatorsLoading ? "-" : filteredCreators.length}
@@ -209,49 +250,39 @@ export default function Creators() {
         </div>
       </div>
 
-      <div className="flex gap-1.5 sm:gap-4 -mt-2 sm:mt-0 mb-4 sm:mb-6 overflow-x-auto pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:overflow-visible">
+      <div className="flex items-center gap-1 -mt-2 mb-2 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0 sm:overflow-visible">
         <button
-          onClick={() => setSelectedTab("top")}
-          className={`flex-1 px-2 sm:px-6 py-1.5 sm:py-2 rounded-lg font-medium transition-all text-xs sm:text-base whitespace-nowrap ${
-            selectedTab === "top"
-              ? "bg-primary text-primary-foreground"
-              : "bg-card text-muted-foreground hover:bg-muted"
-          }`}
+          onClick={() => setFilterOpen(true)}
+          className="flex h-8 min-w-8 items-center justify-center rounded-full bg-card/80 text-muted-foreground hover:bg-muted"
+          aria-label="Filter creators"
         >
-          <div className="flex items-center justify-center gap-1 sm:gap-2">
-            <Award className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline">Top Creators</span>
-            <span className="sm:hidden">Top</span>
-          </div>
+          <SlidersHorizontal className="h-3.5 w-3.5" />
         </button>
-        <button
-          onClick={() => setSelectedTab("rising")}
-          className={`flex-1 px-2 sm:px-6 py-1.5 sm:py-2 rounded-lg font-medium transition-all text-xs sm:text-base whitespace-nowrap ${
-            selectedTab === "rising"
-              ? "bg-primary text-primary-foreground"
-              : "bg-card text-muted-foreground hover:bg-muted"
-          }`}
-        >
-          <div className="flex items-center justify-center gap-1 sm:gap-2">
-            <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline">Rising Stars</span>
-            <span className="sm:hidden">Rising</span>
-          </div>
-        </button>
-        <button
-          onClick={() => setSelectedTab("new")}
-          className={`flex-1 px-2 sm:px-6 py-1.5 sm:py-2 rounded-lg font-medium transition-all text-xs sm:text-base whitespace-nowrap ${
-            selectedTab === "new"
-              ? "bg-primary text-primary-foreground"
-              : "bg-card text-muted-foreground hover:bg-muted"
-          }`}
-        >
-          <div className="flex items-center justify-center gap-1 sm:gap-2">
-            <Flame className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline">New Creators</span>
-            <span className="sm:hidden">New</span>
-          </div>
-        </button>
+        {[
+          { id: "music", label: "Music", icon: Music },
+          { id: "art", label: "Art", icon: Palette },
+          { id: "lifestyle", label: "Lifestyle", icon: Sparkles },
+          { id: "movies", label: "Movies", icon: Film },
+          { id: "sports", label: "Sports", icon: Trophy },
+          { id: "pop", label: "Pop-culture", icon: StarIcon },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() =>
+              setSelectedTab(tab.id as typeof selectedTab)
+            }
+            className={`flex items-center gap-1 px-2 py-0.5 rounded-full border-0 transition-all text-[10px] whitespace-nowrap ${
+              selectedTab === tab.id
+                ? "bg-primary text-primary-foreground"
+                : "bg-card/80 text-muted-foreground hover:bg-muted"
+            }`}
+          >
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted/40">
+              <tab.icon className="w-3 h-3" />
+            </span>
+            <span>{tab.label}</span>
+          </button>
+        ))}
       </div>
 
       {creatorsLoading ? (
@@ -351,7 +382,7 @@ export default function Creators() {
                       </div>
                       <div className="text-center">
                         <div className="text-yellow-500 font-bold text-[10px] flex items-center justify-center gap-0.5">
-                          <Star className="w-2 h-2" />
+                          <StarIcon className="w-2 h-2" />
                           {formatNumber(creator.e1xpPoints || 0)}
                         </div>
                         <div className="text-muted-foreground text-[8px]">
@@ -420,7 +451,7 @@ export default function Creators() {
                     </div>
                     <div className="text-center">
                       <div className="text-yellow-500 font-bold text-sm flex items-center justify-center gap-1">
-                        <Star className="w-3 h-3" />
+                        <StarIcon className="w-3 h-3" />
                         {formatNumber(creator.e1xpPoints || 0)}
                       </div>
                       <div className="text-muted-foreground text-[10px]">
@@ -434,6 +465,94 @@ export default function Creators() {
           })}
         </div>
       )}
+
+      <Drawer open={filterOpen} onOpenChange={setFilterOpen}>
+        <DrawerContent className="px-3 pb-4">
+          <DrawerHeader className="px-1 pb-2">
+            <DrawerTitle className="text-base">Filter creators</DrawerTitle>
+          </DrawerHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-xs text-muted-foreground">Sort by</label>
+              <Select value={sortBy} onValueChange={(value) => setSortBy(value as typeof sortBy)}>
+                <SelectTrigger className="h-9 text-xs">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="holders">Most holders</SelectItem>
+                  <SelectItem value="marketcap">Market cap</SelectItem>
+                  <SelectItem value="volume">24h volume</SelectItem>
+                  <SelectItem value="newest">Newest</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs text-muted-foreground">Min holders</label>
+              <Select value={minHolders} onValueChange={setMinHolders}>
+                <SelectTrigger className="h-9 text-xs">
+                  <SelectValue placeholder="Min holders" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0">Any</SelectItem>
+                  <SelectItem value="100">100+</SelectItem>
+                  <SelectItem value="500">500+</SelectItem>
+                  <SelectItem value="1000">1k+</SelectItem>
+                  <SelectItem value="5000">5k+</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs text-muted-foreground">Min market cap</label>
+              <Select value={minMarketCap} onValueChange={setMinMarketCap}>
+                <SelectTrigger className="h-9 text-xs">
+                  <SelectValue placeholder="Min market cap" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0">Any</SelectItem>
+                  <SelectItem value="100000">{formatSmartCurrency(convertUsdToNgn(100000, fxRates))}</SelectItem>
+                  <SelectItem value="500000">{formatSmartCurrency(convertUsdToNgn(500000, fxRates))}</SelectItem>
+                  <SelectItem value="1000000">{formatSmartCurrency(convertUsdToNgn(1000000, fxRates))}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs text-muted-foreground">Min volume (24h)</label>
+              <Select value={minVolume} onValueChange={setMinVolume}>
+                <SelectTrigger className="h-9 text-xs">
+                  <SelectValue placeholder="Min volume" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0">Any</SelectItem>
+                  <SelectItem value="50000">{formatSmartCurrency(convertUsdToNgn(50000, fxRates))}</SelectItem>
+                  <SelectItem value="100000">{formatSmartCurrency(convertUsdToNgn(100000, fxRates))}</SelectItem>
+                  <SelectItem value="500000">{formatSmartCurrency(convertUsdToNgn(500000, fxRates))}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                className="flex-1 h-9 text-xs"
+                onClick={() => {
+                  setSortBy("holders");
+                  setMinHolders("0");
+                  setMinMarketCap("0");
+                  setMinVolume("0");
+                }}
+              >
+                Reset
+              </Button>
+              <DrawerClose asChild>
+                <Button className="flex-1 h-9 text-xs">Apply</Button>
+              </DrawerClose>
+            </div>
+          </div>
+        </DrawerContent>
+      </Drawer>
 
       {selectedCreator && (
         <ProfileCardModal

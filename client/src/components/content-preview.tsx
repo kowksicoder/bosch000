@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { uploadToIPFS } from "@/lib/pinata";
-import { Loader2, ExternalLink, Sparkles } from "lucide-react";
+import { Loader2, ExternalLink, Sparkles, Music } from "lucide-react";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { createWalletClient, custom, createPublicClient, http, type Address } from "viem";
 import { base, baseSepolia } from "viem/chains";
@@ -11,7 +11,7 @@ import { createCoinOnBaseSepolia, generateCoinSymbol } from "@/lib/zora-coins";
 import { deployGaslessCoin } from "@/lib/gasless-deployment";
 import { useSmartAccount } from "@/contexts/SmartAccountContext";
 import confetti from "canvas-confetti";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -55,8 +55,54 @@ export default function ContentPreview({ scrapedData, collaboration, onCoinCreat
     platform: typeof scrapedData?.platform === "string" ? scrapedData.platform : "",
     url: typeof scrapedData?.url === "string" ? scrapedData.url : "",
     image: typeof scrapedData?.image === "string" ? scrapedData.image : "",
+    animationUrl: typeof scrapedData?.animation_url === "string" ? scrapedData.animation_url : "",
     publishDate: typeof scrapedData?.publishDate === "string" ? scrapedData.publishDate : "",
     type: typeof scrapedData?.type === "string" ? scrapedData.type : "",
+  };
+
+  const mediaItems = Array.isArray(scrapedData?.metadata?.media)
+    ? scrapedData.metadata.media.filter((item: any) => Boolean(item?.url))
+    : [];
+  const isCarousel =
+    Boolean(scrapedData?.metadata?.isCarousel) || mediaItems.length > 1;
+  const primaryMediaImage =
+    mediaItems.find((item: any) => {
+      const type = item?.type || "";
+      const mime = item?.mimeType || "";
+      return type === "image" || mime.startsWith("image/");
+    })?.url || "";
+  const primaryMediaVideo =
+    mediaItems.find((item: any) => {
+      const type = item?.type || "";
+      const mime = item?.mimeType || "";
+      return (
+        type === "video" ||
+        type === "audio" ||
+        mime.startsWith("video/") ||
+        mime.startsWith("audio/")
+      );
+    })?.url || "";
+  const previewImage =
+    safeScraped.image ||
+    primaryMediaImage ||
+    mediaItems[0]?.preview ||
+    mediaItems[0]?.url ||
+    "";
+
+  const carouselItems = mediaItems.length
+    ? mediaItems
+    : previewImage
+      ? [{ url: previewImage, type: "image" }]
+      : [];
+
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+  const [carouselIndex, setCarouselIndex] = useState(0);
+
+  const handleCarouselScroll = () => {
+    const el = carouselRef.current;
+    if (!el || !el.clientWidth) return;
+    const nextIndex = Math.round(el.scrollLeft / el.clientWidth);
+    setCarouselIndex(Math.min(Math.max(nextIndex, 0), carouselItems.length - 1));
   };
 
   // Auto-generate symbol from platform/channel/content - NON-EDITABLE
@@ -87,20 +133,26 @@ export default function ContentPreview({ scrapedData, collaboration, onCoinCreat
 
       const safeDescription = safeScraped.description.trim() || `A coin representing ${safeTitle}`;
       const safeAuthor = safeScraped.author.trim();
-      const safeImage = safeScraped.image.trim();
+      const safeImage = previewImage.trim();
+      const safeAnimation = (safeScraped.animationUrl || primaryMediaVideo).trim();
       const safeUrl = safeScraped.url.trim();
+      const resolvedContentType =
+        safeScraped.type ||
+        mediaItems[0]?.type ||
+        (safeAnimation ? "video" : safeImage ? "image" : "");
 
       const metadata = {
         name: safeTitle,
         symbol: coinSymbol,
         description: safeDescription,
         image: safeImage,
+        ...(safeAnimation ? { animation_url: safeAnimation } : {}),
         external_url: safeUrl,
         attributes: {
           platform: safeScraped.platform,
           author: safeAuthor,
           publishDate: safeScraped.publishDate,
-          contentType: safeScraped.type,
+          contentType: resolvedContentType,
           collaboration: collaboration
             ? {
                 mode: collaboration.mode,
@@ -108,6 +160,14 @@ export default function ContentPreview({ scrapedData, collaboration, onCoinCreat
               }
             : undefined,
         },
+        ...(mediaItems.length
+          ? {
+              properties: {
+                media: mediaItems,
+                isCarousel,
+              },
+            }
+          : {}),
       };
 
       // Ensure smart account is initialized
@@ -226,43 +286,86 @@ export default function ContentPreview({ scrapedData, collaboration, onCoinCreat
 
   return (
     <div className="space-y-4">
-      {/* Compact preview card */}
-      <div className="flex gap-3">
-        {/* Image thumbnail - compact */}
-        {scrapedData.image && (
-          <div className="flex-shrink-0">
-            <img
-              src={scrapedData.image}
-              alt={scrapedData.title}
-              className="w-20 h-20 object-cover rounded-lg border border-border"
-            />
+      {carouselItems.length > 0 && (
+        <div className="relative">
+          <div
+            ref={carouselRef}
+            onScroll={handleCarouselScroll}
+            className="flex w-full overflow-x-auto scroll-smooth snap-x snap-mandatory rounded-2xl border border-border/50 bg-muted/10 scrollbar-hide"
+          >
+            {carouselItems.map((item: any, index: number) => {
+              const type = item?.type || item?.mimeType?.split("/")?.[0] || "image";
+              const preview = item?.preview || previewImage;
+              return (
+                <div
+                  key={`${item?.url || "media"}-${index}`}
+                  className="min-w-full snap-center"
+                >
+                  {type === "video" ? (
+                    <video
+                      src={item.url}
+                      poster={preview}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      className="h-56 w-full object-cover sm:h-64"
+                    />
+                  ) : type === "audio" ? (
+                    <div className="flex h-56 w-full flex-col items-center justify-center gap-3 bg-gradient-to-br from-muted/30 to-muted/10 sm:h-64">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 text-primary">
+                        <Music className="h-6 w-6" />
+                      </div>
+                      <audio controls className="w-5/6">
+                        <source src={item.url} />
+                      </audio>
+                    </div>
+                  ) : (
+                    <img
+                      src={item.url}
+                      alt={`${scrapedData.title} ${index + 1}`}
+                      className="h-56 w-full object-cover sm:h-64"
+                    />
+                  )}
+                </div>
+              );
+            })}
           </div>
+          {carouselItems.length > 1 && (
+            <div className="absolute bottom-2 right-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] text-white">
+              {carouselIndex + 1} / {carouselItems.length}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Content info - compact */}
+      <div className="space-y-1.5">
+        <h3 className="font-semibold text-sm text-foreground truncate">
+          {scrapedData.title}
+        </h3>
+        {scrapedData.description && (
+          <p className="text-xs text-muted-foreground line-clamp-2">
+            {scrapedData.description}
+          </p>
         )}
 
-        {/* Content info - compact */}
-        <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-sm text-foreground truncate">
-            {scrapedData.title}
-          </h3>
-          {scrapedData.description && (
-            <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
-              {scrapedData.description}
-            </p>
+        {/* Metadata row */}
+        <div className="flex items-center gap-2">
+          {scrapedData.platform && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+              {scrapedData.platform}
+            </span>
           )}
-
-          {/* Metadata row */}
-          <div className="flex items-center gap-2 mt-2">
-            {scrapedData.platform && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                {scrapedData.platform}
-              </span>
-            )}
-            {scrapedData.author && (
-              <span className="text-xs text-muted-foreground truncate">
-                by {scrapedData.author}
-              </span>
-            )}
-          </div>
+          {scrapedData.author && (
+            <span className="text-xs text-muted-foreground truncate">
+              by {scrapedData.author}
+            </span>
+          )}
+          {isCarousel && (
+            <span className="text-[10px] text-muted-foreground">
+              Carousel · {carouselItems.length} items
+            </span>
+          )}
         </div>
       </div>
 

@@ -16,6 +16,7 @@ export interface ScrapedData {
   tags?: string[];
   followers?: number;
   engagement?: number;
+  metadata?: Record<string, any>;
 }
 
 const ENSEMBLE_API_KEY = "7eAd2jIty0ouYF7q";
@@ -45,6 +46,60 @@ async function scrapeInstagramOembed(url: string): Promise<ScrapedData> {
 
       const post = postData.items?.[0] || postData;
       const owner = post.owner || post.user || {};
+      const mediaItems: Array<{
+        url: string;
+        type: "image" | "video";
+        preview?: string;
+      }> = [];
+
+      const pushMedia = (item: any) => {
+        const isVideo =
+          item?.media_type === 2 ||
+          item?.is_video ||
+          Array.isArray(item?.video_versions) ||
+          Boolean(item?.video_url);
+        const imageUrl =
+          item?.display_url ||
+          item?.thumbnail_url ||
+          item?.image_versions2?.candidates?.[0]?.url ||
+          item?.image_url ||
+          "";
+        const videoUrl =
+          item?.video_versions?.[0]?.url || item?.video_url || "";
+
+        if (isVideo && videoUrl) {
+          mediaItems.push({
+            url: videoUrl,
+            type: "video",
+            preview: imageUrl || undefined,
+          });
+        } else if (imageUrl) {
+          mediaItems.push({ url: imageUrl, type: "image" });
+        }
+      };
+
+      if (Array.isArray(post?.carousel_media)) {
+        post.carousel_media.forEach((media: any) => pushMedia(media));
+      } else if (post?.edge_sidecar_to_children?.edges?.length) {
+        post.edge_sidecar_to_children.edges.forEach((edge: any) =>
+          pushMedia(edge?.node),
+        );
+      } else {
+        pushMedia(post);
+      }
+
+      const primaryImage =
+        mediaItems.find((item) => item.type === "image")?.url ||
+        mediaItems[0]?.preview ||
+        mediaItems[0]?.url ||
+        post.display_url ||
+        post.thumbnail_url ||
+        post.image_versions2?.candidates?.[0]?.url ||
+        "";
+      const primaryVideo =
+        mediaItems.find((item) => item.type === "video")?.url ||
+        post.video_versions?.[0]?.url ||
+        post.video_url;
 
       return {
         url,
@@ -52,10 +107,17 @@ async function scrapeInstagramOembed(url: string): Promise<ScrapedData> {
         title: `Instagram Post by @${owner.username || 'user'}`,
         author: owner.full_name || owner.username || 'Instagram User',
         description: post.caption?.text || post.edge_media_to_caption?.edges?.[0]?.node?.text || 'Instagram post',
-        image: post.display_url || post.thumbnail_url || post.image_versions2?.candidates?.[0]?.url || '',
+        image: primaryImage,
+        animation_url: primaryVideo,
         content: post.caption?.text || post.edge_media_to_caption?.edges?.[0]?.node?.text || '',
         followers: post.like_count || post.edge_media_preview_like?.count || 0,
         engagement: post.comment_count || post.edge_media_to_comment?.count || 0,
+        metadata: {
+          media: mediaItems,
+          isCarousel: mediaItems.length > 1,
+          source: "instagram",
+          sourceId: shortcode,
+        },
       };
     }
 
@@ -150,6 +212,20 @@ async function scrapeTikTokOembed(url: string): Promise<ScrapedData> {
         content: video.desc || '',
         followers: stats.diggCount || stats.playCount || 0,
         engagement: stats.shareCount || stats.commentCount || 0,
+        metadata: {
+          media: videoUrl
+            ? [
+                {
+                  url: videoUrl,
+                  type: "video",
+                  preview: video.video?.cover || video.cover || undefined,
+                },
+              ]
+            : [],
+          isCarousel: false,
+          source: "tiktok",
+          sourceId: videoId,
+        },
       };
     }
 

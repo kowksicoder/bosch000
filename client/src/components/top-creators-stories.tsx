@@ -17,8 +17,8 @@ export function TopCreatorsStories({
   className,
 }: TopCreatorsStoriesProps) {
   const isMobile = useIsMobile();
-  const displayLimit = limit || (isMobile ? 5 : 6);
-  const topCreators = isMobile ? creators.slice(0, 5) : creators.slice(0, displayLimit);
+  const displayLimit = limit || (isMobile ? 4 : 6);
+  const topCreators = isMobile ? creators.slice(0, displayLimit) : creators.slice(0, displayLimit);
   const [selectedCreator, setSelectedCreator] = useState<string | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
@@ -26,7 +26,7 @@ export function TopCreatorsStories({
     <>
       <div
         className={cn(
-          "flex gap-3 overflow-x-auto scrollbar-hide pb-2 justify-start md:justify-center top-creators-stories -mt-4 md:mt-0",
+          "flex gap-2 overflow-x-auto scrollbar-hide pb-1 justify-start md:justify-center top-creators-stories -mt-2 md:mt-0",
           className,
         )}
         data-tour="top-creators"
@@ -43,27 +43,27 @@ export function TopCreatorsStories({
                 setSelectedCreator(address);
                 setIsProfileModalOpen(true);
               }}
-              className="flex flex-col items-center gap-1.5 flex-shrink-0 group cursor-pointer"
+              className="flex flex-col items-center gap-1 flex-shrink-0 group cursor-pointer"
               data-testid={`link-story-creator-${creator.id}`}
             >
               <div className="relative">
                 <div className="p-[2px] rounded-full bg-gradient-to-tr from-primary via-secondary to-accent group-hover:scale-105 transition-transform duration-200">
                   <div className="p-[2px] rounded-full bg-background">
-                    <Avatar className="h-16 w-16 md:h-12 md:w-12 ring-0">
+                    <Avatar className="h-12 w-12 md:h-12 md:w-12 ring-0">
                       <AvatarImage src={creator.avatarUrl || undefined} />
-                      <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20 text-foreground font-bold text-base md:text-sm">
+                      <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20 text-foreground font-bold text-sm md:text-sm">
                         {creator.username?.charAt(0).toUpperCase() || "?"}
                       </AvatarFallback>
                     </Avatar>
                   </div>
                 </div>
 
-                <div className="absolute -bottom-0.5 -right-0.5 min-w-[24px] md:min-w-[20px] h-4 md:h-3.5 px-1.5 md:px-1 rounded-full bg-white flex items-center justify-center text-[9px] md:text-[8px] font-bold text-green-600 ring-1 ring-background shadow-sm">
+                <div className="absolute -bottom-0.5 -right-0.5 min-w-[20px] md:min-w-[24px] h-3.5 md:h-4 px-1 md:px-1.5 rounded-full bg-white flex items-center justify-center text-[8px] md:text-[9px] font-bold text-green-600 ring-1 ring-background shadow-sm">
                   ${earnings}
                 </div>
               </div>
 
-              <span className="text-[11px] md:text-[10px] font-medium text-foreground max-w-[64px] md:max-w-[56px] truncate text-center group-hover:text-primary transition-colors">
+              <span className="text-[10px] md:text-[10px] font-medium text-foreground max-w-[56px] md:max-w-[56px] truncate text-center group-hover:text-primary transition-colors">
                 {creator.username || "Unknown"}
               </span>
             </div>

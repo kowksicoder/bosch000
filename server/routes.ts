@@ -4832,6 +4832,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===== COIN LIKES =====
+  app.get("/api/coins/:coinId/likes", async (req, res) => {
+    try {
+      const { coinId } = req.params;
+      const userId = typeof req.query.userId === "string" ? req.query.userId : "";
+      const count = await storage.getCoinLikesCount(coinId);
+      const liked = userId
+        ? await storage.isCoinLiked(userId, coinId)
+        : false;
+      res.json({ count, liked });
+    } catch (error) {
+      console.error("Get coin likes error:", error);
+      res.status(500).json({ error: "Failed to fetch likes" });
+    }
+  });
+
+  app.post("/api/coins/:coinId/likes", async (req, res) => {
+    try {
+      const { coinId } = req.params;
+      const { userId } = req.body || {};
+
+      if (!userId) {
+        return res.status(400).json({ error: "userId is required" });
+      }
+
+      const alreadyLiked = await storage.isCoinLiked(userId, coinId);
+      if (!alreadyLiked) {
+        await storage.addCoinLike(userId, coinId);
+      }
+
+      const count = await storage.getCoinLikesCount(coinId);
+      res.json({ liked: true, count });
+    } catch (error) {
+      console.error("Add coin like error:", error);
+      res.status(500).json({ error: "Failed to like coin" });
+    }
+  });
+
+  // Check balances for specific holders (used to surface followed holders)
+  app.post("/api/coins/holders/check", async (req, res) => {
+    try {
+      const { coinAddress, addresses } = req.body || {};
+
+      if (!coinAddress || !isWalletAddress(coinAddress)) {
+        return res.status(400).json({ error: "Invalid coin address" });
+      }
+
+      if (!Array.isArray(addresses)) {
+        return res.status(400).json({ error: "Invalid addresses" });
+      }
+
+      const uniqueAddresses = Array.from(
+        new Set(
+          addresses.filter(
+            (address: string) => typeof address === "string" && isWalletAddress(address),
+          ),
+        ),
+      ).slice(0, 50);
+
+      if (uniqueAddresses.length === 0) {
+        return res.json({ holders: [] });
+      }
+
+      const balances = await Promise.all(
+        uniqueAddresses.map(async (address) => {
+          try {
+            const balance = await getTokenBalance(coinAddress, address);
+            return {
+              address,
+              normalized: balance.normalized,
+            };
+          } catch (error) {
+            console.warn("Failed to fetch holder balance:", address, error);
+            return null;
+          }
+        }),
+      );
+
+      const holders = balances
+        .filter((item): item is { address: string; normalized: number } => !!item)
+        .filter((item) => item.normalized > 0)
+        .map((item) => ({
+          address: item.address,
+          balance: item.normalized,
+        }));
+
+      res.json({ holders });
+    } catch (error) {
+      console.error("Check holders error:", error);
+      res.status(500).json({ error: "Failed to check holders" });
+    }
+  });
+
+  app.delete("/api/coins/:coinId/likes", async (req, res) => {
+    try {
+      const { coinId } = req.params;
+      const { userId } = req.body || {};
+
+      if (!userId) {
+        return res.status(400).json({ error: "userId is required" });
+      }
+
+      await storage.removeCoinLike(userId, coinId);
+      const count = await storage.getCoinLikesCount(coinId);
+      res.json({ liked: false, count });
+    } catch (error) {
+      console.error("Remove coin like error:", error);
+      res.status(500).json({ error: "Failed to unlike coin" });
+    }
+  });
+
   // ===== REFERRAL ENDPOINTS =====
 
   // Generate referral link

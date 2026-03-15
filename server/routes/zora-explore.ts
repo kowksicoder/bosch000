@@ -5,9 +5,13 @@ import {
   getCoinsTopVolume24h,
   getCoinsMostValuable,
   getCoinsNew,
+  getCoin,
+  getCoinHolders,
+  getCoinSwaps,
   getCreatorCoins,
   getMostValuableCreatorCoins,
 } from "@zoralabs/coins-sdk";
+import { base } from "viem/chains";
 
 export function registerZoraExploreRoutes(app: Router) {
   // Get top gaining coins from Zora
@@ -109,6 +113,56 @@ export function registerZoraExploreRoutes(app: Router) {
     } catch (error: any) {
       console.error("Error fetching most valuable creator coins from Zora:", error);
       res.status(500).json({ error: error.message || "Failed to fetch most valuable creator coins" });
+    }
+  });
+
+  // Get detailed coin data
+  app.get("/api/zora/coin/:address", async (req, res) => {
+    try {
+      const { address } = req.params;
+      const chain = parseInt(req.query.chain as string) || base.id;
+      const response = await getCoin({ address, chain });
+      if (!response.data?.zora20Token) {
+        return res.status(404).json({ error: "Coin not found" });
+      }
+      res.json(response.data.zora20Token);
+    } catch (error: any) {
+      console.error("Error fetching coin details from Zora:", error);
+      res.status(500).json({ error: error.message || "Failed to fetch coin details" });
+    }
+  });
+
+  // Get recent swap activity for a coin
+  app.get("/api/zora/coins/swaps/:address", async (req, res) => {
+    try {
+      const { address } = req.params;
+      const chain = parseInt(req.query.chain as string) || base.id;
+      const first = parseInt(req.query.first as string) || 24;
+      const after = (req.query.after as string) || undefined;
+
+      const response = await getCoinSwaps({ address, chain, first, after });
+      const swaps = response.data?.zora20Token?.swapActivities || { edges: [] };
+      res.json(swaps);
+    } catch (error: any) {
+      console.error("Error fetching coin swaps from Zora:", error);
+      res.status(500).json({ error: error.message || "Failed to fetch coin swaps" });
+    }
+  });
+
+  // Get holders for a coin
+  app.get("/api/zora/coins/holders/:address", async (req, res) => {
+    try {
+      const { address } = req.params;
+      const chainId = parseInt(req.query.chainId as string) || base.id;
+      const count = parseInt(req.query.count as string) || 20;
+      const after = (req.query.after as string) || undefined;
+
+      const response = await getCoinHolders({ address, chainId, count, after });
+      const holders = response.data?.zora20Token?.tokenBalances || { edges: [], count: 0 };
+      res.json(holders);
+    } catch (error: any) {
+      console.error("Error fetching coin holders from Zora:", error);
+      res.status(500).json({ error: error.message || "Failed to fetch coin holders" });
     }
   });
 }

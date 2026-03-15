@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { Coin, Comment } from "@shared/schema";
 import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { formatEther } from "viem";
@@ -54,15 +54,26 @@ interface MobileTradeModalProps {
   coin: CoinProp;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialTab?: "trade" | "chart" | "comments" | "holders" | "details" | "activity";
+  mode?: "full" | "tab";
 }
 
-export default function MobileTradeModal({ coin, open, onOpenChange }: MobileTradeModalProps) {
+export default function MobileTradeModal({
+  coin,
+  open,
+  onOpenChange,
+  initialTab,
+  mode = "full",
+}: MobileTradeModalProps) {
   const { toast } = useToast();
   const [ethAmount, setEthAmount] = useState("0.001");
   const [isTrading, setIsTrading] = useState(false);
   const [isNairaPaying, setIsNairaPaying] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
   const [isBuying, setIsBuying] = useState(true);
+  const [activeTab, setActiveTab] = useState<
+    "trade" | "chart" | "comments" | "holders" | "details" | "activity"
+  >(initialTab ?? "trade");
   const [standaloneComment, setStandaloneComment] = useState("");
   const [balance, setBalance] = useState<string>("0");
   const [marketCap, setMarketCap] = useState<string | null>(null);
@@ -74,7 +85,16 @@ export default function MobileTradeModal({ coin, open, onOpenChange }: MobileTra
     balance: string;
     percentage: number;
     profile?: string | null;
+    avatarUrl?: string | null;
+    isFollowing?: boolean;
   }>>([]);
+  const [holdersTotal, setHoldersTotal] = useState<number>(0);
+  const [holdersCursor, setHoldersCursor] = useState<string | null>(null);
+  const [holdersHasNext, setHoldersHasNext] = useState(false);
+  const [holdersLoadingMore, setHoldersLoadingMore] = useState(false);
+  const holdersScrollRef = useRef<HTMLDivElement | null>(null);
+  const holdersSentinelRef = useRef<HTMLDivElement | null>(null);
+  const [showFollowingOnly, setShowFollowingOnly] = useState(false);
   const [chartData, setChartData] = useState<Array<{ time: string; price: number }>>([]);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [totalSupply, setTotalSupply] = useState<string | null>(null);
@@ -82,6 +102,104 @@ export default function MobileTradeModal({ coin, open, onOpenChange }: MobileTra
   const [currentPrice, setCurrentPrice] = useState<string | null>(null);
   const { data: fxRates } = useFxRates();
   const { user: privyUser, authenticated } = usePrivy();
+  const [followingAddresses, setFollowingAddresses] = useState<string[]>([]);
+  const currentUserAddress = privyUser?.wallet?.address || privyUser?.id || "";
+  const isCompact = mode === "tab";
+
+  useEffect(() => {
+    if (!open) return;
+    setActiveTab(initialTab ?? "trade");
+  }, [open, initialTab, coin.address]);
+
+  useEffect(() => {
+    if (!open || activeTab !== "holders" || showFollowingOnly) return;
+    const root = holdersScrollRef.current;
+    const sentinel = holdersSentinelRef.current;
+    if (!root || !sentinel) return;
+    const viewport = root.querySelector(
+      "[data-radix-scroll-area-viewport]",
+    ) as HTMLElement | null;
+    if (!viewport) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (
+          entry?.isIntersecting &&
+          holdersHasNext &&
+          !holdersLoadingMore
+        ) {
+          loadMoreHolders();
+        }
+      },
+      {
+        root: viewport,
+        rootMargin: "120px",
+        threshold: 0.1,
+      },
+    );
+
+    observer.observe(sentinel);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [
+    open,
+    activeTab,
+    holdersHasNext,
+    holdersLoadingMore,
+    holdersCursor,
+    coin.address,
+    showFollowingOnly,
+  ]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (!currentUserAddress) {
+      setFollowingAddresses([]);
+      return;
+    }
+
+    let cancelled = false;
+    const loadFollowing = async () => {
+      try {
+        const response = await fetch(
+          `/api/follows/following/${encodeURIComponent(currentUserAddress)}`,
+        );
+        if (!response.ok) {
+          if (!cancelled) setFollowingAddresses([]);
+          return;
+        }
+        const data = await response.json();
+        if (!Array.isArray(data)) {
+          if (!cancelled) setFollowingAddresses([]);
+          return;
+        }
+        const addresses = data
+          .map(
+            (follow) =>
+              follow?.followingAddress ||
+              follow?.creator_address ||
+              follow?.following_address,
+          )
+          .filter(
+            (address) => typeof address === "string" && address.startsWith("0x"),
+          )
+          .map((address) => address.toLowerCase());
+        if (!cancelled) setFollowingAddresses(addresses);
+      } catch (error) {
+        console.error("Load following error:", error);
+        if (!cancelled) setFollowingAddresses([]);
+      }
+    };
+
+    loadFollowing();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [open, currentUserAddress]);
 
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
@@ -220,19 +338,93 @@ export default function MobileTradeModal({ coin, open, onOpenChange }: MobileTra
           count: 20,
         });
 
-        const holderBalances = holdersResponse.data?.zora20Token?.tokenBalances?.edges || [];
+        const tokenBalances = holdersResponse.data?.zora20Token?.tokenBalances;
+        const holderBalances = tokenBalances?.edges || [];
+        if (typeof tokenBalances?.count === "number") {
+          setHoldersTotal(tokenBalances.count);
+        }
+        const pageInfo = tokenBalances?.pageInfo;
+        setHoldersCursor(pageInfo?.endCursor || null);
+        setHoldersHasNext(Boolean(pageInfo?.hasNextPage));
         const supply = parseFloat(coinData?.totalSupply || "0");
+        const followingSet = new Set(
+          followingAddresses.map((address) => address.toLowerCase()),
+        );
 
-        if (holderBalances.length > 0 && supply > 0) {
+        let followedBalances: Array<{ address: string; balance: number }> = [];
+        if (followingAddresses.length > 0) {
+          try {
+            const followResponse = await fetch("/api/coins/holders/check", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                coinAddress: coin.address,
+                addresses: followingAddresses,
+              }),
+            });
+            if (followResponse.ok) {
+              const followData = await followResponse.json();
+              if (Array.isArray(followData?.holders)) {
+                followedBalances = followData.holders;
+              }
+            }
+          } catch (error) {
+            console.warn("Failed to check followed holder balances:", error);
+          }
+        }
+
+        if (holderBalances.length === 0 && followedBalances.length === 0) {
+          setHolders([]);
+          return;
+        }
+
+        if (supply > 0 || holderBalances.length > 0 || followedBalances.length > 0) {
           const processedHolders = holderBalances.map((edge: any) => {
             const balance = parseFloat(edge.node.balance || "0");
+            const address = edge.node.ownerAddress;
+            const avatar =
+              edge.node.ownerProfile?.avatar?.previewImage?.small ||
+              edge.node.ownerProfile?.avatar?.previewImage?.medium ||
+              edge.node.ownerProfile?.avatar?.small ||
+              edge.node.ownerProfile?.avatar?.medium ||
+              null;
             return {
-              address: edge.node.ownerAddress,
+              address,
               balance: edge.node.balance,
               percentage: (balance / supply) * 100,
               profile: edge.node.ownerProfile?.handle || null,
+              avatarUrl: avatar,
+              isFollowing: followingSet.has(address?.toLowerCase?.() || ""),
             };
           });
+
+          const holderAddressSet = new Set(
+            processedHolders.map((holder) => holder.address.toLowerCase()),
+          );
+
+          followedBalances.forEach((holder) => {
+            const address = holder.address;
+            if (!address) return;
+            const key = address.toLowerCase();
+            if (holderAddressSet.has(key)) return;
+            holderAddressSet.add(key);
+            processedHolders.push({
+              address,
+              balance: holder.balance.toString(),
+              percentage: supply > 0 ? (holder.balance / supply) * 100 : 0,
+              profile: null,
+              avatarUrl: null,
+              isFollowing: true,
+            });
+          });
+
+          processedHolders.sort((a, b) => {
+            if (a.isFollowing === b.isFollowing) {
+              return b.percentage - a.percentage;
+            }
+            return a.isFollowing ? -1 : 1;
+          });
+
           setHolders(processedHolders);
         }
       } catch (error) {
@@ -240,7 +432,7 @@ export default function MobileTradeModal({ coin, open, onOpenChange }: MobileTra
       }
     }
     if (open) fetchCoinStats();
-  }, [coin.address, open, fxRates]);
+  }, [coin.address, open, fxRates, followingAddresses]);
 
   const marketCapNgn = convertUsdToNgn(marketCap, fxRates);
   const volume24hNgn = convertUsdToNgn(volume24h, fxRates);
@@ -378,68 +570,213 @@ export default function MobileTradeModal({ coin, open, onOpenChange }: MobileTra
     }
   };
 
+  const scrollToFirstFollowing = () => {
+    const root = holdersScrollRef.current;
+    if (!root) return;
+    const viewport = root.querySelector(
+      "[data-radix-scroll-area-viewport]",
+    ) as HTMLElement | null;
+    if (!viewport) return;
+    const target = viewport.querySelector(
+      "[data-holder-following='true']",
+    ) as HTMLElement | null;
+    if (target) {
+      target.scrollIntoView({ block: "start", behavior: "smooth" });
+    }
+  };
+
+  const loadMoreHolders = async () => {
+    if (!coin.address || !holdersHasNext || holdersLoadingMore) return;
+
+    setHoldersLoadingMore(true);
+    try {
+      const response = await getCoinHolders({
+        chainId: base.id,
+        address: coin.address as `0x${string}`,
+        count: 20,
+        after: holdersCursor || undefined,
+      });
+
+      const tokenBalances = response.data?.zora20Token?.tokenBalances;
+      const holderBalances = tokenBalances?.edges || [];
+      const pageInfo = tokenBalances?.pageInfo;
+      const supply = parseFloat(totalSupply || "0");
+      const followingSet = new Set(
+        followingAddresses.map((address) => address.toLowerCase()),
+      );
+
+      const newHolders = holderBalances.map((edge: any) => {
+        const balance = parseFloat(edge.node.balance || "0");
+        const address = edge.node.ownerAddress;
+        const avatar =
+          edge.node.ownerProfile?.avatar?.previewImage?.small ||
+          edge.node.ownerProfile?.avatar?.previewImage?.medium ||
+          edge.node.ownerProfile?.avatar?.small ||
+          edge.node.ownerProfile?.avatar?.medium ||
+          null;
+        return {
+          address,
+          balance: edge.node.balance,
+          percentage: supply > 0 ? (balance / supply) * 100 : 0,
+          profile: edge.node.ownerProfile?.handle || null,
+          avatarUrl: avatar,
+          isFollowing: followingSet.has(address?.toLowerCase?.() || ""),
+        };
+      });
+
+      setHolders((prev) => {
+        const merged = [...prev, ...newHolders];
+        const uniqueMap = new Map<string, typeof merged[number]>();
+        merged.forEach((holder) => {
+          if (!holder?.address) return;
+          uniqueMap.set(holder.address.toLowerCase(), holder);
+        });
+        const unique = Array.from(uniqueMap.values());
+        unique.sort((a, b) => {
+          if (a.isFollowing === b.isFollowing) {
+            return b.percentage - a.percentage;
+          }
+          return a.isFollowing ? -1 : 1;
+        });
+        return unique;
+      });
+
+      if (typeof tokenBalances?.count === "number") {
+        setHoldersTotal(tokenBalances.count);
+      }
+      setHoldersCursor(pageInfo?.endCursor || null);
+      setHoldersHasNext(Boolean(pageInfo?.hasNextPage));
+    } catch (error) {
+      console.error("Load more holders error:", error);
+    } finally {
+      setHoldersLoadingMore(false);
+    }
+  };
+
   const displayImage = coinImage || coin?.image || coin?.metadata?.image;
+  const displayedHolders = showFollowingOnly
+    ? holders.filter((holder) => holder.isFollowing)
+    : holders;
+  const hasFollowingHolders = holders.some((holder) => holder.isFollowing);
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[90vh] bg-background border-none">
-        {/* Header with coin info */}
-        <div className="sticky top-0 z-10 bg-background">
-          <DrawerHeader className="px-3 py-2">
+      <DrawerContent
+        className={`${isCompact ? "max-h-[65vh]" : "max-h-[90vh]"} bg-background border-none`}
+      >
+        {isCompact ? (
+          <div className="sticky top-0 z-10 bg-background px-3 pb-2 pt-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-full overflow-hidden bg-muted/50 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full overflow-hidden bg-muted/50 flex items-center justify-center">
                   {displayImage ? (
                     <img src={displayImage} alt={coin.name} className="w-full h-full object-cover" />
                   ) : (
-                    <Coins className="w-5 h-5 text-muted-foreground" />
+                    <Coins className="w-4 h-4 text-muted-foreground" />
                   )}
                 </div>
                 <div>
-                  <DrawerTitle className="text-base font-bold">{coin.name}</DrawerTitle>
-                  <p className="text-xs text-muted-foreground">@{coin.symbol}</p>
+                  <p className="text-sm font-semibold">
+                    {activeTab === "comments"
+                      ? "Comments"
+                      : activeTab === "activity"
+                        ? "Activity"
+                        : "Trade"}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground truncate max-w-[180px]">
+                    {coin.name}
+                  </p>
                 </div>
               </div>
               <DrawerClose asChild>
-                <Button variant="ghost" size="icon" className="h-7 w-7 absolute right-2 top-2">
+                <Button variant="ghost" size="icon" className="h-7 w-7">
                   <X className="h-3.5 w-3.5" />
                 </Button>
               </DrawerClose>
             </div>
-          </DrawerHeader>
+          </div>
+        ) : (
+          <div className="sticky top-0 z-10 bg-background">
+            <DrawerHeader className="px-3 py-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-full overflow-hidden bg-muted/50 flex items-center justify-center">
+                    {displayImage ? (
+                      <img src={displayImage} alt={coin.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <Coins className="w-5 h-5 text-muted-foreground" />
+                    )}
+                  </div>
+                  <div>
+                    <DrawerTitle className="text-base font-bold">{coin.name}</DrawerTitle>
+                    <p className="text-xs text-muted-foreground">@{coin.symbol}</p>
+                  </div>
+                </div>
+                <DrawerClose asChild>
+                  <Button variant="ghost" size="icon" className="h-7 w-7 absolute right-2 top-2">
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
+                </DrawerClose>
+              </div>
+            </DrawerHeader>
 
-          {/* Stats Bar */}
-          <div className="grid grid-cols-3 gap-1.5 px-3 pb-2">
-            <div className="bg-muted/20 rounded-lg p-1.5 text-center">
-              <p className="text-[10px] text-muted-foreground">Market Cap</p>
-              <p className="text-xs font-bold text-green-500">
-                {formatSmartCurrency(marketCapNgn)}
-              </p>
-            </div>
-            <div className="bg-muted/20 rounded-lg p-1.5 text-center">
-              <p className="text-[10px] text-muted-foreground">24H Vol</p>
-              <p className="text-xs font-semibold">
-                {formatSmartCurrency(volume24hNgn)}
-              </p>
-            </div>
-            <div className="bg-muted/20 rounded-lg p-1.5 text-center">
-              <p className="text-[10px] text-muted-foreground">Holders</p>
-              <p className="text-xs font-semibold">{holders.length || 0}</p>
+            {/* Stats Bar */}
+            <div className="grid grid-cols-3 gap-1.5 px-3 pb-2">
+              <div className="bg-muted/20 rounded-lg p-1.5 text-center">
+                <p className="text-[10px] text-muted-foreground">Market Cap</p>
+                <p className="text-xs font-bold text-green-500">
+                  {formatSmartCurrency(marketCapNgn)}
+                </p>
+              </div>
+              <div className="bg-muted/20 rounded-lg p-1.5 text-center">
+                <p className="text-[10px] text-muted-foreground">24H Vol</p>
+                <p className="text-xs font-semibold">
+                  {formatSmartCurrency(volume24hNgn)}
+                </p>
+              </div>
+              <div className="bg-muted/20 rounded-lg p-1.5 text-center">
+                <p className="text-[10px] text-muted-foreground">Holders</p>
+                <p className="text-xs font-semibold">{holdersTotal || holders.length || 0}</p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Tabs */}
-        <Tabs defaultValue="trade" className="flex-1 flex flex-col overflow-hidden">
-          <TabsList className="w-full grid grid-cols-5 mx-3 mt-1.5 mb-1 bg-transparent border-none h-8">
-            <TabsTrigger value="trade" className="text-[11px] h-7 data-[state=active]:bg-primary data-[state=active]:text-black">Trade</TabsTrigger>
-            <TabsTrigger value="chart" className="text-[11px] h-7 data-[state=active]:bg-primary data-[state=active]:text-black">Chart</TabsTrigger>
-            <TabsTrigger value="comments" className="text-[11px] h-7 data-[state=active]:bg-primary data-[state=active]:text-black">Chat</TabsTrigger>
-            <TabsTrigger value="holders" className="text-[11px] h-7 data-[state=active]:bg-primary data-[state=active]:text-black">Top</TabsTrigger>
-            <TabsTrigger value="details" className="text-[11px] h-7 data-[state=active]:bg-primary data-[state=active]:text-black">Info</TabsTrigger>
-          </TabsList>
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) =>
+            setActiveTab(
+              value as "trade" | "chart" | "comments" | "holders" | "details" | "activity"
+            )
+          }
+          className="flex-1 flex flex-col overflow-hidden"
+        >
+          {!isCompact ? (
+            <TabsList className="w-full grid grid-cols-5 mx-3 mt-1.5 mb-1 bg-transparent border-none h-8">
+              <TabsTrigger value="trade" className="text-[11px] h-7 data-[state=active]:bg-primary data-[state=active]:text-black">Trade</TabsTrigger>
+              <TabsTrigger value="chart" className="text-[11px] h-7 data-[state=active]:bg-primary data-[state=active]:text-black">Chart</TabsTrigger>
+              <TabsTrigger value="comments" className="text-[11px] h-7 data-[state=active]:bg-primary data-[state=active]:text-black">Chat</TabsTrigger>
+              <TabsTrigger value="holders" className="text-[11px] h-7 data-[state=active]:bg-primary data-[state=active]:text-black">Top</TabsTrigger>
+              <TabsTrigger value="details" className="text-[11px] h-7 data-[state=active]:bg-primary data-[state=active]:text-black">Info</TabsTrigger>
+            </TabsList>
+          ) : (
+            activeTab === "comments" || activeTab === "activity" ? (
+              <div className="px-3 pt-1 pb-2">
+                <TabsList className="w-full grid grid-cols-2 bg-muted/30 border-none h-8">
+                  <TabsTrigger value="comments" className="text-[11px] h-7 data-[state=active]:bg-primary data-[state=active]:text-black">Comment</TabsTrigger>
+                  <TabsTrigger value="activity" className="text-[11px] h-7 data-[state=active]:bg-primary data-[state=active]:text-black">Activity</TabsTrigger>
+                </TabsList>
+              </div>
+            ) : null
+          )}
 
-          <TabsContent value="trade" className="flex-1 px-3 pb-3 overflow-y-auto mt-0 min-h-[400px]">
+          <TabsContent
+            value="trade"
+            className={`flex-1 px-3 pb-3 overflow-y-auto mt-0 ${
+              isCompact ? "pt-1 min-h-[320px]" : "min-h-[400px]"
+            }`}
+          >
             <div className="space-y-2.5">
               {/* Buy/Sell Toggle */}
               <div className="grid grid-cols-2 gap-1.5">
@@ -613,7 +950,12 @@ export default function MobileTradeModal({ coin, open, onOpenChange }: MobileTra
             </div>
           </TabsContent>
 
-          <TabsContent value="comments" className="flex-1 px-3 pb-3 overflow-hidden mt-0 flex flex-col min-h-[400px]">
+          <TabsContent
+            value="comments"
+            className={`flex-1 px-3 pb-3 overflow-hidden mt-0 flex flex-col ${
+              isCompact ? "pt-1 min-h-[320px]" : "min-h-[400px]"
+            }`}
+          >
             <div className="flex gap-1.5 mb-2">
               <Input
                 placeholder="Add a comment..."
@@ -645,18 +987,83 @@ export default function MobileTradeModal({ coin, open, onOpenChange }: MobileTra
             </ScrollArea>
           </TabsContent>
 
+          <TabsContent
+            value="activity"
+            className={`flex-1 px-3 pb-3 overflow-hidden mt-0 flex flex-col ${
+              isCompact ? "pt-1 min-h-[320px]" : "min-h-[400px]"
+            }`}
+          >
+            <div className="flex flex-1 flex-col items-center justify-center text-center py-10">
+              <ActivityIcon className="w-10 h-10 text-muted-foreground/30 mb-2" />
+              <p className="text-xs text-muted-foreground">Activity coming soon</p>
+            </div>
+          </TabsContent>
+
           <TabsContent value="holders" className="flex-1 px-3 pb-3 overflow-y-auto mt-0 min-h-[400px]">
-            <ScrollArea className="flex-1 -mx-3">
-              {holders.length > 0 ? (
+            <div className="sticky top-0 z-10 bg-background/95 backdrop-blur px-1 pb-2 pt-1">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={showFollowingOnly ? "default" : "ghost"}
+                  size="sm"
+                  className="h-7 text-[11px]"
+                  onClick={() => setShowFollowingOnly((prev) => !prev)}
+                  disabled={!hasFollowingHolders}
+                >
+                  Following
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 text-[11px]"
+                  onClick={scrollToFirstFollowing}
+                  disabled={!hasFollowingHolders}
+                >
+                  Jump to following
+                </Button>
+              </div>
+            </div>
+            <ScrollArea ref={holdersScrollRef} className="flex-1 -mx-3">
+              {displayedHolders.length > 0 ? (
                 <div className="space-y-1 px-4">
-                  {holders.map((holder, idx) => (
-                    <div key={holder.address} className="flex items-center justify-between p-2 bg-muted/20 rounded-lg">
+                  {displayedHolders.map((holder, idx) => (
+                    <div
+                      key={holder.address}
+                      data-holder-following={holder.isFollowing ? "true" : "false"}
+                      className={`flex items-center justify-between p-2 rounded-lg ${
+                        holder.isFollowing
+                          ? "bg-emerald-500/10 border border-emerald-500/20"
+                          : "bg-muted/20"
+                      }`}
+                    >
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                          <span className="text-[10px] font-bold">#{idx + 1}</span>
+                        <span className="w-6 text-[10px] text-muted-foreground">
+                          #{idx + 1}
+                        </span>
+                        <div className="w-6 h-6 rounded-full overflow-hidden bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                          {holder.avatarUrl ? (
+                            <img
+                              src={holder.avatarUrl}
+                              alt={holder.profile || holder.address}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-[10px] font-bold">
+                              {(holder.profile || holder.address)
+                                ?.replace(/^0x/, "")
+                                ?.slice(0, 1)
+                                ?.toUpperCase() || "H"}
+                            </span>
+                          )}
                         </div>
                         <div>
-                          <p className="text-xs font-medium">{holder.profile || formatAddress(holder.address)}</p>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-xs font-medium">{holder.profile || formatAddress(holder.address)}</p>
+                            {holder.isFollowing && (
+                              <span className="rounded-full bg-emerald-500/20 px-1.5 py-0.5 text-[9px] text-emerald-200">
+                                Following
+                              </span>
+                            )}
+                          </div>
                           {holder.profile && <p className="text-[10px] text-muted-foreground">{formatAddress(holder.address)}</p>}
                         </div>
                       </div>
@@ -665,11 +1072,28 @@ export default function MobileTradeModal({ coin, open, onOpenChange }: MobileTra
                       </div>
                     </div>
                   ))}
+                  {holdersHasNext && !showFollowingOnly && (
+                    <div ref={holdersSentinelRef} className="py-3 text-center text-[11px] text-muted-foreground">
+                      {holdersLoadingMore ? "Loading more holders..." : "Scroll to load more"}
+                    </div>
+                  )}
+                  {holdersLoadingMore && !showFollowingOnly && (
+                    <div className="space-y-1.5 py-2">
+                      {Array.from({ length: 4 }).map((_, idx) => (
+                        <div
+                          key={`holder-skeleton-${idx}`}
+                          className="h-10 rounded-lg bg-muted/20 animate-pulse"
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-center py-10">
                   <Users className="w-10 h-10 text-muted-foreground/30 mb-2" />
-                  <p className="text-xs text-muted-foreground">No holders data available</p>
+                  <p className="text-xs text-muted-foreground">
+                    {showFollowingOnly ? "No followed holders yet" : "No holders data available"}
+                  </p>
                 </div>
               )}
             </ScrollArea>
