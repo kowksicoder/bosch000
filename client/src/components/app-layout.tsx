@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { NotificationBell } from "./notification-bell";
+import { subscribeToPushNotifications } from "@/lib/push-notifications";
 import { UserMenu } from "./user-menu";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -689,6 +690,27 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
     syncPoints();
   }, [authenticated, user, getAccessToken]);
+
+  // One-time push subscription on login (per session)
+  useEffect(() => {
+    if (!authenticated || !user?.id) return;
+    const pushKey = `every1_push_subscribe_${user.id}`;
+    if (sessionStorage.getItem(pushKey)) return;
+
+    const subscribe = async () => {
+      try {
+        const identifier = user.wallet?.address || user.id;
+        if (!identifier) return;
+        await subscribeToPushNotifications(identifier);
+      } catch (error) {
+        console.warn("[Push] Failed to auto-subscribe:", error);
+      } finally {
+        sessionStorage.setItem(pushKey, "true");
+      }
+    };
+
+    subscribe();
+  }, [authenticated, user]);
 
 
   const handleLogin = () => {

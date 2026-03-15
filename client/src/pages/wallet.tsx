@@ -3,7 +3,7 @@ import { usePrivy, getAccessToken } from "@privy-io/react-auth";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProfileBalances } from "@zoralabs/coins-sdk";
 import { base } from "viem/chains";
-import { ArrowDownLeft, ArrowUpRight, Check, Copy, Gift, Wallet } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, Check, Copy, Gift, Wallet, Plus, Send } from "lucide-react";
 import { Link } from "wouter";
 
 import { useFxRates, convertUsdToNgn } from "@/lib/fx";
@@ -75,6 +75,7 @@ export default function WalletPage() {
   const [depositAmount, setDepositAmount] = useState("");
   const [isDepositing, setIsDepositing] = useState(false);
   const [activityRange, setActivityRange] = useState<"30d" | "all">("30d");
+  const [mobileTab, setMobileTab] = useState<"balances" | "holdings" | "activity">("balances");
   const queryClient = useQueryClient();
 
   const walletAddress = smartAccountAddress || user?.wallet?.address || "";
@@ -208,6 +209,8 @@ export default function WalletPage() {
   });
 
   const recentTransactions = transactionsData ?? [];
+  const mobileHoldings = holdings.slice(0, 6);
+  const mobileTransactions = recentTransactions.slice(0, 6);
 
   const handleCopyAddress = async () => {
     if (!walletAddress) return;
@@ -361,7 +364,217 @@ export default function WalletPage() {
   const fallbackAvatar = "https://i.ibb.co/JRQCPsZK/ev122logo-1-1.png";
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-4 py-6 md:py-10 space-y-6">
+      <div className="md:hidden px-4 pt-5 pb-6 space-y-5">
+        <div className="text-center space-y-1">
+          <div className="text-4xl font-semibold tracking-tight">
+            {formatSmartCurrency(totalValueNgn)}
+          </div>
+          <div className="text-[11px] text-muted-foreground">Total available balance</div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            type="button"
+            onClick={() => setDepositOpen(true)}
+            disabled={!authenticated}
+            className={cn(
+              "flex flex-col items-center justify-center gap-1 rounded-2xl bg-muted/20 py-3 text-[10px] text-foreground/80",
+              !authenticated && "opacity-50",
+            )}
+          >
+            <Plus className="h-4 w-4" />
+            Deposit
+          </button>
+          <button
+            type="button"
+            onClick={() => setWithdrawOpen(true)}
+            disabled={!authenticated}
+            className={cn(
+              "flex flex-col items-center justify-center gap-1 rounded-2xl bg-muted/20 py-3 text-[10px] text-foreground/80",
+              !authenticated && "opacity-50",
+            )}
+          >
+            <ArrowUpRight className="h-4 w-4" />
+            Cash out
+          </button>
+          <Link href="/swap">
+            <button
+              type="button"
+              className="flex w-full flex-col items-center justify-center gap-1 rounded-2xl bg-muted/20 py-3 text-[10px] text-foreground/80"
+            >
+              <Send className="h-4 w-4" />
+              Send
+            </button>
+          </Link>
+        </div>
+
+        <div className="flex items-center justify-between border-b border-border/40 text-[11px] text-muted-foreground">
+          {[
+            { id: "balances", label: "Balances" },
+            { id: "holdings", label: "Holdings" },
+            { id: "activity", label: "Activity" },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setMobileTab(tab.id as typeof mobileTab)}
+              className={cn(
+                "flex-1 py-2 text-center border-b-2",
+                mobileTab === tab.id
+                  ? "border-foreground text-foreground"
+                  : "border-transparent",
+              )}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {mobileTab === "balances" && (
+          <div className="space-y-3">
+            <div>
+              <div className="text-sm font-semibold">Available balance</div>
+              <div className="text-[11px] text-muted-foreground">
+                These contribute to your total available balance
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between rounded-2xl bg-muted/20 p-3">
+                <div className="flex items-center gap-2">
+                  <div className="h-10 w-10 rounded-full bg-muted/40 flex items-center justify-center text-[11px] font-semibold">
+                    ₦
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold">Naira</div>
+                    <div className="text-[10px] text-muted-foreground">
+                      {formatSmartCurrency(nairaLedger?.availableNgn || 0)}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-sm font-semibold">
+                  {formatSmartCurrency(nairaLedger?.availableNgn || 0)}
+                </div>
+              </div>
+              {mobileHoldings.length === 0 ? (
+                <div className="text-[11px] text-muted-foreground">
+                  No holdings yet.
+                </div>
+              ) : (
+                mobileHoldings.map((holding) => {
+                  const valueNgn = convertUsdToNgn(holding.valueUsd, fxRates) || 0;
+                  return (
+                    <div
+                      key={holding.id}
+                      className="flex items-center justify-between rounded-2xl bg-muted/20 p-3"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-10 w-10 bg-muted/40">
+                          <AvatarImage src={holding.creatorAvatar || fallbackAvatar} />
+                          <AvatarFallback className="bg-muted/40 text-[10px] font-semibold">
+                            {holding.symbol?.slice(0, 2) || "CO"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="text-sm font-semibold">{holding.name}</div>
+                          <div className="text-[10px] text-muted-foreground">
+                            {holding.balance.toLocaleString("en-US", {
+                              maximumFractionDigits: 4,
+                            })}{" "}
+                            {holding.symbol}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-sm font-semibold">
+                        {formatSmartCurrency(valueNgn)}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        )}
+
+        {mobileTab === "holdings" && (
+          <div className="space-y-3">
+            <div className="text-sm font-semibold">
+              Holding {holdings.length} coin{holdings.length === 1 ? "" : "s"}
+            </div>
+            <div className="space-y-2">
+              {mobileHoldings.length === 0 ? (
+                <div className="text-[11px] text-muted-foreground">
+                  No holdings yet.
+                </div>
+              ) : (
+                mobileHoldings.map((holding) => {
+                  const valueNgn = convertUsdToNgn(holding.valueUsd, fxRates) || 0;
+                  return (
+                    <div
+                      key={holding.id}
+                      className="flex items-center justify-between rounded-2xl bg-muted/20 p-3"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-10 w-10 bg-muted/40">
+                          <AvatarImage src={holding.creatorAvatar || fallbackAvatar} />
+                          <AvatarFallback className="bg-muted/40 text-[10px] font-semibold">
+                            {holding.symbol?.slice(0, 2) || "CO"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="text-sm font-semibold">{holding.name}</div>
+                          <div className="text-[10px] text-muted-foreground">
+                            {holding.balance.toLocaleString("en-US", {
+                              maximumFractionDigits: 4,
+                            })}{" "}
+                            {holding.symbol}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-sm font-semibold">
+                        {formatSmartCurrency(valueNgn)}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        )}
+
+        {mobileTab === "activity" && (
+          <div className="space-y-3">
+            {transactionsLoading ? (
+              <div className="text-[11px] text-muted-foreground">Loading activity…</div>
+            ) : mobileTransactions.length === 0 ? (
+              <div className="text-[11px] text-muted-foreground">
+                Your trade activity appears here.
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {mobileTransactions.map((txn) => (
+                  <div
+                    key={txn.id}
+                    className="flex items-center justify-between rounded-2xl bg-muted/20 p-3"
+                  >
+                    <div>
+                      <div className="text-sm font-semibold capitalize">{txn.label}</div>
+                      <div className="text-[10px] text-muted-foreground">
+                        {txn.time ? new Date(txn.time).toLocaleDateString() : "-"}
+                      </div>
+                    </div>
+                    <div className="text-sm font-semibold">
+                      {formatSmartCurrency(txn.amountNgn)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="hidden md:block">
+        <div className="max-w-6xl mx-auto px-4 py-6 md:py-10 space-y-6">
         <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div className="hidden md:block space-y-1">
             <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Wallet</p>
@@ -598,84 +811,86 @@ export default function WalletPage() {
           </div>
         </Card>
 
-        <Dialog open={withdrawOpen} onOpenChange={setWithdrawOpen}>
-          <DialogContent className="sm:max-w-md rounded-2xl">
-            <DialogHeader>
-              <DialogTitle>Withdraw with Paystack</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="rounded-xl bg-muted/30 p-3 text-xs text-muted-foreground">
-                Available: {formatSmartCurrency(nairaLedger?.availableNgn || 0)}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="withdraw-amount">Amount (NGN)</Label>
-                <Input
-                  id="withdraw-amount"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="e.g. 5000"
-                  value={withdrawAmount}
-                  onChange={(event) => setWithdrawAmount(event.target.value)}
-                />
-              </div>
-
-              <p className="text-xs text-muted-foreground">
-                Paystack will securely handle your payout.
-              </p>
-
-              <div className="flex gap-2 justify-end">
-                <Button variant="ghost" onClick={() => setWithdrawOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleWithdrawNaira} disabled={isWithdrawing}>
-                  {isWithdrawing ? "Processing..." : "Withdraw with Paystack"}
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-
-        <Dialog open={depositOpen} onOpenChange={setDepositOpen}>
-          <DialogContent className="sm:max-w-md rounded-2xl">
-            <DialogHeader>
-              <DialogTitle>Deposit with Paystack</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="rounded-xl bg-muted/30 p-3 text-xs text-muted-foreground">
-                Add money to your Every1 wallet to trade on the swap page.
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="deposit-amount">Amount (NGN)</Label>
-                <Input
-                  id="deposit-amount"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="e.g. 10000"
-                  value={depositAmount}
-                  onChange={(event) => setDepositAmount(event.target.value)}
-                />
-              </div>
-
-              <p className="text-xs text-muted-foreground">
-                You&apos;ll be redirected to Paystack to complete the deposit.
-              </p>
-
-              <div className="flex gap-2 justify-end">
-                <Button variant="ghost" onClick={() => setDepositOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleDepositNaira} disabled={isDepositing}>
-                  {isDepositing ? "Processing..." : "Continue to Paystack"}
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
+
+    <Dialog open={withdrawOpen} onOpenChange={setWithdrawOpen}>
+      <DialogContent className="sm:max-w-md rounded-2xl">
+        <DialogHeader>
+          <DialogTitle>Withdraw with Paystack</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="rounded-xl bg-muted/30 p-3 text-xs text-muted-foreground">
+            Available: {formatSmartCurrency(nairaLedger?.availableNgn || 0)}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="withdraw-amount">Amount (NGN)</Label>
+            <Input
+              id="withdraw-amount"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="e.g. 5000"
+              value={withdrawAmount}
+              onChange={(event) => setWithdrawAmount(event.target.value)}
+            />
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            Paystack will securely handle your payout.
+          </p>
+
+          <div className="flex gap-2 justify-end">
+            <Button variant="ghost" onClick={() => setWithdrawOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleWithdrawNaira} disabled={isWithdrawing}>
+              {isWithdrawing ? "Processing..." : "Withdraw with Paystack"}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+
+    <Dialog open={depositOpen} onOpenChange={setDepositOpen}>
+      <DialogContent className="sm:max-w-md rounded-2xl">
+        <DialogHeader>
+          <DialogTitle>Deposit with Paystack</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="rounded-xl bg-muted/30 p-3 text-xs text-muted-foreground">
+            Add money to your Every1 wallet to trade on the swap page.
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="deposit-amount">Amount (NGN)</Label>
+            <Input
+              id="deposit-amount"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="e.g. 10000"
+              value={depositAmount}
+              onChange={(event) => setDepositAmount(event.target.value)}
+            />
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            You&apos;ll be redirected to Paystack to complete the deposit.
+          </p>
+
+          <div className="flex gap-2 justify-end">
+            <Button variant="ghost" onClick={() => setDepositOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleDepositNaira} disabled={isDepositing}>
+              {isDepositing ? "Processing..." : "Continue to Paystack"}
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  </div>
   );
 }

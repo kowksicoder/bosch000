@@ -60,44 +60,44 @@ export default function URLInputForm({ onScraped }: URLInputFormProps) {
   };
 
   return (
-    <div className="max-w-xl mx-auto">
-      <div className="bg-card border border-border/50 rounded-3xl p-8">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
+    <div className="w-full">
+      <div className="bg-muted/10 border border-border/30 rounded-2xl p-2">
+        <form onSubmit={handleSubmit} className="space-y-2">
+          <div className="space-y-1">
             <div className="relative">
-              <LinkIcon className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground pointer-events-none z-10" />
-              <div className="bg-muted/30 dark:bg-muted/20 rounded-2xl p-1 border border-border/30">
+              <LinkIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none z-10" />
+              <div className="bg-muted/30 dark:bg-muted/20 rounded-xl p-0.5 border border-border/20">
                 <Input
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  placeholder="https://youtube.com/watch?v=..."
-                  className="bg-transparent border-0 h-12 pl-14 pr-4 focus-visible:ring-0 focus-visible:ring-offset-0 text-base"
+                  placeholder="Paste a link..."
+                  className="bg-transparent border-0 h-8 pl-8 pr-2.5 focus-visible:ring-0 focus-visible:ring-offset-0 text-[11px]"
                   disabled={isLoading}
                   data-testid="input-url"
                 />
               </div>
             </div>
-            <p className="text-xs text-muted-foreground px-2">
-              Supports YouTube, Spotify, Medium, Substack, X/Twitter, Instagram, TikTok, and more
+            <p className="text-[9px] text-muted-foreground px-1">
+              Supports major platforms.
             </p>
           </div>
 
           <Button
             type="submit"
             disabled={isLoading || !url.trim()}
-            className="w-full h-12 bg-gradient-to-r from-primary to-primary hover:from-primary/100 hover:to-primary/90 text-primary-foreground font-semibold rounded-2xl transition-all"
+            className="w-full h-7 bg-gradient-to-r from-primary to-primary hover:from-primary/100 hover:to-primary/90 text-primary-foreground font-semibold rounded-lg text-[10px] transition-all"
             data-testid="button-import"
           >
             {isLoading ? (
               <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
                 Importing...
               </>
             ) : (
               <>
-                <LinkIcon className="w-5 h-5 mr-2" />
-                Import Content
+                <LinkIcon className="w-3.5 h-3.5 mr-1.5" />
+                Import
               </>
             )}
           </Button>

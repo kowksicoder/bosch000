@@ -16,6 +16,7 @@ import {
   type LoginStreak, type InsertLoginStreak, type UpdateLoginStreak,
   type NotificationType,
   type E1xpReward,
+  type CoinFomoState,
   type FiatTransaction, type InsertFiatTransaction, type WithdrawalRequest, type InsertWithdrawalRequest
 } from '@shared/schema';
 import { type User, users, type InsertUser } from '@shared/schema';
@@ -153,6 +154,77 @@ export class SupabaseStorage {
 
     if (error) throw error;
     return data as Coin[];
+  }
+
+  // ===== FOMO STATE =====
+  async getCoinFomoState(coinAddress: string): Promise<CoinFomoState | null> {
+    const { data, error } = await supabase
+      .from('coin_fomo_state')
+      .select('*')
+      .eq('coin_address', coinAddress)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    if (!data) return null;
+    return {
+      ...data,
+      coinAddress: data.coin_address,
+      lastMarketCap: data.last_market_cap,
+      lastVolume24h: data.last_volume_24h,
+      lastHolders: data.last_holders,
+      lastMarketCapTier: data.last_market_cap_tier,
+      lastHolderTier: data.last_holder_tier,
+      lastVolumeAlertAt: data.last_volume_alert_at,
+      lastSwapTxHash: data.last_swap_tx_hash,
+      lastSwapTimestamp: data.last_swap_timestamp,
+      updatedAt: data.updated_at,
+    } as CoinFomoState;
+  }
+
+  async upsertCoinFomoState(state: {
+    coinAddress: string;
+    lastMarketCap?: number | string | null;
+    lastVolume24h?: number | string | null;
+    lastHolders?: number | null;
+    lastMarketCapTier?: number | null;
+    lastHolderTier?: number | null;
+    lastVolumeAlertAt?: Date | string | null;
+    lastSwapTxHash?: string | null;
+    lastSwapTimestamp?: Date | string | null;
+  }): Promise<CoinFomoState> {
+    const payload = {
+      coin_address: state.coinAddress,
+      last_market_cap: state.lastMarketCap ?? null,
+      last_volume_24h: state.lastVolume24h ?? null,
+      last_holders: state.lastHolders ?? null,
+      last_market_cap_tier: state.lastMarketCapTier ?? null,
+      last_holder_tier: state.lastHolderTier ?? null,
+      last_volume_alert_at: state.lastVolumeAlertAt ?? null,
+      last_swap_tx_hash: state.lastSwapTxHash ?? null,
+      last_swap_timestamp: state.lastSwapTimestamp ?? null,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { data, error } = await supabase
+      .from('coin_fomo_state')
+      .upsert(payload, { onConflict: 'coin_address' })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return {
+      ...data,
+      coinAddress: data.coin_address,
+      lastMarketCap: data.last_market_cap,
+      lastVolume24h: data.last_volume_24h,
+      lastHolders: data.last_holders,
+      lastMarketCapTier: data.last_market_cap_tier,
+      lastHolderTier: data.last_holder_tier,
+      lastVolumeAlertAt: data.last_volume_alert_at,
+      lastSwapTxHash: data.last_swap_tx_hash,
+      lastSwapTimestamp: data.last_swap_timestamp,
+      updatedAt: data.updated_at,
+    } as CoinFomoState;
   }
 
   async createCoin(insertCoin: InsertCoin): Promise<Coin> {
@@ -1720,29 +1792,99 @@ Join me: ${profileUrl}
   }
 
   // ===== PUSH SUBSCRIPTIONS =====
-  async createPushSubscription(data: { userAddress: string; subscription: string; endpoint: string }): Promise<void> {
+  private async resolveUserId(identifier: string): Promise<string | null> {
+    if (!identifier) return null;
+
+    let userRecord = await this.getUserById(identifier);
+    if (!userRecord) userRecord = await this.getUserByPrivyId(identifier);
+    if (!userRecord) userRecord = await this.getUserByAddress(identifier);
+    if (!userRecord && identifier.includes("@")) {
+      userRecord = await this.getUserByEmail(identifier);
+    }
+
+    return userRecord?.id || null;
+  }
+
+  async createPushSubscription(data: {
+    userId?: string;
+    userAddress?: string;
+    subscription?: any;
+    endpoint?: string;
+    p256dhKey?: string;
+    authKey?: string;
+  }): Promise<void> {
+    const identifier = data.userId || data.userAddress;
+    if (!identifier) {
+      throw new Error("Missing user identifier for push subscription");
+    }
+
+    const resolvedUserId = (await this.resolveUserId(identifier)) || data.userId;
+    if (!resolvedUserId) {
+      throw new Error("Unable to resolve user for push subscription");
+    }
+
+    let endpoint = data.endpoint;
+    let p256dhKey = data.p256dhKey;
+    let authKey = data.authKey;
+
+    if (data.subscription) {
+      const subscription =
+        typeof data.subscription === "string"
+          ? JSON.parse(data.subscription)
+          : data.subscription;
+      endpoint = endpoint || subscription?.endpoint;
+      p256dhKey = p256dhKey || subscription?.keys?.p256dh;
+      authKey = authKey || subscription?.keys?.auth;
+    }
+
+    if (!endpoint || !p256dhKey || !authKey) {
+      throw new Error("Invalid push subscription payload");
+    }
+
     const { error } = await supabase
       .from('push_subscriptions')
-      .upsert({
-        user_address: data.userAddress,
-        subscription: data.subscription,
-        endpoint: data.endpoint,
-        created_at: new Date().toISOString()
-      }, {
-        onConflict: 'user_address'
-      });
+      .upsert(
+        {
+          user_id: resolvedUserId,
+          endpoint,
+          p256dh_key: p256dhKey,
+          auth_key: authKey,
+          created_at: new Date().toISOString(),
+        },
+        {
+          onConflict: 'endpoint',
+        },
+      );
 
     if (error) throw error;
   }
 
-  async getPushSubscriptionsByUser(userAddress: string): Promise<any[]> {
+  async getPushSubscriptionsByUser(userIdentifier: string): Promise<any[]> {
+    const resolvedUserId =
+      (await this.resolveUserId(userIdentifier)) || userIdentifier;
+
+    if (!resolvedUserId) return [];
+
     const { data, error } = await supabase
       .from('push_subscriptions')
       .select('*')
-      .eq('user_address', userAddress);
+      .eq('user_id', resolvedUserId);
 
     if (error) throw error;
     return data || [];
+  }
+
+  async deletePushSubscription(userIdentifier: string, endpoint: string): Promise<void> {
+    const resolvedUserId =
+      (await this.resolveUserId(userIdentifier)) || userIdentifier;
+
+    const { error } = await supabase
+      .from('push_subscriptions')
+      .delete()
+      .eq('endpoint', endpoint)
+      .eq('user_id', resolvedUserId);
+
+    if (error) throw error;
   }
 
   async getAllPushSubscriptions(): Promise<any[]> {

@@ -250,7 +250,7 @@ export default function Creators() {
         </div>
       </div>
 
-      <div className="flex items-center gap-1 -mt-2 mb-2 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0 sm:overflow-visible">
+      <div className="flex items-center gap-1 -mt-2 mb-2 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0 sm:overflow-visible sm:justify-center sm:w-fit sm:mx-auto">
         <button
           onClick={() => setFilterOpen(true)}
           className="flex h-8 min-w-8 items-center justify-center rounded-full bg-card/80 text-muted-foreground hover:bg-muted"

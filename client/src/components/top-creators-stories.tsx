@@ -26,7 +26,7 @@ export function TopCreatorsStories({
     <>
       <div
         className={cn(
-          "flex gap-2 overflow-x-auto scrollbar-hide pb-1 justify-start md:justify-center top-creators-stories -mt-2 md:mt-0",
+          "flex gap-2 overflow-x-auto scrollbar-hide pb-1 justify-start md:justify-center top-creators-stories -mt-1 md:mt-0 mb-2",
           className,
         )}
         data-tour="top-creators"
@@ -63,7 +63,7 @@ export function TopCreatorsStories({
                 </div>
               </div>
 
-              <span className="text-[10px] md:text-[10px] font-medium text-foreground max-w-[56px] md:max-w-[56px] truncate text-center group-hover:text-primary transition-colors">
+              <span className="text-[9px] md:text-[10px] font-medium text-foreground max-w-[48px] md:max-w-[56px] truncate text-center group-hover:text-primary transition-colors">
                 {creator.username || "Unknown"}
               </span>
             </div>

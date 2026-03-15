@@ -808,6 +808,20 @@ export const tradeHistory = pgTable("trade_history", {
   metadata: jsonb("metadata").$type<Record<string, any>>().default({}),
 });
 
+// FOMO notification state per coin
+export const coinFomoState = pgTable("coin_fomo_state", {
+  coinAddress: text("coin_address").primaryKey(),
+  lastMarketCap: decimal("last_market_cap", { precision: 36, scale: 6 }),
+  lastVolume24h: decimal("last_volume_24h", { precision: 36, scale: 6 }),
+  lastHolders: integer("last_holders"),
+  lastMarketCapTier: integer("last_market_cap_tier").default(0),
+  lastHolderTier: integer("last_holder_tier").default(0),
+  lastVolumeAlertAt: timestamp("last_volume_alert_at"),
+  lastSwapTxHash: text("last_swap_tx_hash"),
+  lastSwapTimestamp: timestamp("last_swap_timestamp"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Creator Stories table
 export const creatorStories = pgTable("creator_stories", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -851,6 +865,8 @@ export type InsertUserBadge = typeof userBadges.$inferInsert;
 
 export type TradeHistory = typeof tradeHistory.$inferSelect;
 export type InsertTradeHistory = typeof tradeHistory.$inferInsert;
+export type CoinFomoState = typeof coinFomoState.$inferSelect;
+export type InsertCoinFomoState = typeof coinFomoState.$inferInsert;
 
 export type CreatorStory = typeof creatorStories.$inferSelect;
 export type InsertCreatorStory = typeof creatorStories.$inferInsert;

@@ -265,12 +265,12 @@ export default function Swap() {
   const outputTokenLabel = tradeSide === "buy" ? (selectedCoin?.symbol || "COIN") : "NGN";
 
   return (
-    <div className="min-h-screen bg-background px-4 py-6">
-      <div className="mx-auto w-full max-w-[360px] space-y-3">
-        <div className="rounded-[24px] border border-border/60 bg-card px-4 py-4">
+    <div className="min-h-screen bg-background px-3 py-4 sm:px-4 sm:py-6">
+      <div className="mx-auto w-full max-w-[360px] space-y-2 sm:space-y-3">
+        <div className="rounded-[22px] border border-border/60 bg-card px-3 py-3 sm:px-4 sm:py-4">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-full bg-muted/40 overflow-hidden">
+              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full bg-muted/40 overflow-hidden">
                 {selectedCoin?.image ? (
                   <img src={selectedCoin.image} alt={selectedCoin.name} className="h-full w-full object-cover" />
                 ) : (
@@ -280,31 +280,32 @@ export default function Swap() {
                 )}
               </div>
               <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-lg font-semibold text-foreground">
-                    {selectedCoin?.name || "Creator Coin"}
-                  </p>
-                  <p className="text-lg font-semibold text-foreground/80">
+                <p className="text-sm sm:text-base font-semibold text-foreground">
+                  {selectedCoin?.name || "Creator Coin"}
+                </p>
+                <div className="mt-0.5 flex flex-wrap items-center gap-2 text-[10px] sm:text-xs text-muted-foreground">
+                  <span>{selectedCoin?.symbol || "COIN"} • Creator Coin</span>
+                  <span className="font-semibold text-foreground/80">
                     {currentPriceNgn ? `₦${currentPriceNgn.toFixed(0)}` : "₦0"}
-                  </p>
-                  <p
-                    className={`text-sm font-semibold ${priceChange24h >= 0 ? "text-green-600 dark:text-green-400" : "text-pink-500 dark:text-pink-400"}`}
+                  </span>
+                  <span
+                    className={`${priceChange24h >= 0 ? "text-green-600 dark:text-green-400" : "text-pink-500 dark:text-pink-400"} font-semibold`}
                   >
                     {priceChange24h >= 0 ? "+" : ""}{priceChange24h.toFixed(1)}% Today
-                  </p>
+                  </span>
                 </div>
               </div>
             </div>
             <Button
               variant="ghost"
               size="icon"
-              className="h-9 w-9 rounded-full text-muted-foreground hover:text-muted-foreground hover:bg-muted/40"
+              className="h-8 w-8 sm:h-9 sm:w-9 rounded-full text-muted-foreground hover:text-muted-foreground hover:bg-muted/40"
             >
-              <Settings className="h-5 w-5" />
+              <Settings className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
           </div>
 
-          <div className="mt-3 h-14 relative">
+          <div className="mt-2 h-10 sm:h-14 relative">
             {chartSeries.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartSeries}>
@@ -327,10 +328,10 @@ export default function Swap() {
             ) : (
               <div className="h-full rounded-2xl bg-muted/30" />
             )}
-            <span className="absolute right-0 bottom-0 text-xs text-muted-foreground">7D</span>
+            <span className="absolute right-0 bottom-0 text-[10px] text-muted-foreground">7D</span>
           </div>
 
-          <div className="mt-3 rounded-2xl border border-border/60 bg-card px-4 py-3 shadow-sm">
+          <div className="mt-3 hidden sm:block rounded-2xl border border-border/60 bg-card px-4 py-3 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-foreground">Price Trend (7 Days)</p>
@@ -363,9 +364,9 @@ export default function Swap() {
             </div>
           </div>
 
-          <div className="mt-3 rounded-2xl border border-border/60 bg-muted/30 px-4 py-3">
+          <div className="mt-2 rounded-xl sm:rounded-2xl border border-border/60 bg-muted/30 px-3 py-2 sm:px-4 sm:py-3">
             <div className="flex items-center gap-3">
-              <div className="h-7 w-7 rounded-full overflow-hidden border border-border/60">
+              <div className="h-6 w-6 sm:h-7 sm:w-7 rounded-full overflow-hidden border border-border/60">
                 <div className="grid h-full w-full grid-cols-3">
                   <span className="bg-primary" />
                   <span className="bg-card" />
@@ -387,7 +388,7 @@ export default function Swap() {
                       });
                     }
                   }}
-                  className="w-full appearance-none bg-transparent pr-6 text-sm font-semibold text-foreground/80 outline-none"
+                  className="w-full appearance-none bg-transparent pr-6 text-xs sm:text-sm font-semibold text-foreground/80 outline-none"
                 >
                   {coinsWithAddress.map((coin) => (
                     <option key={coin.address} value={coin.address}>
@@ -400,17 +401,17 @@ export default function Swap() {
             </div>
           </div>
 
-          <div className="mt-2 text-sm text-muted-foreground">
+          <div className="mt-1 text-xs text-muted-foreground">
             Balance: <span className="font-semibold text-foreground">₦0</span>
           </div>
 
           <div className="mt-2 grid gap-2">
-            <div className="rounded-2xl border border-border/60 bg-card px-4 py-3">
+            <div className="rounded-xl sm:rounded-2xl border border-border/60 bg-card px-3 py-2 sm:px-4 sm:py-3">
               <div className="flex items-center gap-2">
                 {tradeSide === "buy" && <span className="text-2xl font-semibold text-foreground">₦</span>}
                 <Input
                   type="number"
-                  className="border-none px-0 text-2xl font-semibold text-foreground placeholder:text-muted-foreground/50"
+                  className="border-none px-0 text-xl sm:text-2xl font-semibold text-foreground placeholder:text-muted-foreground/50"
                   value={tradeSide === "buy" ? nairaAmount : walletAmount}
                   onChange={(e) => (tradeSide === "buy" ? setNairaAmount(e.target.value) : setWalletAmount(e.target.value))}
                   placeholder={tradeSide === "buy" ? "0" : selectedCoin?.symbol || "0"}
@@ -423,17 +424,17 @@ export default function Swap() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-full border border-border/60 bg-card text-muted-foreground hover:bg-muted/40"
+                className="h-9 w-9 sm:h-10 sm:w-10 rounded-full border border-border/60 bg-card text-muted-foreground hover:bg-muted/40"
                 onClick={() => setTradeSide(tradeSide === "buy" ? "sell" : "buy")}
               >
                 <ArrowDownUp className="h-4 w-4" />
               </Button>
             </div>
 
-            <div className="rounded-2xl border border-border/60 bg-muted/30 px-4 py-3">
+            <div className="rounded-xl sm:rounded-2xl border border-border/60 bg-muted/30 px-3 py-2 sm:px-4 sm:py-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-7 w-7 rounded-full bg-muted/50 overflow-hidden">
+                  <div className="h-6 w-6 sm:h-7 sm:w-7 rounded-full bg-muted/50 overflow-hidden">
                     {selectedCoin?.image ? (
                       <img src={selectedCoin.image} alt={selectedCoin.name} className="h-full w-full object-cover" />
                     ) : (
@@ -442,9 +443,9 @@ export default function Swap() {
                       </div>
                     )}
                   </div>
-                  <p className="text-sm font-semibold text-foreground/80">{outputPreview}</p>
+                  <p className="text-xs sm:text-sm font-semibold text-foreground/80">{outputPreview}</p>
                 </div>
-                <div className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
+                <div className="flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-muted-foreground">
                   <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary/15 text-primary dark:bg-primary/20">
                     {tradeSide === "buy" ? (selectedCoin?.symbol?.slice(0, 1) || "C") : "₦"}
                   </span>
@@ -454,17 +455,12 @@ export default function Swap() {
             </div>
           </div>
 
-          <div className="mt-2 text-sm text-muted-foreground">
+          <div className="mt-1 text-xs text-muted-foreground">
             Balance: <span className="font-semibold text-foreground">0 {selectedCoin?.symbol || "COIN"}</span>
           </div>
 
-          <div className="mt-2 flex items-start gap-2 rounded-2xl border border-amber-200/80 bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
-            <AlertTriangle className="mt-0.5 h-4 w-4" />
-            <span>Note: Price may change by the time the swap completes.</span>
-          </div>
-
           <Button
-            className="mt-3 h-11 w-full rounded-2xl bg-primary text-base font-semibold text-primary-foreground hover:bg-primary/90"
+            className="mt-2 h-10 sm:h-11 w-full rounded-2xl bg-primary text-sm sm:text-base font-semibold text-primary-foreground hover:bg-primary/90"
             onClick={handleWalletTrade}
             disabled={
               !selectedCoin ||
@@ -474,7 +470,7 @@ export default function Swap() {
             {isTrading ? "Trading..." : tradeSide === "buy" ? `Buy ${selectedCoin?.name || "Coin"}` : `Sell ${selectedCoin?.name || "Coin"}`}
           </Button>
 
-          <p className="mt-2 text-center text-xs italic text-muted-foreground">
+          <p className="mt-2 text-center text-[11px] sm:text-xs italic text-muted-foreground">
             Trades use your wallet balance.
           </p>
 
@@ -485,7 +481,7 @@ export default function Swap() {
           )}
         </div>
 
-        <div className="flex gap-2 overflow-x-auto rounded-2xl border border-border/60 bg-card px-3 py-2">
+        <div className="hidden sm:flex gap-2 overflow-x-auto rounded-2xl border border-border/60 bg-card px-3 py-2">
           {coinsWithAddress.slice(0, 4).map((coin) => (
             <button
               key={coin.address}

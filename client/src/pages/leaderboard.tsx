@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Users, TrendingUp, Award, Star, Flame, Trophy, Medal } from "lucide-react";
+import { Users, TrendingUp, Award, Star as StarIcon, Flame, Trophy, Medal, Music, Palette, Sparkles, Film } from "lucide-react";
 import { createAvatar } from "@dicebear/core";
 import { avataaars } from "@dicebear/collection";
 import { usePrivy } from "@privy-io/react-auth";
@@ -30,6 +30,9 @@ type Creator = {
 export default function Leaderboard() {
   const { user: privyUser } = usePrivy();
   const [selectedTab, setSelectedTab] = useState<"marketcap" | "volume" | "e1xp">("marketcap");
+  const [selectedCategory, setSelectedCategory] = useState<
+    "music" | "art" | "lifestyle" | "movies" | "sports" | "pop"
+  >("music");
   const [selectedCreator, setSelectedCreator] = useState<string | null>(null);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const { data: fxRates } = useFxRates();
@@ -76,6 +79,20 @@ export default function Leaderboard() {
 
   const creators = zoraCreatorsData || [];
 
+  const categoryKeywords: Record<typeof selectedCategory, string[]> = {
+    music: ["music", "song", "album", "artist", "singer", "rapper", "dj", "beats"],
+    art: ["art", "artist", "gallery", "painting", "illustration", "design", "visual"],
+    lifestyle: ["lifestyle", "fashion", "beauty", "food", "travel", "wellness", "fitness"],
+    movies: ["movie", "film", "cinema", "series", "tv", "director", "trailer"],
+    sports: ["sport", "sports", "football", "soccer", "basketball", "nba", "nfl", "ufc", "boxing"],
+    pop: ["pop", "celebrity", "gossip", "culture", "entertainment", "viral"],
+  };
+
+  const hasCategoryMatches = creators.some((creator: any) => {
+    const haystack = `${creator.bio || ""} ${creator.displayName || ""} ${creator.username || ""}`.toLowerCase();
+    return categoryKeywords[selectedCategory].some((kw) => haystack.includes(kw));
+  });
+
   const filteredCreators = creators
     .filter((creator: any) => creator.totalConnections && creator.totalConnections > 0)
     .sort((a: any, b: any) => {
@@ -90,6 +107,11 @@ export default function Leaderboard() {
           return parseFloat(b.marketCap || "0") - parseFloat(a.marketCap || "0");
       }
     });
+  const filteredByCategory = filteredCreators.filter((creator: any) => {
+    if (!hasCategoryMatches) return true;
+    const haystack = `${creator.bio || ""} ${creator.displayName || ""} ${creator.username || ""}`.toLowerCase();
+    return categoryKeywords[selectedCategory].some((kw) => haystack.includes(kw));
+  });
 
   const formatNumber = (num: number): string => {
     if (num >= 1000000000) return `${(num / 1000000000).toFixed(1).replace(/\.0$/, "")}B`;
@@ -123,99 +145,58 @@ export default function Leaderboard() {
     return { bg: "bg-muted", text: "text-muted-foreground" };
   };
 
-  const totalMarketCap = filteredCreators.reduce(
+  const totalMarketCap = filteredByCategory.reduce(
     (acc: number, creator: any) => acc + parseFloat(creator.marketCap || "0"),
     0,
   );
-  const totalVolume = filteredCreators.reduce(
+  const totalVolume = filteredByCategory.reduce(
     (acc: number, creator: any) => acc + parseFloat(creator.volume24h || "0"),
     0,
   );
   const totalMarketCapNgn = convertUsdToNgn(totalMarketCap, fxRates);
   const totalVolumeNgn = convertUsdToNgn(totalVolume, fxRates);
   const avgHolders =
-    filteredCreators.length > 0
-      ? filteredCreators.reduce((acc: number, creator: any) => acc + (creator.totalConnections || 0), 0) /
-        filteredCreators.length
+    filteredByCategory.length > 0
+      ? filteredByCategory.reduce((acc: number, creator: any) => acc + (creator.totalConnections || 0), 0) /
+        filteredByCategory.length
       : 0;
 
   return (
     <div className="container max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-8">
-      {/* Stats */}
-      <div className="grid grid-cols-4 gap-2 mb-6">
-        <div className="text-center bg-muted/20 rounded-lg p-1.5">
-          <div className="text-sm font-bold text-primary">
-            {creatorsLoading ? "-" : filteredCreators.length}
-          </div>
-          <div className="text-[9px] text-muted-foreground">Creators</div>
-        </div>
-        <div className="text-center bg-muted/20 rounded-lg p-1.5">
-          <div className="text-sm font-bold text-green-500">
-            {formatSmartCurrency(totalMarketCapNgn)}
-          </div>
-          <div className="text-[9px] text-muted-foreground">Market Cap</div>
-        </div>
-        <div className="text-center bg-muted/20 rounded-lg p-1.5">
-          <div className="text-sm font-bold text-blue-500">
-            {formatSmartCurrency(totalVolumeNgn)}
-          </div>
-          <div className="text-[9px] text-muted-foreground">Total Vol</div>
-        </div>
-        <div className="text-center bg-muted/20 rounded-lg p-1.5">
-          <div className="text-sm font-bold text-foreground">
-            {creatorsLoading ? "-" : formatNumber(avgHolders)}
-          </div>
-          <div className="text-[9px] text-muted-foreground">Avg. Holders</div>
-        </div>
+      <div className="flex items-center gap-1 -mt-2 mb-2 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0 sm:overflow-visible sm:justify-center sm:w-fit sm:mx-auto">
+        {[
+          { id: "music", label: "Music", icon: Music },
+          { id: "art", label: "Art", icon: Palette },
+          { id: "lifestyle", label: "Lifestyle", icon: Sparkles },
+          { id: "movies", label: "Movies", icon: Film },
+          { id: "sports", label: "Sports", icon: Trophy },
+          { id: "pop", label: "Pop-culture", icon: StarIcon },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() =>
+              setSelectedCategory(tab.id as typeof selectedCategory)
+            }
+            className={`flex items-center gap-1 px-2 py-0.5 rounded-full border-0 transition-all text-[10px] whitespace-nowrap ${
+              selectedCategory === tab.id
+                ? "bg-primary text-primary-foreground"
+                : "bg-card/80 text-muted-foreground hover:bg-muted"
+            }`}
+          >
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted/40">
+              <tab.icon className="w-3 h-3" />
+            </span>
+            <span>{tab.label}</span>
+          </button>
+        ))}
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1.5 sm:gap-4 -mt-2 sm:mt-0 mb-4 sm:mb-6 overflow-x-auto pb-2 -mx-3 px-3 sm:mx-0 sm:px-0 sm:overflow-visible">
-        <button
-          onClick={() => setSelectedTab("marketcap")}
-          className={`flex-1 px-2 sm:px-6 py-1.5 sm:py-2 rounded-lg font-medium transition-all text-xs sm:text-base whitespace-nowrap ${
-            selectedTab === "marketcap"
-              ? "bg-primary text-primary-foreground"
-              : "bg-card text-muted-foreground hover:bg-muted"
-          }`}
-          data-testid="tab-leaderboard-marketcap"
-        >
-          <div className="flex items-center justify-center gap-1 sm:gap-2">
-            <Award className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline">Market Cap</span>
-            <span className="sm:hidden">M.Cap</span>
-          </div>
-        </button>
-        <button
-          onClick={() => setSelectedTab("volume")}
-          className={`flex-1 px-2 sm:px-6 py-1.5 sm:py-2 rounded-lg font-medium transition-all text-xs sm:text-base whitespace-nowrap ${
-            selectedTab === "volume"
-              ? "bg-primary text-primary-foreground"
-              : "bg-card text-muted-foreground hover:bg-muted"
-          }`}
-          data-testid="tab-leaderboard-volume"
-        >
-          <div className="flex items-center justify-center gap-1 sm:gap-2">
-            <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline">24h Volume</span>
-            <span className="sm:hidden">Volume</span>
-          </div>
-        </button>
-        <button
-          onClick={() => setSelectedTab("e1xp")}
-          className={`flex-1 px-2 sm:px-6 py-1.5 sm:py-2 rounded-lg font-medium transition-all text-xs sm:text-base whitespace-nowrap ${
-            selectedTab === "e1xp"
-              ? "bg-primary text-primary-foreground"
-              : "bg-card text-muted-foreground hover:bg-muted"
-          }`}
-          data-testid="tab-leaderboard-e1xp"
-        >
-          <div className="flex items-center justify-center gap-1 sm:gap-2">
-            <Star className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline">E1XP Points</span>
-            <span className="sm:hidden">E1XP</span>
-          </div>
-        </button>
+      <div className="hidden sm:grid grid-cols-5 gap-2 px-2 text-[10px] uppercase tracking-wide text-muted-foreground">
+        <div>Creator</div>
+        <div className="text-center">Holders</div>
+        <div className="text-center">Market Cap</div>
+        <div className="text-center">24h Vol</div>
+        <div className="text-center">E1XP</div>
       </div>
 
       {/* List */}
@@ -233,7 +214,7 @@ export default function Leaderboard() {
             </div>
           ))}
         </div>
-      ) : filteredCreators.length === 0 ? (
+      ) : filteredByCategory.length === 0 ? (
         <div className="text-center py-16">
           <Trophy className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
           <h3 className="text-xl font-bold text-foreground mb-2">No entries yet</h3>
@@ -241,7 +222,7 @@ export default function Leaderboard() {
         </div>
       ) : (
         <div className="space-y-2 sm:space-y-3">
-          {filteredCreators.map((creator: any, index: number) => {
+          {filteredByCategory.map((creator: any, index: number) => {
             const isCurrentUser =
               privyUser?.wallet?.address && creator.id === privyUser.wallet.address;
             const rank = getRankBadge(index);
@@ -305,7 +286,7 @@ export default function Leaderboard() {
                       </div>
                       <div className="text-center">
                         <div className="text-yellow-500 font-bold text-[10px] flex items-center justify-center gap-0.5">
-                          <Star className="w-2 h-2" />
+                            <StarIcon className="w-2 h-2" />
                           {formatNumber(creator.e1xpPoints || 0)}
                         </div>
                         <div className="text-muted-foreground text-[8px]">E1XP</div>
@@ -373,7 +354,7 @@ export default function Leaderboard() {
                     </div>
                     <div className="text-center">
                       <div className="text-yellow-500 font-bold text-sm flex items-center justify-center gap-1">
-                        <Star className="w-3 h-3" />
+                        <StarIcon className="w-3 h-3" />
                         {formatNumber(creator.e1xpPoints || 0)}
                       </div>
                       <div className="text-muted-foreground text-[10px]">E1XP</div>

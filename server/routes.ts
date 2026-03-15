@@ -1008,6 +1008,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       await trackReferralActivity(userRecord.id, "trade");
 
+      if (side === "buy") {
+        try {
+          const { handleFomoTradeFromApp } = await import("./fomo-notifications");
+          await handleFomoTradeFromApp({
+            coinAddress,
+            buyerAddress: walletAddress,
+            txHash,
+            amountEth,
+            coinSymbol: coinRecord?.symbol,
+            coinName: coinRecord?.name,
+            creatorAddress: coinRecord?.creator_wallet || coinRecord?.creatorWallet,
+          });
+        } catch (fomoError) {
+          console.warn("[FOMO] Failed to process trade alert:", fomoError);
+        }
+      }
+
       return res.json({ status: "ok" });
     } catch (error) {
       console.error("Trade record error:", error);

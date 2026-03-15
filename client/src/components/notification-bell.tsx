@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+﻿import { useEffect, useRef, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
@@ -25,18 +25,25 @@ export function NotificationBell() {
   const showNotificationToast = useCallback(
     (notification: Notification) => {
       const icons: Record<string, string> = {
-        referral: "🎁",
-        reward: "🏆",
-        trade: "📈",
-        streak: "🔥",
-        welcome: "👋",
-        admin: "💬",
-        milestone: "🎯",
-        follower: "👥",
-        points_earned: "⭐",
-        trade_completed: "✅",
+        referral: "ðŸŽ",
+        reward: "ðŸ†",
+        trade: "ðŸ“ˆ",
+        streak: "ðŸ”¥",
+        welcome: "ðŸ‘‹",
+        admin: "ðŸ’¬",
+        milestone: "ðŸŽ¯",
+        follower: "ðŸ‘¥",
+        points_earned: "â­",
+        trade_completed: "âœ…",
+        fomo_buy: "ðŸ’¸",
+        fomo_whale: "ðŸ³",
+        fomo_market_cap: "ðŸš€",
+        fomo_holders: "ðŸ‘¥",
+        fomo_volume: "ðŸ“ˆ",
+        trending: "ðŸ”¥",
+        performance: "ðŸ’Ž",
       };
-      const emoji = icons[notification.type] || "🔔";
+      const emoji = icons[notification.type] || "ðŸ””";
 
       const isReferralBonus =
         notification.type === "referral" ||
@@ -204,22 +211,22 @@ export function NotificationBell() {
 
     // Connect to Socket.IO with user's wallet address or Privy ID (for email users)
     const userId = user.wallet?.address || user.id;
-    console.log('🔌 Connecting to Socket.IO with userId:', userId);
+    console.log('ðŸ”Œ Connecting to Socket.IO with userId:', userId);
     socketClient.connect(userId);
 
     const handleAdminMessage = (data: any) => {
-      console.log('📨 Received admin message:', data);
+      console.log('ðŸ“¨ Received admin message:', data);
       toast({
-        title: "💬 Message from Admin",
+        title: "ðŸ’¬ Message from Admin",
         description: data.message,
         duration: 6000,
       });
     };
 
     const handleAdminBroadcast = (data: any) => {
-      console.log('📢 Received admin broadcast:', data);
+      console.log('ðŸ“¢ Received admin broadcast:', data);
       toast({
-        title: "📢 Announcement from Creatorland",
+        title: "ðŸ“¢ Announcement from Creatorland",
         description: data.message,
         duration: 6000,
       });
@@ -227,13 +234,13 @@ export function NotificationBell() {
 
     // Handle new messages from other users
     const handleNewMessage = (message: any) => {
-      console.log('💬 Received new message:', message);
+      console.log('ðŸ’¬ Received new message:', message);
       // Increment unread message count
       setUnreadMessageCount((prev) => prev + 1);
       
       // Show toast notification
       toast({
-        title: "💬 New Message",
+        title: "ðŸ’¬ New Message",
         description: message.content.length > 50 
           ? `${message.content.substring(0, 50)}...` 
           : message.content,

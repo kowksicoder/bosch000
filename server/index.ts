@@ -147,6 +147,10 @@ app.use((req, res, next) => {
   const { startTrendingNotifications } = await import('./trending-notifications');
   startTrendingNotifications();
 
+  // Start FOMO notifications (live trade + milestone signals)
+  const { startFomoNotifications } = await import('./fomo-notifications');
+  startFomoNotifications();
+
   // Run automatic migration on startup
   // Disabled - uses direct database connection instead of Supabase SDK
   // try {

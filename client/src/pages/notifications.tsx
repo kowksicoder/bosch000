@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePrivy } from "@privy-io/react-auth";
 import { Button } from "@/components/ui/button";
@@ -258,25 +258,32 @@ export default function Notifications() {
 
   const getNotificationIcon = (type: string) => {
     const icons = {
-        referral: { emoji: "🎁", color: "from-lime-500 to-lime-600" },
-        reward: { emoji: "🏆", color: "from-yellow-500 to-orange-500" },
-        trade: { emoji: "📈", color: "from-blue-500 to-blue-600" },
-        streak: { emoji: "🔥", color: "from-orange-500 to-red-500" },
-        welcome: { emoji: "👋", color: "from-green-500 to-emerald-600" },
-        admin: { emoji: "💬", color: "from-purple-500 to-purple-600" },
-        milestone: { emoji: "🎯", color: "from-pink-500 to-pink-600" },
-        follower: { emoji: "👥", color: "from-indigo-500 to-indigo-600" },
-        points_earned: { emoji: "⭐", color: "from-amber-500 to-amber-600" },
-        trade_completed: { emoji: "✅", color: "from-teal-500 to-teal-600" },
-        points: { emoji: "⚡", color: "from-yellow-400 to-yellow-500" },
-        reminder: { emoji: "⏰", color: "from-blue-400 to-blue-500" },
-        coin_created: { emoji: "🪙", color: "from-purple-400 to-purple-500" },
-        message: { emoji: "💬", color: "from-cyan-500 to-cyan-600" },
+        referral: { emoji: "ðŸŽ", color: "from-lime-500 to-lime-600" },
+        reward: { emoji: "ðŸ†", color: "from-yellow-500 to-orange-500" },
+        trade: { emoji: "ðŸ“ˆ", color: "from-blue-500 to-blue-600" },
+        streak: { emoji: "ðŸ”¥", color: "from-orange-500 to-red-500" },
+        welcome: { emoji: "ðŸ‘‹", color: "from-green-500 to-emerald-600" },
+        admin: { emoji: "ðŸ’¬", color: "from-purple-500 to-purple-600" },
+        milestone: { emoji: "ðŸŽ¯", color: "from-pink-500 to-pink-600" },
+        follower: { emoji: "ðŸ‘¥", color: "from-indigo-500 to-indigo-600" },
+        points_earned: { emoji: "â­", color: "from-amber-500 to-amber-600" },
+        trade_completed: { emoji: "âœ…", color: "from-teal-500 to-teal-600" },
+        points: { emoji: "âš¡", color: "from-yellow-400 to-yellow-500" },
+        reminder: { emoji: "â°", color: "from-blue-400 to-blue-500" },
+        coin_created: { emoji: "ðŸª™", color: "from-purple-400 to-purple-500" },
+        message: { emoji: "ðŸ’¬", color: "from-cyan-500 to-cyan-600" },
+        fomo_buy: { emoji: "ðŸ’¸", color: "from-emerald-500 to-emerald-600" },
+        fomo_whale: { emoji: "ðŸ³", color: "from-sky-500 to-blue-600" },
+        fomo_market_cap: { emoji: "ðŸš€", color: "from-orange-500 to-yellow-500" },
+        fomo_holders: { emoji: "ðŸ‘¥", color: "from-indigo-500 to-indigo-600" },
+        fomo_volume: { emoji: "ðŸ“ˆ", color: "from-blue-500 to-cyan-500" },
+        trending: { emoji: "ðŸ”¥", color: "from-orange-500 to-red-500" },
+        performance: { emoji: "ðŸ’Ž", color: "from-teal-500 to-teal-600" },
       };
 
     return (
       icons[type as keyof typeof icons] || {
-        emoji: "🔔",
+        emoji: "ðŸ””",
         color: "from-gray-500 to-gray-600",
       }
     );

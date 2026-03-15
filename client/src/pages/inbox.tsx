@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { usePrivy } from "@privy-io/react-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -11,6 +10,7 @@ import { socketClient, type Message, type Conversation } from "@/lib/socket-clie
 import { useQuery } from "@tanstack/react-query";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { apiRequest } from "@/lib/queryClient";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -30,23 +30,52 @@ export default function Inbox() {
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showComposeDialog, setShowComposeDialog] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [conversationSearch, setConversationSearch] = useState("");
+  const [userSearch, setUserSearch] = useState("");
   const [newMessageContent, setNewMessageContent] = useState("");
+  const [activeTab, setActiveTab] = useState<"all" | "unread" | "archived">("all");
 
   const { data: creators } = useQuery<any[]>({
     queryKey: ["/api/creators"],
   });
 
+  const { data: users } = useQuery<any[]>({
+    queryKey: ["/api/users"],
+  });
+
+  const { data: searchResults, isLoading: isSearching } = useQuery<any[]>({
+    queryKey: ["/api/creators/search", userSearch],
+    enabled: Boolean(userSearch.trim()),
+    queryFn: async () => {
+      const response = await fetch(`/api/creators/search?q=${encodeURIComponent(userSearch)}`);
+      if (!response.ok) throw new Error("Failed to search users");
+      return response.json();
+    },
+  });
+
   const creatorMap = new Map(
-    creators?.flatMap((creator) => {
-      const entries: [string, any][] = [];
-      if (creator.address) entries.push([creator.address.toLowerCase(), creator]);
-      if (creator.privyId) {
-        entries.push([creator.privyId.toLowerCase(), creator]);
-        entries.push([`email_${creator.privyId}`.toLowerCase(), creator]);
-      }
-      return entries;
-    }) || []
+    [
+      ...(creators?.flatMap((creator) => {
+        const entries: [string, any][] = [];
+        if (creator.address) entries.push([creator.address.toLowerCase(), creator]);
+        if (creator.privyId) {
+          entries.push([creator.privyId.toLowerCase(), creator]);
+          entries.push([`email_${creator.privyId}`.toLowerCase(), creator]);
+        }
+        return entries;
+      }) || []),
+      ...(users?.flatMap((user) => {
+        const entries: [string, any][] = [];
+        const normalizedUser = {
+          ...user,
+          avatar: user.avatarUrl || user.avatar || null,
+          address: user.walletAddress || user.address || null,
+        };
+        if (normalizedUser.address) entries.push([normalizedUser.address.toLowerCase(), normalizedUser]);
+        if (user.id) entries.push([`email_${user.id}`.toLowerCase(), normalizedUser]);
+        return entries;
+      }) || []),
+    ]
   );
 
   const getCurrentUserId = () => {
@@ -58,7 +87,8 @@ export default function Inbox() {
 
   const resolveRecipientId = (creator: any) => {
     if (creator?.address) return creator.address.toLowerCase();
-    if (creator?.privyId) return `email_${creator.privyId}`.toLowerCase();
+    const rawId = creator?.privyId || creator?.id;
+    if (rawId) return `email_${rawId}`.toLowerCase();
     return null;
   };
 
@@ -97,18 +127,11 @@ export default function Inbox() {
     return response.json();
   };
 
-  const filteredCreators = creators?.filter(creator => {
-    if (!searchQuery.trim()) return true;
-    const query = searchQuery.toLowerCase();
-    const username = creator.username?.toLowerCase() || "";
-    const address = creator.address?.toLowerCase() || "";
-    const privyId = creator.privyId?.toLowerCase() || "";
-    return username.includes(query) || address.includes(query) || privyId.includes(query);
-  }).filter(creator => {
-    // Exclude current user by comparing both address and privyId
+  const filteredCreators = (userSearch.trim() ? searchResults : [])?.filter((creator) => {
     const currentUserId = user?.wallet?.address?.toLowerCase() || user?.id;
-    return creator.address?.toLowerCase() !== currentUserId && 
-           creator.privyId?.toLowerCase() !== currentUserId;
+    const creatorAddress = creator.address?.toLowerCase() || creator.walletAddress?.toLowerCase();
+    const creatorId = creator.privyId?.toLowerCase() || creator.id?.toLowerCase();
+    return creatorAddress !== currentUserId && creatorId !== currentUserId;
   }) || [];
 
   useEffect(() => {
@@ -278,7 +301,7 @@ export default function Inbox() {
     if (existingConversation) {
       handleSelectConversation(existingConversation);
       setShowComposeDialog(false);
-      setSearchQuery("");
+      setUserSearch("");
     } else {
       // Create new conversation by requesting it
       if (socketClient.isConnected()) {
@@ -300,7 +323,7 @@ export default function Inbox() {
       setSelectedConversation(tempConversation);
       setMessages([]);
       setShowComposeDialog(false);
-      setSearchQuery("");
+      setUserSearch("");
     }
   };
 
@@ -319,6 +342,28 @@ export default function Inbox() {
     // Return the unread count from the conversation object
     return conversation.unreadCount || 0;
   };
+
+  const filteredConversations = useMemo(() => {
+    if (activeTab === "unread") {
+      return conversations.filter((conversation) => (conversation.unreadCount || 0) > 0);
+    }
+    if (activeTab === "archived") {
+      return [];
+    }
+    return conversations;
+  }, [activeTab, conversations]);
+
+  const searchedConversations = useMemo(() => {
+    const query = conversationSearch.trim().toLowerCase();
+    if (!query) return filteredConversations;
+    return filteredConversations.filter((conversation) => {
+      const other = getOtherParticipant(conversation);
+      const name = other.username?.toLowerCase() || other.name?.toLowerCase() || "";
+      const address = other.address?.toLowerCase() || "";
+      const lastMessage = conversation.lastMessage?.content?.toLowerCase() || "";
+      return name.includes(query) || address.includes(query) || lastMessage.includes(query);
+    });
+  }, [filteredConversations, conversationSearch]);
 
 
   if (!authenticated) {
@@ -344,46 +389,103 @@ export default function Inbox() {
   }
 
   return (
-    <div className={`${isMobile ? 'h-screen' : 'h-[calc(100vh-4rem)]'} flex flex-col max-w-5xl mx-auto`}>
-      <div className="px-4 py-4 border-b bg-card/95 backdrop-blur-sm sticky top-0 z-10">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl md:text-2xl font-bold">Messages</h1>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setShowComposeDialog(true)}
-            className="h-9 w-9"
-          >
-            <Edit className="h-5 w-5" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="flex-1 flex overflow-hidden">
-        <div className={`${isMobile ? 'w-full' : 'w-full lg:w-80'} border-r flex flex-col bg-card`}>
+    <div
+      className={cn(
+        isMobile ? "h-screen" : "h-[calc(100vh-4rem)]",
+        "flex flex-col max-w-6xl mx-auto",
+      )}
+    >
+      <div className="flex-1 flex overflow-hidden rounded-none md:rounded-3xl border-border/50 md:border bg-background">
+        <aside
+          className={cn(
+            "flex flex-col border-r bg-card/95",
+            isMobile ? (selectedConversation ? "hidden" : "w-full") : "w-80",
+          )}
+        >
+          <div className="px-4 pt-4 pb-3 border-b space-y-3">
+            <div className="flex items-center justify-between">
+              <h1 className="text-lg font-semibold">Chat</h1>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowComposeDialog(true)}
+                className="h-8 w-8"
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search chats"
+                value={conversationSearch}
+                onChange={(e) => setConversationSearch(e.target.value)}
+                className="pl-9 h-9 text-sm"
+              />
+            </div>
+            <div className="flex items-center gap-1 rounded-full bg-muted/30 p-0.5">
+              {[
+                { id: "all", label: "All" },
+                { id: "unread", label: "Unread" },
+                { id: "archived", label: "Archived" },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id as typeof activeTab)}
+                  className={cn(
+                    "flex-1 rounded-full py-1 text-[11px] font-semibold transition",
+                    activeTab === tab.id ? "bg-foreground text-background" : "text-muted-foreground",
+                  )}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
 
           <div className="flex-1 overflow-y-auto">
-            {conversations.length === 0 ? (
+            {searchedConversations.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground">
-                <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-20" />
-                <p className="text-sm">No conversations yet</p>
+                <div className="mx-auto mb-3 h-12 w-12 overflow-hidden rounded-full bg-muted/30">
+                  <img
+                    src="https://i.ibb.co/JRQCPsZK/ev122logo-1-1.png"
+                    alt="Every1"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <p className="text-sm">
+                  {conversationSearch.trim()
+                    ? "No matches found"
+                    : activeTab === "archived"
+                      ? "No archived chats"
+                      : "No conversations yet"}
+                </p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="mt-3 text-xs"
+                  onClick={() => setShowComposeDialog(true)}
+                >
+                  Start new chat
+                </Button>
               </div>
             ) : (
-              conversations.map((conversation) => {
+              searchedConversations.map((conversation) => {
                 const other = getOtherParticipant(conversation);
-                const unreadCount = getUnreadCount(conversation); // Use the refined getUnreadCount
                 const participantAvatar = other.avatar || "https://i.ibb.co/JRQCPsZK/ev122logo-1-1.png";
-
+                const unreadCount = getUnreadCount(conversation);
                 return (
                   <div
                     key={conversation.id}
                     onClick={() => handleSelectConversation(conversation)}
-                    className={`p-4 border-b cursor-pointer hover:bg-accent/50 transition-colors ${
-                      selectedConversation?.id === conversation.id ? 'bg-accent' : ''
-                    }`}
+                    className={cn(
+                      "px-4 py-3 border-b cursor-pointer hover:bg-accent/40 transition-colors",
+                      selectedConversation?.id === conversation.id && "bg-accent/50",
+                    )}
                   >
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-12 w-12">
+                      <Avatar className="h-11 w-11">
                         <AvatarImage src={participantAvatar} />
                         <AvatarFallback>
                           {other.username?.[0]?.toUpperCase() || other.address?.slice(2, 4).toUpperCase()}
@@ -391,18 +493,17 @@ export default function Inbox() {
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
-                          <p className="font-medium truncate">
+                          <p className="font-medium truncate text-sm">
                             {other.username || `${other.address?.slice(0, 6)}...${other.address?.slice(-4)}`}
                           </p>
-                          {/* Display unread count if available and greater than 0 */}
-                          {(conversation.unreadCount || 0) > 0 && ( 
-                            <Badge variant="destructive" className="h-5 px-2">
-                              {conversation.unreadCount}
+                          {unreadCount > 0 && (
+                            <Badge variant="destructive" className="h-5 px-2 text-[10px]">
+                              {unreadCount}
                             </Badge>
                           )}
                         </div>
                         {conversation.lastMessage && (
-                          <p className="text-sm text-muted-foreground truncate">
+                          <p className="text-[11px] text-muted-foreground truncate">
                             {conversation.lastMessage.content}
                           </p>
                         )}
@@ -413,105 +514,118 @@ export default function Inbox() {
               })
             )}
           </div>
-        </div>
+        </aside>
 
-        {(!isMobile || selectedConversation) && (
-          <div className="flex-1 flex flex-col">
-            {selectedConversation ? (
-              <>
-                <div className="px-4 py-3 border-b bg-card/95 backdrop-blur-sm sticky top-0 z-10">
-                  <div className="flex items-center gap-3">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setSelectedConversation(null)}
-                      className="h-9 w-9 lg:hidden" // Show back button only on mobile
-                    >
-                      <ArrowLeft className="h-5 w-5" />
-                    </Button>
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={getOtherParticipant(selectedConversation).avatar || "https://i.ibb.co/JRQCPsZK/ev122logo-1-1.png"} />
-                      <AvatarFallback>
-                        {getOtherParticipant(selectedConversation).username?.[0]?.toUpperCase() || 
-                         getOtherParticipant(selectedConversation).address?.slice(2, 4).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-medium">
-                        {getOtherParticipant(selectedConversation).username || 
-                         `${getOtherParticipant(selectedConversation).address?.slice(0, 6)}...${getOtherParticipant(selectedConversation).address?.slice(-4)}`}
-                      </p>
-                    </div>
+        <main
+          className={cn(
+            "flex-1 flex flex-col bg-background",
+            isMobile && !selectedConversation && "hidden",
+          )}
+        >
+          {selectedConversation ? (
+            <>
+              <div className="px-4 py-3 border-b bg-card/95 backdrop-blur-sm">
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setSelectedConversation(null)}
+                    className="h-8 w-8 md:hidden"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                  </Button>
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={getOtherParticipant(selectedConversation).avatar || "https://i.ibb.co/JRQCPsZK/ev122logo-1-1.png"} />
+                    <AvatarFallback>
+                      {getOtherParticipant(selectedConversation).username?.[0]?.toUpperCase() ||
+                        getOtherParticipant(selectedConversation).address?.slice(2, 4).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm truncate">
+                      {getOtherParticipant(selectedConversation).username ||
+                        `${getOtherParticipant(selectedConversation).address?.slice(0, 6)}...${getOtherParticipant(selectedConversation).address?.slice(-4)}`}
+                    </p>
                   </div>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                  {messages.map((message) => {
-                    // Use wallet address if available, otherwise use Privy ID
-                    const currentUserId = user?.wallet?.address?.toLowerCase() || user?.id;
-                    const isOwnMessage = message.senderId === currentUserId;
-                    return (
-                      <div
-                        key={message.id}
-                        className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
-                      >
-                        <div
-                          className={`max-w-[70%] rounded-2xl px-4 py-2 ${
-                            isOwnMessage
-                              ? 'bg-primary text-primary-foreground'
-                              : 'bg-muted'
-                          }`}
-                        >
-                          <p className="text-sm break-words">{message.content}</p>
-                          <p className={`text-xs mt-1 ${isOwnMessage ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
-                            {new Date(message.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })}
-                  <div ref={messagesEndRef} />
-                </div>
-
-                <div className="p-4 border-t bg-card/95 backdrop-blur-sm sticky bottom-0 z-10">
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="Type a message..."
-                      value={messageInput}
-                      onChange={(e) => setMessageInput(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
-                      className="flex-1"
-                      disabled={isSending}
-                    />
-                    <Button 
-                      onClick={handleSendMessage}
-                      disabled={!messageInput.trim() || isSending}
-                      size="icon"
-                    >
-                      {isSending ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Send className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="flex-1 flex items-center justify-center text-muted-foreground">
-                <div className="text-center">
-                  <div className="mb-4 flex justify-center">
-                    <div className="h-20 w-20 rounded-full bg-accent flex items-center justify-center">
-                      <Send className="h-10 w-10 text-muted-foreground" />
-                    </div>
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">No conversation selected</h3>
-                  <p className="text-sm">Select a conversation from the list to start messaging</p>
                 </div>
               </div>
-            )}
-          </div>
-        )}
+
+              <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+                {messages.map((message) => {
+                  const currentUserId = user?.wallet?.address?.toLowerCase() || user?.id;
+                  const isOwnMessage = message.senderId === currentUserId;
+                  return (
+                    <div
+                      key={message.id}
+                      className={cn("flex", isOwnMessage ? "justify-end" : "justify-start")}
+                    >
+                      <div
+                        className={cn(
+                          "max-w-[72%] rounded-2xl px-3 py-2 text-sm",
+                          isOwnMessage
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted",
+                        )}
+                      >
+                        <p className="break-words">{message.content}</p>
+                        <p
+                          className={cn(
+                            "text-[10px] mt-1",
+                            isOwnMessage ? "text-primary-foreground/70" : "text-muted-foreground",
+                          )}
+                        >
+                          {new Date(message.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+                <div ref={messagesEndRef} />
+              </div>
+
+              <div className="p-3 border-t bg-card/95 backdrop-blur-sm">
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Type a message..."
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && !e.shiftKey && handleSendMessage()}
+                    className="flex-1 h-9 text-sm"
+                    disabled={isSending}
+                  />
+                  <Button
+                    onClick={handleSendMessage}
+                    disabled={!messageInput.trim() || isSending}
+                    size="icon"
+                    className="h-9 w-9"
+                  >
+                    {isSending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="hidden md:flex flex-1 items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <div className="mb-4 flex justify-center">
+                  <div className="h-20 w-20 overflow-hidden rounded-full bg-muted/30">
+                    <img
+                      src="https://i.ibb.co/JRQCPsZK/ev122logo-1-1.png"
+                      alt="Every1"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Welcome to Chat</h3>
+                <p className="text-sm">Pick a conversation or start a new one.</p>
+              </div>
+            </div>
+          )}
+        </main>
       </div>
 
       <Dialog open={showComposeDialog} onOpenChange={setShowComposeDialog}>
@@ -527,15 +641,15 @@ export default function Inbox() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search by username or address..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={userSearch}
+                onChange={(e) => setUserSearch(e.target.value)}
                 className="pl-9"
               />
-              {searchQuery && (
+              {userSearch && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => setSearchQuery("")}
+                  onClick={() => setUserSearch("")}
                   className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7"
                 >
                   <X className="h-4 w-4" />
@@ -547,7 +661,7 @@ export default function Inbox() {
               {filteredCreators.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <p className="text-sm">
-                    {searchQuery ? "No users found" : "Search for users to message"}
+                    {userSearch ? "No users found" : "Search for users to message"}
                   </p>
                 </div>
               ) : (

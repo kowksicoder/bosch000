@@ -114,6 +114,11 @@ export function NotificationTestingPanel() {
                 <SelectItem value="reminder">E1XP Claim Reminder</SelectItem>
                 <SelectItem value="referral">Referral Bonus</SelectItem>
                 <SelectItem value="trade">New Trade</SelectItem>
+                <SelectItem value="fomo_buy">FOMO Buy</SelectItem>
+                <SelectItem value="fomo_whale">Whale Buy</SelectItem>
+                <SelectItem value="fomo_market_cap">Market Cap Milestone</SelectItem>
+                <SelectItem value="fomo_holders">Holder Milestone</SelectItem>
+                <SelectItem value="fomo_volume">Volume Surge</SelectItem>
                 <SelectItem value="points">E1XP Points Earned</SelectItem>
                 <SelectItem value="follower">New Follower</SelectItem>
                 <SelectItem value="milestone">Milestone Reached</SelectItem>

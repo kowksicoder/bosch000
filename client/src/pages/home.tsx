@@ -3,6 +3,12 @@ import { CreatorCard } from "@/components/creator-card";
 import { CoinCard } from "@/components/coin-card";
 import { TopCreatorsStories } from "@/components/top-creators-stories";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import ProfileCardModal from "@/components/profile-card-modal";
 import { useToast } from "@/hooks/use-toast";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
@@ -23,6 +29,7 @@ import {
   Share2,
   ChevronLeft,
   Heart,
+  SlidersHorizontal,
 } from "lucide-react";
 import type { User as UserType } from "@shared/schema";
 import { useState, useMemo, useRef } from "react";
@@ -1287,24 +1294,17 @@ export default function Home() {
           <TopCreatorsStories creators={filteredCreators} limit={10} />
         )}
 
-        <div className="flex items-center justify-center gap-1 overflow-x-auto pb-0">
+        <div className="hidden md:flex items-center justify-center gap-1 overflow-x-auto pb-0 mt-2">
           {categories.map((category) => (
             <Button
               key={category.id}
               size="sm"
               variant={selectedCategory === category.id ? "default" : "secondary"}
-              className="min-h-0 h-5 md:h-6 shrink-0 rounded-[6px] md:rounded-full px-1.5 md:px-2.5 py-0 text-[9px] md:text-[10px] leading-none border-0 gap-1.5 [&_svg]:size-3 md:[&_svg]:size-3"
+              className="min-h-0 h-6 shrink-0 rounded-full px-2.5 py-0 text-[10px] leading-none border-0 gap-1.5 [&_svg]:size-3"
               onClick={() => setSelectedCategory(category.id)}
               aria-label={category.label}
             >
-              <category.Icon
-                className={selectedCategory === category.id ? "mr-1" : "mr-0 md:mr-1"}
-              />
-              <span
-                className="inline md:inline"
-              >
-                {category.label}
-              </span>
+              <span>{category.label}</span>
             </Button>
           ))}
         </div>
@@ -1320,14 +1320,51 @@ export default function Home() {
       <div className="md:hidden">
         <div className="mb-1 flex items-center justify-between">
           <h2 className="text-[11px] font-semibold text-foreground">Discover</h2>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-5 px-2 text-[9px] text-muted-foreground"
-            onClick={() => setLocation("/creators")}
-          >
-            See All
-          </Button>
+          <div className="flex items-center gap-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-5 px-1.5 text-[9px] text-muted-foreground"
+                  aria-label="Filter categories"
+                >
+                  <SlidersHorizontal className="h-3 w-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-[140px] rounded-xl p-1">
+                {[
+                  { id: "music", label: "Music" },
+                  { id: "art", label: "Art" },
+                  { id: "movies", label: "Movies" },
+                  { id: "popculture", label: "Pop-Culture" },
+                  { id: "trending", label: "Trending" },
+                  { id: "collabs", label: "Collabs" },
+                  { id: "community", label: "Community" },
+                ].map((item) => (
+                  <DropdownMenuItem
+                    key={item.id}
+                    onClick={() => setSelectedCategory(item.id)}
+                    className={`text-[10px] ${
+                      selectedCategory === item.id
+                        ? "text-foreground"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    {item.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-5 px-2 text-[9px] text-muted-foreground"
+              onClick={() => setLocation("/creators")}
+            >
+              See All
+            </Button>
+          </div>
         </div>
       </div>
 
