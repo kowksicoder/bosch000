@@ -6,6 +6,14 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
     return 'denied';
   }
 
+  if (Notification.permission === 'granted') {
+    return 'granted';
+  }
+
+  if (Notification.permission === 'denied') {
+    return 'denied';
+  }
+
   return await Notification.requestPermission();
 }
 
@@ -34,14 +42,20 @@ export async function subscribeToPushNotifications(
     return null;
   }
 
-  const permission = await requestNotificationPermission();
-  
-  if (permission !== 'granted') {
-    console.warn('Notification permission not granted');
-    return null;
-  }
-
   try {
+    const existing = await registration.pushManager.getSubscription();
+
+    if (existing) {
+      await saveSubscription(userAddress, existing);
+      return existing;
+    }
+
+    const permission = await requestNotificationPermission();
+    if (permission !== 'granted') {
+      console.warn('Notification permission not granted');
+      return null;
+    }
+
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlBase64ToUint8Array(
@@ -49,21 +63,24 @@ export async function subscribeToPushNotifications(
       )
     });
 
-    // Save subscription to backend
-    await fetch('/api/push-subscriptions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        userAddress,
-        subscription
-      })
-    });
+    await saveSubscription(userAddress, subscription);
 
     return subscription;
   } catch (error) {
     console.error('Failed to subscribe to push notifications:', error);
     return null;
   }
+}
+
+async function saveSubscription(userAddress: string, subscription: PushSubscription) {
+  await fetch('/api/push-subscriptions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      userAddress,
+      subscription
+    })
+  });
 }
 
 export function showLocalNotification(title: string, options?: NotificationOptions) {

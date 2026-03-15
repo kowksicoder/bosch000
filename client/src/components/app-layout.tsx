@@ -701,7 +701,14 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       try {
         const identifier = user.wallet?.address || user.id;
         if (!identifier) return;
-        await subscribeToPushNotifications(identifier);
+        const subscription = await subscribeToPushNotifications(identifier);
+        if (subscription) {
+          toast({
+            title: "Notifications enabled",
+            description: "You’ll get real-time updates for trades, milestones, and messages.",
+            duration: 3000,
+          });
+        }
       } catch (error) {
         console.warn("[Push] Failed to auto-subscribe:", error);
       } finally {
