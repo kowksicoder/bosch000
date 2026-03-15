@@ -13,6 +13,7 @@ import {
   PlusCircle,
   User,
   Users,
+  X,
 } from "lucide-react";
 import type { User as UserType } from "@shared/schema";
 import { useState, useMemo, useRef } from "react";
@@ -24,7 +25,9 @@ import { avataaars } from "@dicebear/collection";
 import { getMostValuableCreatorCoins } from "@zoralabs/coins-sdk";
 import { useEffect } from "react";
 import { updateOGMeta } from "@/lib/og-meta";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { useFxRates, convertUsdToNgn } from "@/lib/fx";
+import { formatSmartCurrency } from "@/lib/utils";
 
 type Coin = {
   id: string;
@@ -142,8 +145,12 @@ export default function Home() {
   const [coinHolders, setCoinHolders] = useState<Record<string, number>>({});
   const [selectedCoin, setSelectedCoin] = useState<Coin | null>(null);
   const [isTradeModalOpen, setIsTradeModalOpen] = useState(false);
+  const [isMobileViewerOpen, setIsMobileViewerOpen] = useState(false);
+  const [mobileViewerIndex, setMobileViewerIndex] = useState(0);
+  const mobileViewerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const [, setLocation] = useLocation();
+  const { data: fxRates } = useFxRates();
 
 
   const categories = [
@@ -260,14 +267,38 @@ export default function Home() {
     }
   };
 
-  const openTradeModal = (coin: Coin) => {
+  const openExploreViewer = (coin: Coin, index: number) => {
     if (isMobile) {
       setSelectedCoin(coin);
-      setIsTradeModalOpen(true);
+      setMobileViewerIndex(index);
+      setIsMobileViewerOpen(true);
     } else {
       setLocation(`/coin/${coin.address}`);
     }
   };
+
+  const openTradeFromViewer = (coin: Coin) => {
+    setSelectedCoin(coin);
+    setIsTradeModalOpen(true);
+  };
+
+  useEffect(() => {
+    if (!isMobileViewerOpen) return;
+    document.body.style.overflow = "hidden";
+    const handle = window.setTimeout(() => {
+      const container = mobileViewerRef.current;
+      if (!container) return;
+      const target = container.querySelector(
+        `[data-coin-index="${mobileViewerIndex}"]`,
+      ) as HTMLElement | null;
+      target?.scrollIntoView({ block: "start" });
+    }, 0);
+
+    return () => {
+      window.clearTimeout(handle);
+      document.body.style.overflow = "";
+    };
+  }, [isMobileViewerOpen, mobileViewerIndex, filteredCoins.length]);
 
   // Check for referral code in URL
   useEffect(() => {
@@ -401,11 +432,11 @@ export default function Home() {
           </div>
         ) : filteredCoins.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-1">
-            {filteredCoins.map((coin: Coin) => (
+            {filteredCoins.map((coin: Coin, index: number) => (
               <CoinCard
                 key={coin.id || coin.address}
                 coin={coin}
-                onClick={() => openTradeModal(coin)}
+                onClick={() => openExploreViewer(coin, index)}
               />
             ))}
           </div>
@@ -417,6 +448,101 @@ export default function Home() {
           </div>
         )}
       </section>
+
+      {isMobile && isMobileViewerOpen && (
+        <div className="fixed inset-0 z-[60] bg-black text-white">
+          <div className="absolute top-4 right-4 z-20">
+            <button
+              type="button"
+              onClick={() => setIsMobileViewerOpen(false)}
+              className="h-10 w-10 rounded-full bg-black/60 flex items-center justify-center border border-white/10"
+              aria-label="Close viewer"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div
+            ref={mobileViewerRef}
+            className="h-full overflow-y-auto snap-y snap-mandatory"
+          >
+            {filteredCoins.map((coin, index) => {
+              const displayImage =
+                coin.image || coin.metadata?.image || coin.metadata?.imageUrl;
+              const marketCapNgn = convertUsdToNgn(coin.marketCap, fxRates);
+              const volumeNgn = convertUsdToNgn(coin.volume24h, fxRates);
+
+              return (
+                <div
+                  key={coin.id || coin.address}
+                  data-coin-index={index}
+                  className="relative h-[100dvh] snap-start"
+                >
+                  {displayImage ? (
+                    <img
+                      src={displayImage}
+                      alt={coin.name}
+                      className="absolute inset-0 h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 via-black to-neutral-900" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/40" />
+
+                  <div className="relative z-10 flex h-full flex-col justify-end px-5 pb-8">
+                    <div className="mb-6 flex items-center justify-between text-sm text-white/70">
+                      <span>
+                        {index + 1} / {filteredCoins.length}
+                      </span>
+                      <span className="rounded-full border border-white/20 px-2 py-0.5 text-[11px] uppercase tracking-wide">
+                        Explore
+                      </span>
+                    </div>
+
+                    <Card className="bg-black/60 border-white/10 text-white shadow-lg backdrop-blur">
+                      <div className="p-4 space-y-3">
+                        <div>
+                          <h3 className="text-xl font-semibold">{coin.name}</h3>
+                          <p className="text-sm text-white/70">@{coin.symbol}</p>
+                        </div>
+
+                        <div className="flex items-center justify-between text-xs text-white/70">
+                          <span>
+                            MC: {formatSmartCurrency(marketCapNgn ?? 0)}
+                          </span>
+                          <span>
+                            Vol: {formatSmartCurrency(volumeNgn ?? 0)}
+                          </span>
+                        </div>
+
+                        <div className="flex gap-2 pt-1">
+                          <Button
+                            className="flex-1 bg-white text-black hover:bg-white/90"
+                            onClick={() => openTradeFromViewer(coin)}
+                          >
+                            Trade
+                          </Button>
+                          <Button
+                            variant="secondary"
+                            className="flex-1 bg-white/10 text-white hover:bg-white/20"
+                            onClick={() => setLocation(`/coin/${coin.address}`)}
+                          >
+                            Open
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+
+                    <div className="mt-4 text-center text-[11px] text-white/60">
+                      Swipe up or down for more
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {selectedCoin && isMobile && (
         <TradeModalMobile
